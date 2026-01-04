@@ -1,9 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/providers/cart_provider.dart';
 import '../../data/dummy_data.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -18,13 +20,13 @@ import '../../data/dummy_data.dart';
 /// • Fixed bottom bar with price and Add to Cart
 /// ═══════════════════════════════════════════════════════════════════════════
 
-class ProductDetailScreen extends StatelessWidget {
+class ProductDetailScreen extends ConsumerWidget {
   final ProductModel product;
 
   const ProductDetailScreen({super.key, required this.product});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isArabic = context.locale.languageCode == 'ar';
 
@@ -68,7 +70,7 @@ class ProductDetailScreen extends StatelessWidget {
             left: 0,
             right: 0,
             bottom: 0,
-            child: _buildBottomBar(context, isDark),
+            child: _buildBottomBar(context, ref, isDark, isArabic),
           ),
         ],
       ),
@@ -624,7 +626,12 @@ class ProductDetailScreen extends StatelessWidget {
   // BOTTOM ACTION BAR
   // ═══════════════════════════════════════════════════════════════════════════
 
-  Widget _buildBottomBar(BuildContext context, bool isDark) {
+  Widget _buildBottomBar(
+    BuildContext context,
+    WidgetRef ref,
+    bool isDark,
+    bool isArabic,
+  ) {
     return ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
@@ -709,19 +716,65 @@ class ProductDetailScreen extends StatelessWidget {
                   // Add to Cart button
                   GestureDetector(
                     onTap: () {
-                      // TODO: Add to cart
+                      // Add to cart using provider
+                      ref.read(cartProvider.notifier).addItem(product);
+                      final itemCount = ref.read(cartItemCountProvider);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                            '${product.name} ${'add_to_cart'.tr()}',
+                          content: Row(
+                            children: [
+                              Icon(
+                                Icons.check_circle_rounded,
+                                color: isDark
+                                    ? AppColors.darkGradientStart
+                                    : Colors.white,
+                                size: 20.w,
+                              ),
+                              SizedBox(width: 10.w),
+                              Expanded(
+                                child: Text(
+                                  '${isArabic ? product.nameAr : product.name} ${'added_to_cart'.tr()}',
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.darkGradientStart
+                                        : Colors.white,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w,
+                                  vertical: 4.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? AppColors.darkGradientStart.withValues(
+                                          alpha: 0.3,
+                                        )
+                                      : Colors.white.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Text(
+                                  '$itemCount',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark
+                                        ? AppColors.darkGradientStart
+                                        : Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           backgroundColor: isDark
                               ? AppColors.neonCyan
                               : AppColors.lightAccent,
                           behavior: SnackBarBehavior.floating,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.r),
+                            borderRadius: BorderRadius.circular(12.r),
                           ),
+                          duration: const Duration(seconds: 2),
                         ),
                       );
                     },

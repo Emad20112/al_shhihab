@@ -47,5 +47,18 @@
   "discount": "OFF",
   "available_colors": "Available Colors",
   "added_to_cart": "added to cart",
-  "product_added": "Product added successfully"
+  "product_added": "Product added successfully",
+  "my_cart": "My Cart",
+  "item": "item",
+  "items": "items",
+  "cart_empty": "Your cart is empty",
+  "cart_empty_subtitle": "Add some amazing products to your cart",
+  "start_shopping": "Start Shopping",
+  "subtotal": "Subtotal",
+  "tax": "Tax (10%)",
+  "clear_cart": "Clear Cart",
+  "clear_cart_confirm": "Are you sure you want to remove all items from your cart?",
+  "clear": "Clear",
+  "cancel": "Cancel",
+  "checkout_coming_soon": "Checkout coming soon!"
 }

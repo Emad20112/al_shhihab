@@ -10,6 +10,7 @@ import 'widgets/animated_gradient_background.dart';
 import 'widgets/glass_bottom_nav.dart';
 import 'widgets/glass_container.dart';
 import 'features/home/home_screen.dart';
+import 'features/cart/cart_screen.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// MAIN ENTRY POINT - TechVault Electronics Store
@@ -155,11 +156,7 @@ class MainLayout extends ConsumerWidget {
           isDark,
         );
       case 2:
-        return _buildPlaceholderPage(
-          'Cart',
-          Icons.shopping_cart_rounded,
-          isDark,
-        );
+        return const CartScreen();
       case 3:
         return _buildSettingsPage(context, ref, isDark);
       default:

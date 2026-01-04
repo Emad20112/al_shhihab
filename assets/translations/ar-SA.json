@@ -47,5 +47,18 @@
   "discount": "خصم",
   "available_colors": "الألوان المتاحة",
   "added_to_cart": "تمت الإضافة للسلة",
-  "product_added": "تمت إضافة المنتج بنجاح"
+  "product_added": "تمت إضافة المنتج بنجاح",
+  "my_cart": "سلتي",
+  "item": "منتج",
+  "items": "منتجات",
+  "cart_empty": "سلة التسوق فارغة",
+  "cart_empty_subtitle": "أضف بعض المنتجات الرائعة إلى سلتك",
+  "start_shopping": "ابدأ التسوق",
+  "subtotal": "المجموع الفرعي",
+  "tax": "الضريبة (10%)",
+  "clear_cart": "تفريغ السلة",
+  "clear_cart_confirm": "هل أنت متأكد من إزالة جميع المنتجات من سلتك؟",
+  "clear": "تفريغ",
+  "cancel": "إلغاء",
+  "checkout_coming_soon": "خدمة الدفع قريباً!"
 }
