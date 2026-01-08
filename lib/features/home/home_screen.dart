@@ -4,22 +4,14 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
+
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_dimensions.dart'; // ✅ تم الاستيراد
 import '../../core/providers/app_providers.dart';
 import '../../data/dummy_data.dart';
 import '../../widgets/glass_app_bar.dart';
 import '../../widgets/glass_product_card.dart';
 import '../products/product_detail_screen.dart';
-
-/// ═══════════════════════════════════════════════════════════════════════════
-/// HOME SCREEN - Premium Electronics Store
-/// ═══════════════════════════════════════════════════════════════════════════
-///
-/// Features:
-/// • Section A: 3D Hero Carousel with pop-out product images
-/// • Section B: Categories - Horizontal glass buttons with icons
-/// • Section C: Featured Products Grid with staggered animation
-/// ═══════════════════════════════════════════════════════════════════════════
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -29,13 +21,12 @@ class HomeScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final baseMedia = MediaQuery.of(context);
 
-    // Wrap with MediaQuery to fix textScaleFactor for this sensitive screen
     return MediaQuery(
       data: baseMedia.copyWith(textScaleFactor: 1.0),
       child: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          // Glass App Bar - using simple SliverToBoxAdapter
+          // Glass App Bar
           SliverToBoxAdapter(
             child: GlassAppBar(
               userName: 'TechVault',
@@ -50,13 +41,15 @@ class HomeScreen extends ConsumerWidget {
           ),
 
           // Spacer
-          SliverToBoxAdapter(child: SizedBox(height: 16.h)),
+          // ✅ استبدال 16.h بـ spacingMD
+          SliverToBoxAdapter(child: SizedBox(height: AppDimensions.spacingMD)),
 
           // Section A: Hero Carousel
           SliverToBoxAdapter(child: _buildHeroCarousel(context, isDark)),
 
           // Spacer
-          SliverToBoxAdapter(child: SizedBox(height: 28.h)),
+          // ✅ استبدال 28.h بـ spacingXL (32) لتوحيد التباعد بين الأقسام
+          SliverToBoxAdapter(child: SizedBox(height: AppDimensions.spacingXL)),
 
           // Section B: Categories
           SliverToBoxAdapter(
@@ -64,7 +57,7 @@ class HomeScreen extends ConsumerWidget {
           ),
 
           // Spacer
-          SliverToBoxAdapter(child: SizedBox(height: 28.h)),
+          SliverToBoxAdapter(child: SizedBox(height: AppDimensions.spacingXL)),
 
           // Section Header: Featured Products
           SliverToBoxAdapter(
@@ -82,6 +75,7 @@ class HomeScreen extends ConsumerWidget {
           _buildFeaturedProductsGrid(context, isDark),
 
           // Bottom padding for nav bar
+          // ✅ مسافة كبيرة مخصصة للنافيجيشن، يمكن إبقاؤها أو استخدام spacingHuge * 2
           SliverToBoxAdapter(child: SizedBox(height: 120.h)),
         ],
       ),
@@ -100,7 +94,8 @@ class HomeScreen extends ConsumerWidget {
       children: [
         // Section header
         Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              // ✅ استبدال 20.w بـ spacingLG (24) لتوحيد الهوامش
+              padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacingLG),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -115,7 +110,7 @@ class HomeScreen extends ConsumerWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(height: 4.h),
+                        SizedBox(height: 4.h), // مسافة صغيرة جداً (spacingXXS)
                         Text(
                           'flash_deals'.tr(),
                           style: Theme.of(context).textTheme.bodySmall
@@ -130,27 +125,27 @@ class HomeScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  SizedBox(width: 8.w),
-                  // Animated dots indicator placeholder
+                  SizedBox(width: AppDimensions.spacingXS), // ✅ 8.w
+                  // Animated dots indicator
                   _buildCarouselIndicator(isDark, heroProducts.length, 0),
                 ],
               ),
             )
             .animate()
-            .fadeIn(duration: const Duration(milliseconds: 400))
+            .fadeIn(duration: const Duration(milliseconds: AppDimensions.animationNormal))
             .slideX(begin: -0.1, end: 0),
 
-        SizedBox(height: 20.h),
+        SizedBox(height: AppDimensions.spacingLG), // ✅ 20.h -> spacingLG (24)
 
         // Hero carousel
         SizedBox(
-          height: 340.h,
+          height: 340.h, // ارتفاع مخصص للـ Carousel
           child: PageView.builder(
             controller: PageController(viewportFraction: 0.8),
             itemCount: heroProducts.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacingXS), // ✅ 8.w
                 child: HeroProductCard(
                   product: heroProducts[index],
                   animationDelay: Duration(milliseconds: 100 * index),
@@ -167,7 +162,7 @@ class HomeScreen extends ConsumerWidget {
                                 child: child,
                               );
                             },
-                        transitionDuration: const Duration(milliseconds: 400),
+                        transitionDuration: const Duration(milliseconds: AppDimensions.animationNormal),
                       ),
                     );
                   },
@@ -185,12 +180,12 @@ class HomeScreen extends ConsumerWidget {
       children: List.generate(count, (index) {
         final isActive = index == current;
         return AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: AppDimensions.animationFast), // ✅ 200ms
           margin: EdgeInsets.symmetric(horizontal: 3.w),
           width: isActive ? 24.w : 8.w,
           height: 8.w,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4.r),
+            borderRadius: BorderRadius.circular(4.r), // نصف قطر صغير مخصص
             color: isActive
                 ? (isDark ? AppColors.neonCyan : AppColors.lightAccent)
                 : (isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted)
@@ -231,14 +226,15 @@ class HomeScreen extends ConsumerWidget {
           },
         ),
 
-        SizedBox(height: 16.h),
+        SizedBox(height: AppDimensions.spacingMD), // ✅ 16.h
 
         // Categories horizontal list
         SizedBox(
           height: 110.h,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            // ✅ spacingLG (24) أو MD (16)
+            padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacingMD), 
             itemCount: dummyCategories.length,
             itemBuilder: (context, index) {
               final category = dummyCategories[index];
@@ -259,7 +255,7 @@ class HomeScreen extends ConsumerWidget {
     final isArabic = context.locale.languageCode == 'ar';
 
     return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 6.w),
+          padding: EdgeInsets.symmetric(horizontal: 6.w), // مسافة صغيرة بين العناصر
           child: GestureDetector(
             onTap: () {
               // TODO: Navigate to category
@@ -268,7 +264,7 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 // Glass circle with icon
                 Container(
-                  width: 70.w,
+                  width: 70.w, // حجم ثابت للأيقونة
                   height: 70.w,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -297,7 +293,7 @@ class HomeScreen extends ConsumerWidget {
                       child: Center(
                         child: Icon(
                           category.icon,
-                          size: 30.w,
+                          size: 30.w, // يمكن استخدام iconLG
                           color: category.color,
                         ),
                       ),
@@ -305,7 +301,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
 
-                SizedBox(height: 8.h),
+                SizedBox(height: AppDimensions.spacingXS), // ✅ 8.h
 
                 // Category name
                 Text(
@@ -323,12 +319,13 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
         )
-        .animate(delay: Duration(milliseconds: 50 * index))
-        .fadeIn(duration: const Duration(milliseconds: 300))
+        // ✅ استخدام staggerDelay الموحد
+        .animate(delay: Duration(milliseconds: AppDimensions.staggerDelay * index))
+        .fadeIn(duration: const Duration(milliseconds: AppDimensions.animationNormal))
         .scale(
           begin: const Offset(0.8, 0.8),
           end: const Offset(1, 1),
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: AppDimensions.animationNormal),
           curve: Curves.easeOutBack,
         );
   }
@@ -341,12 +338,13 @@ class HomeScreen extends ConsumerWidget {
     final products = dummyProducts;
 
     return SliverPadding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      // ✅ spacingMD (16)
+      padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacingMD), 
       sliver: SliverGrid(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisSpacing: 16.h,
-          crossAxisSpacing: 12.w,
+          mainAxisSpacing: AppDimensions.spacingMD, // ✅ 16.h
+          crossAxisSpacing: AppDimensions.spacingSM, // ✅ 12.w
           childAspectRatio: 0.72,
         ),
         delegate: SliverChildBuilderDelegate((context, index) {
@@ -364,7 +362,7 @@ class HomeScreen extends ConsumerWidget {
                       (context, animation, secondaryAnimation, child) {
                         return FadeTransition(opacity: animation, child: child);
                       },
-                  transitionDuration: const Duration(milliseconds: 400),
+                  transitionDuration: const Duration(milliseconds: AppDimensions.animationNormal),
                 ),
               );
             },
@@ -378,7 +376,7 @@ class HomeScreen extends ConsumerWidget {
                       : AppColors.lightAccent,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.r),
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusSM), // ✅ 10 -> 12
                   ),
                 ),
               );
@@ -400,7 +398,8 @@ class HomeScreen extends ConsumerWidget {
     VoidCallback? onViewAll,
   }) {
     return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          // ✅ spacingLG (24) أو 20 حسب التفضيل، وحدناها هنا بـ LG
+          padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacingLG),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -415,14 +414,14 @@ class HomeScreen extends ConsumerWidget {
                   onTap: onViewAll,
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
+                      horizontal: AppDimensions.spacingSM, // ✅ 12.w
                       vertical: 6.h,
                     ),
                     decoration: BoxDecoration(
                       color: isDark
                           ? AppColors.neonCyan.withValues(alpha: 0.1)
                           : AppColors.lightAccent.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20.r),
+                      borderRadius: BorderRadius.circular(AppDimensions.radiusLG), // ✅ 20.r
                       border: Border.all(
                         color: isDark
                             ? AppColors.neonCyan.withValues(alpha: 0.3)
@@ -445,7 +444,7 @@ class HomeScreen extends ConsumerWidget {
                         SizedBox(width: 4.w),
                         Icon(
                           Icons.arrow_forward_rounded,
-                          size: 14.w,
+                          size: 14.w, // يمكن استخدام iconXS (16) أو تركها صغيرة
                           color: isDark
                               ? AppColors.neonCyan
                               : AppColors.lightAccent,
@@ -458,7 +457,7 @@ class HomeScreen extends ConsumerWidget {
           ),
         )
         .animate()
-        .fadeIn(duration: const Duration(milliseconds: 400))
+        .fadeIn(duration: const Duration(milliseconds: AppDimensions.animationNormal))
         .slideX(begin: -0.05, end: 0);
   }
 }

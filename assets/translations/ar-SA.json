@@ -60,5 +60,22 @@
   "clear_cart_confirm": "هل أنت متأكد من إزالة جميع المنتجات من سلتك؟",
   "clear": "تفريغ",
   "cancel": "إلغاء",
-  "checkout_coming_soon": "خدمة الدفع قريباً!"
+  "checkout_coming_soon": "خدمة الدفع قريباً!",
+  "browse_categories": "تصفح جميع الفئات",
+  "products": "منتجات",
+  "appearance": "المظهر",
+  "general": "عام",
+  "support": "الدعم",
+  "notifications": "الإشعارات",
+  "manage_notifications": "إدارة الإشعارات",
+  "privacy": "الخصوصية",
+  "privacy_settings": "إعدادات الخصوصية والأمان",
+  "help_center": "مركز المساعدة",
+  "get_help": "احصل على المساعدة والدعم",
+  "about": "حول التطبيق",
+  "version_info": "الإصدار 1.0.0",
+  "logout": "تسجيل الخروج",
+  "logout_confirm": "هل أنت متأكد من تسجيل الخروج؟",
+  "coming_soon": "قريباً!",
+  "premium": "مميز"
 }

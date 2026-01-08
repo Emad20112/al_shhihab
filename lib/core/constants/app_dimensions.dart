@@ -86,6 +86,19 @@ class AppDimensions {
   static double get appBarHeight => 60.h;
 
   // ═══════════════════════════════════════════════════════════════════════════
+  // AVATAR SIZES
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /// Large avatar (profile headers)
+  static double get avatarSizeLG => 70.w;
+
+  /// Avatar inner circle (for gradient border effect)
+  static double get avatarSizeInner => 64.w;
+
+  /// Avatar icon size
+  static double get avatarIconSize => 32.w;
+
+  // ═══════════════════════════════════════════════════════════════════════════
   // ANIMATION DURATIONS (in milliseconds)
   // ═══════════════════════════════════════════════════════════════════════════
 

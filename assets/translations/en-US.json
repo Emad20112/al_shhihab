@@ -60,5 +60,22 @@
   "clear_cart_confirm": "Are you sure you want to remove all items from your cart?",
   "clear": "Clear",
   "cancel": "Cancel",
-  "checkout_coming_soon": "Checkout coming soon!"
+  "checkout_coming_soon": "Checkout coming soon!",
+  "browse_categories": "Browse all categories",
+  "products": "products",
+  "appearance": "Appearance",
+  "general": "General",
+  "support": "Support",
+  "notifications": "Notifications",
+  "manage_notifications": "Manage your notifications",
+  "privacy": "Privacy",
+  "privacy_settings": "Privacy & security settings",
+  "help_center": "Help Center",
+  "get_help": "Get help and support",
+  "about": "About",
+  "version_info": "Version 1.0.0",
+  "logout": "Logout",
+  "logout_confirm": "Are you sure you want to logout?",
+  "coming_soon": "Coming soon!",
+  "premium": "Premium"
 }
