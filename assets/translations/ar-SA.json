@@ -77,5 +77,15 @@
   "logout": "تسجيل الخروج",
   "logout_confirm": "هل أنت متأكد من تسجيل الخروج؟",
   "coming_soon": "قريباً!",
-  "premium": "مميز"
+  "premium": "مميز",
+  "search_products": "ابحث عن المنتجات...",
+  "popular_tags": "العلامات الشائعة",
+  "recent_searches": "عمليات البحث الأخيرة",
+  "no_recent_searches": "لا توجد عمليات بحث سابقة",
+  "no_results": "لم يتم العثور على نتائج",
+  "no_results_desc": "لم نتمكن من العثور على منتجات تطابق بحثك",
+  "try_different": "جرب كلمة بحث مختلفة",
+  "results_found": "نتيجة",
+  "added_to_wishlist": "تمت الإضافة للمفضلة",
+  "removed_from_wishlist": "تمت الإزالة من المفضلة"
 }

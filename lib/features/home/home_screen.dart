@@ -12,6 +12,7 @@ import '../../data/dummy_data.dart';
 import '../../widgets/glass_app_bar.dart';
 import '../../widgets/glass_product_card.dart';
 import '../products/product_detail_screen.dart';
+import '../search/search_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -32,7 +33,21 @@ class HomeScreen extends ConsumerWidget {
               userName: 'TechVault',
               notificationCount: 3,
               onSearchTap: () {
-                // TODO: Navigate to search
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const SearchScreen(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                    transitionDuration: const Duration(milliseconds: 300),
+                  ),
+                );
               },
               onNotificationTap: () {
                 // TODO: Show notifications
@@ -95,7 +110,9 @@ class HomeScreen extends ConsumerWidget {
         // Section header
         Padding(
               // ✅ استبدال 20.w بـ spacingLG (24) لتوحيد الهوامش
-              padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacingLG),
+              padding: EdgeInsets.symmetric(
+                horizontal: AppDimensions.spacingLG,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -132,11 +149,14 @@ class HomeScreen extends ConsumerWidget {
               ),
             )
             .animate()
-            .fadeIn(duration: const Duration(milliseconds: AppDimensions.animationNormal))
+            .fadeIn(
+              duration: const Duration(
+                milliseconds: AppDimensions.animationNormal,
+              ),
+            )
             .slideX(begin: -0.1, end: 0),
 
         SizedBox(height: AppDimensions.spacingLG), // ✅ 20.h -> spacingLG (24)
-
         // Hero carousel
         SizedBox(
           height: 340.h, // ارتفاع مخصص للـ Carousel
@@ -145,7 +165,9 @@ class HomeScreen extends ConsumerWidget {
             itemCount: heroProducts.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacingXS), // ✅ 8.w
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppDimensions.spacingXS,
+                ), // ✅ 8.w
                 child: HeroProductCard(
                   product: heroProducts[index],
                   animationDelay: Duration(milliseconds: 100 * index),
@@ -162,7 +184,9 @@ class HomeScreen extends ConsumerWidget {
                                 child: child,
                               );
                             },
-                        transitionDuration: const Duration(milliseconds: AppDimensions.animationNormal),
+                        transitionDuration: const Duration(
+                          milliseconds: AppDimensions.animationNormal,
+                        ),
                       ),
                     );
                   },
@@ -180,7 +204,9 @@ class HomeScreen extends ConsumerWidget {
       children: List.generate(count, (index) {
         final isActive = index == current;
         return AnimatedContainer(
-          duration: const Duration(milliseconds: AppDimensions.animationFast), // ✅ 200ms
+          duration: const Duration(
+            milliseconds: AppDimensions.animationFast,
+          ), // ✅ 200ms
           margin: EdgeInsets.symmetric(horizontal: 3.w),
           width: isActive ? 24.w : 8.w,
           height: 8.w,
@@ -227,14 +253,13 @@ class HomeScreen extends ConsumerWidget {
         ),
 
         SizedBox(height: AppDimensions.spacingMD), // ✅ 16.h
-
         // Categories horizontal list
         SizedBox(
           height: 110.h,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             // ✅ spacingLG (24) أو MD (16)
-            padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacingMD), 
+            padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacingMD),
             itemCount: dummyCategories.length,
             itemBuilder: (context, index) {
               final category = dummyCategories[index];
@@ -255,7 +280,9 @@ class HomeScreen extends ConsumerWidget {
     final isArabic = context.locale.languageCode == 'ar';
 
     return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 6.w), // مسافة صغيرة بين العناصر
+          padding: EdgeInsets.symmetric(
+            horizontal: 6.w,
+          ), // مسافة صغيرة بين العناصر
           child: GestureDetector(
             onTap: () {
               // TODO: Navigate to category
@@ -302,7 +329,6 @@ class HomeScreen extends ConsumerWidget {
                 ),
 
                 SizedBox(height: AppDimensions.spacingXS), // ✅ 8.h
-
                 // Category name
                 Text(
                   isArabic ? category.nameAr : category.name,
@@ -320,8 +346,12 @@ class HomeScreen extends ConsumerWidget {
           ),
         )
         // ✅ استخدام staggerDelay الموحد
-        .animate(delay: Duration(milliseconds: AppDimensions.staggerDelay * index))
-        .fadeIn(duration: const Duration(milliseconds: AppDimensions.animationNormal))
+        .animate(
+          delay: Duration(milliseconds: AppDimensions.staggerDelay * index),
+        )
+        .fadeIn(
+          duration: const Duration(milliseconds: AppDimensions.animationNormal),
+        )
         .scale(
           begin: const Offset(0.8, 0.8),
           end: const Offset(1, 1),
@@ -339,7 +369,7 @@ class HomeScreen extends ConsumerWidget {
 
     return SliverPadding(
       // ✅ spacingMD (16)
-      padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacingMD), 
+      padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacingMD),
       sliver: SliverGrid(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
@@ -362,7 +392,9 @@ class HomeScreen extends ConsumerWidget {
                       (context, animation, secondaryAnimation, child) {
                         return FadeTransition(opacity: animation, child: child);
                       },
-                  transitionDuration: const Duration(milliseconds: AppDimensions.animationNormal),
+                  transitionDuration: const Duration(
+                    milliseconds: AppDimensions.animationNormal,
+                  ),
                 ),
               );
             },
@@ -376,7 +408,9 @@ class HomeScreen extends ConsumerWidget {
                       : AppColors.lightAccent,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusSM), // ✅ 10 -> 12
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusSM,
+                    ), // ✅ 10 -> 12
                   ),
                 ),
               );
@@ -421,7 +455,9 @@ class HomeScreen extends ConsumerWidget {
                       color: isDark
                           ? AppColors.neonCyan.withValues(alpha: 0.1)
                           : AppColors.lightAccent.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(AppDimensions.radiusLG), // ✅ 20.r
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusLG,
+                      ), // ✅ 20.r
                       border: Border.all(
                         color: isDark
                             ? AppColors.neonCyan.withValues(alpha: 0.3)
@@ -457,7 +493,9 @@ class HomeScreen extends ConsumerWidget {
           ),
         )
         .animate()
-        .fadeIn(duration: const Duration(milliseconds: AppDimensions.animationNormal))
+        .fadeIn(
+          duration: const Duration(milliseconds: AppDimensions.animationNormal),
+        )
         .slideX(begin: -0.05, end: 0);
   }
 }

@@ -1,10 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimensions.dart';
+import '../core/providers/wishlist_provider.dart';
 import '../data/dummy_data.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -21,7 +23,7 @@ import '../data/dummy_data.dart';
 /// • Discount badge
 /// ═══════════════════════════════════════════════════════════════════════════
 
-class GlassProductCard extends StatefulWidget {
+class GlassProductCard extends ConsumerStatefulWidget {
   /// Product data
   final ProductModel product;
 
@@ -55,11 +57,28 @@ class GlassProductCard extends StatefulWidget {
   });
 
   @override
-  State<GlassProductCard> createState() => _GlassProductCardState();
+  ConsumerState<GlassProductCard> createState() => _GlassProductCardState();
 }
 
-class _GlassProductCardState extends State<GlassProductCard> {
+class _GlassProductCardState extends ConsumerState<GlassProductCard>
+    with SingleTickerProviderStateMixin {
   bool _isPressed = false;
+  late AnimationController _heartController;
+
+  @override
+  void initState() {
+    super.initState();
+    _heartController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  @override
+  void dispose() {
+    _heartController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -175,6 +194,8 @@ class _GlassProductCardState extends State<GlassProductCard> {
     bool isDark,
     ProductModel product,
   ) {
+    final isFavorite = ref.watch(isFavoriteProvider(product.id));
+
     return Stack(
       children: [
         // Product image
@@ -228,9 +249,20 @@ class _GlassProductCardState extends State<GlassProductCard> {
             child: _buildDiscountBadge(isDark, product.discountPercent!),
           ),
 
-        // New badge
+        // Wishlist heart button (top-right)
+        Positioned(
+          top: 8.h,
+          right: 8.w,
+          child: _buildHeartButton(isDark, product.id, isFavorite),
+        ),
+
+        // New badge (below heart if present)
         if (product.isNew)
-          Positioned(top: 8.h, right: 8.w, child: _buildNewBadge(isDark)),
+          Positioned(
+            top: product.discountPercent != null ? 8.h : 40.h,
+            right: product.discountPercent != null ? 50.w : 8.w,
+            child: _buildNewBadge(isDark),
+          ),
 
         // Rating
         Positioned(
@@ -239,6 +271,63 @@ class _GlassProductCardState extends State<GlassProductCard> {
           child: _buildRatingBadge(isDark, product.rating),
         ),
       ],
+    );
+  }
+
+  Widget _buildHeartButton(bool isDark, String productId, bool isFavorite) {
+    return GestureDetector(
+      onTap: () {
+        ref.read(wishlistProvider.notifier).toggleFavorite(productId);
+        // Trigger pulse animation
+        _heartController.forward(from: 0);
+      },
+      child: AnimatedBuilder(
+        animation: _heartController,
+        builder: (context, child) {
+          final scale =
+              1.0 +
+              (_heartController.value * 0.3) * (1 - _heartController.value);
+          return Transform.scale(
+            scale: scale,
+            child: Container(
+              width: 32.w,
+              height: 32.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: (isDark ? Colors.black : Colors.white).withOpacity(0.6),
+                border: Border.all(
+                  color: isFavorite
+                      ? (isDark ? AppColors.neonMagenta : AppColors.error)
+                      : (isDark
+                            ? AppColors.neonCyan.withOpacity(0.3)
+                            : Colors.white.withOpacity(0.5)),
+                  width: 1,
+                ),
+                boxShadow: isFavorite && isDark
+                    ? [
+                        BoxShadow(
+                          color: AppColors.neonMagenta.withOpacity(0.4),
+                          blurRadius: 8,
+                          spreadRadius: 0,
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Icon(
+                isFavorite
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
+                size: 16.w,
+                color: isFavorite
+                    ? (isDark ? AppColors.neonMagenta : AppColors.error)
+                    : (isDark
+                          ? AppColors.darkTextMuted
+                          : AppColors.lightTextMuted),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
