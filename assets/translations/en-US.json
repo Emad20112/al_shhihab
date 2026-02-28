@@ -87,5 +87,14 @@
   "try_different": "Try a different search term",
   "results_found": "results found",
   "added_to_wishlist": "Added to wishlist",
-  "removed_from_wishlist": "Removed from wishlist"
+  "removed_from_wishlist": "Removed from wishlist",
+  "select_location": "Select Your Region",
+  "select_location_subtitle": "Choose the region closest to you for the best experience",
+  "northern_cities": "Northern Cities",
+  "southern_cities": "Southern Cities",
+  "northern_cities_list": "Sana'a • Ibb • Dhamar • Amran • Hajjah",
+  "southern_cities_list": "Aden • Taiz • Abyan • Lahij • Al-Dhale'e",
+  "confirm_location": "Confirm Location",
+  "change_region": "Change Region",
+  "change_region_hint": "You can change your region later from Settings"
 }

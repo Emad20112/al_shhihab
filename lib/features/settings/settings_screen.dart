@@ -8,6 +8,8 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimensions.dart';
 import '../../core/providers/app_providers.dart';
+import '../../core/providers/location_provider.dart';
+import '../../features/onboarding/location_selection_screen.dart';
 import '../../widgets/glass_setting_tile.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -98,6 +100,22 @@ class SettingsScreen extends ConsumerWidget {
             title: 'general'.tr(),
             animationDelay: const Duration(milliseconds: 250),
             children: [
+              // Change Region
+              GlassSettingTile(
+                icon: Icons.location_on_rounded,
+                iconColor: isDark ? AppColors.neonCyan : AppColors.lightAccent,
+                title: 'change_region'.tr(),
+                subtitle: _getRegionSubtitle(ref),
+                animationDelay: const Duration(milliseconds: 270),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const LocationSelectionScreen(),
+                    ),
+                  );
+                },
+              ),
+
               // Notifications
               GlassSettingTile(
                 icon: Icons.notifications_rounded,
@@ -430,6 +448,14 @@ class SettingsScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  String _getRegionSubtitle(WidgetRef ref) {
+    final region = ref.watch(selectedRegionProvider);
+    if (region == null) return 'select_location'.tr();
+    return region == LocationRegion.north
+        ? 'northern_cities'.tr()
+        : 'southern_cities'.tr();
   }
 
   void _toggleLanguage(BuildContext context, WidgetRef ref) {

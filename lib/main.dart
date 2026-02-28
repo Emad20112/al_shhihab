@@ -6,6 +6,8 @@ import 'package:easy_localization/easy_localization.dart';
 
 import 'core/theme/glassmorphism_theme.dart';
 import 'core/providers/app_providers.dart';
+import 'core/providers/location_provider.dart';
+import 'features/onboarding/location_selection_screen.dart';
 import 'widgets/animated_gradient_background.dart';
 import 'widgets/glass_bottom_nav.dart';
 import 'features/home/home_screen.dart';
@@ -98,8 +100,16 @@ class TechVaultApp extends ConsumerWidget {
             );
           },
 
-          // Home
-          home: const MainLayout(),
+          // Home – show onboarding on first launch
+          home: Consumer(
+            builder: (context, ref, _) {
+              final locationState = ref.watch(locationProvider);
+              if (locationState.isFirstLaunch) {
+                return const LocationSelectionScreen();
+              }
+              return const MainLayout();
+            },
+          ),
         );
       },
     );

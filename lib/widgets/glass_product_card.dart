@@ -92,14 +92,16 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
       onTapCancel: () => setState(() => _isPressed = false),
       onTap: widget.onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+        duration: Duration(milliseconds: AppDimensions.tapFeedback),
         curve: Curves.easeOutCubic,
         width: widget.width ?? 170.w,
         height: widget.height ?? 240.h,
-        transform: Matrix4.identity()..scale(_isPressed ? 0.95 : 1.0),
+        transform: Matrix4.identity()..scale(_isPressed ? 0.98 : 1.0),
         transformAlignment: Alignment.center,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusLG),
+          borderRadius: BorderRadius.circular(
+            isDark ? AppDimensions.radiusLG : AppDimensions.radiusXL,
+          ),
           child: BackdropFilter(
             filter: ImageFilter.blur(
               sigmaX: AppColors.getBlurSigma(isDark),
@@ -110,12 +112,18 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
                 color: AppColors.getGlassSurface(
                   isDark,
                 ).withValues(alpha: AppColors.getGlassOpacity(isDark)),
-                borderRadius: BorderRadius.circular(AppDimensions.radiusLG),
+                borderRadius: BorderRadius.circular(
+                  isDark ? AppDimensions.radiusLG : AppDimensions.radiusXL,
+                ),
                 border: Border.all(
                   color: isDark
                       ? (_isPressed
-                            ? AppColors.neonCyan.withValues(alpha: 0.5)
-                            : AppColors.neonCyan.withValues(alpha: 0.2))
+                            ? AppColors.neonCyan.withValues(
+                                alpha: AppColors.neonGlowStrong,
+                              )
+                            : AppColors.neonCyan.withValues(
+                                alpha: AppColors.neonGlowReduced,
+                              ))
                       : Colors.white.withValues(alpha: 0.4),
                   width: isDark ? 1.5 : 1,
                 ),
@@ -123,10 +131,12 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
                   BoxShadow(
                     color: isDark
                         ? (_isPressed
-                              ? AppColors.neonCyan.withValues(alpha: 0.2)
-                              : Colors.black.withValues(alpha: 0.3))
-                        : Colors.black.withValues(alpha: 0.08),
-                    blurRadius: _isPressed ? 15 : 20,
+                              ? AppColors.neonCyan.withValues(alpha: 0.3)
+                              : AppColors.getSoftShadow(isDark))
+                        : AppColors.getSoftShadow(isDark),
+                    blurRadius: _isPressed
+                        ? AppDimensions.glowIntensityStrong
+                        : AppDimensions.glowIntensityMedium,
                     offset: const Offset(0, 8),
                   ),
                 ],
@@ -140,11 +150,11 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
                   // Content section
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.all(12.w),
+                      padding: EdgeInsets.all(isDark ? 14.w : 16.w),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Title
+                          // Title with text shadow for readability
                           Text(
                             isArabic ? product.nameAr : product.name,
                             style: TextStyle(
@@ -153,6 +163,17 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
                               color: isDark
                                   ? AppColors.darkTextPrimary
                                   : AppColors.lightTextPrimary,
+                              shadows: isDark
+                                  ? [
+                                      Shadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.5,
+                                        ),
+                                        blurRadius:
+                                            AppDimensions.textShadowSubtle,
+                                      ),
+                                    ]
+                                  : null,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -198,47 +219,72 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
 
     return Stack(
       children: [
-        // Product image
-        Container(
-          height: 110.h,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.3)
-                : Colors.white.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(AppDimensions.radiusLG),
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(AppDimensions.radiusLG),
-            ),
-            child: Image.network(
-              product.imageUrl,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation(
-                      isDark ? AppColors.neonCyan : AppColors.lightAccent,
+        // Product image with gradient overlay for text readability
+        Stack(
+          children: [
+            Container(
+              height: 110.h,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.black.withValues(alpha: 0.3)
+                    : Colors.white.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(AppDimensions.radiusLG),
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(AppDimensions.radiusLG),
+                ),
+                child: Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation(
+                          isDark ? AppColors.neonCyan : AppColors.lightAccent,
+                        ),
+                      ),
+                    );
+                  },
+                  errorBuilder: (_, __, ___) => Center(
+                    child: Icon(
+                      Icons.devices_rounded,
+                      size: 40.w,
+                      color: isDark
+                          ? AppColors.darkTextMuted
+                          : AppColors.lightTextMuted,
                     ),
                   ),
-                );
-              },
-              errorBuilder: (_, __, ___) => Center(
-                child: Icon(
-                  Icons.devices_rounded,
-                  size: 40.w,
-                  color: isDark
-                      ? AppColors.darkTextMuted
-                      : AppColors.lightTextMuted,
                 ),
               ),
             ),
-          ),
+            // Gradient overlay for better badge visibility
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: isDark ? 0.3 : 0.15),
+                    ],
+                    stops: const [0.6, 1.0],
+                  ),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(
+                      isDark ? AppDimensions.radiusLG : AppDimensions.radiusXL,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
 
         // Discount badge
@@ -290,8 +336,8 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
           return Transform.scale(
             scale: scale,
             child: Container(
-              width: 32.w,
-              height: 32.w,
+              width: AppDimensions.minTouchTarget,
+              height: AppDimensions.minTouchTarget,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: (isDark ? Colors.black : Colors.white).withOpacity(0.6),
@@ -299,15 +345,15 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
                   color: isFavorite
                       ? (isDark ? AppColors.neonMagenta : AppColors.error)
                       : (isDark
-                            ? AppColors.neonCyan.withOpacity(0.3)
+                            ? AppColors.getNeonGlow(AppColors.neonCyan)
                             : Colors.white.withOpacity(0.5)),
                   width: 1,
                 ),
                 boxShadow: isFavorite && isDark
                     ? [
                         BoxShadow(
-                          color: AppColors.neonMagenta.withOpacity(0.4),
-                          blurRadius: 8,
+                          color: AppColors.getNeonGlow(AppColors.neonMagenta),
+                          blurRadius: AppDimensions.glowIntensitySoft,
                           spreadRadius: 0,
                         ),
                       ]
@@ -317,7 +363,7 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
                 isFavorite
                     ? Icons.favorite_rounded
                     : Icons.favorite_border_rounded,
-                size: 16.w,
+                size: 20.w,
                 color: isFavorite
                     ? (isDark ? AppColors.neonMagenta : AppColors.error)
                     : (isDark
@@ -340,8 +386,11 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
         boxShadow: isDark
             ? [
                 BoxShadow(
-                  color: AppColors.neonMagenta.withValues(alpha: 0.4),
-                  blurRadius: 8,
+                  color: AppColors.getNeonGlow(
+                    AppColors.neonMagenta,
+                    subtle: true,
+                  ),
+                  blurRadius: AppDimensions.glowIntensitySoft,
                   spreadRadius: 0,
                 ),
               ]
@@ -367,8 +416,11 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
         boxShadow: isDark
             ? [
                 BoxShadow(
-                  color: AppColors.neonCyan.withValues(alpha: 0.4),
-                  blurRadius: 8,
+                  color: AppColors.getNeonGlow(
+                    AppColors.neonCyan,
+                    subtle: true,
+                  ),
+                  blurRadius: AppDimensions.glowIntensitySoft,
                   spreadRadius: 0,
                 ),
               ]
@@ -442,14 +494,15 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
               Text(
                 '\$${product.price.toStringAsFixed(0)}',
                 style: TextStyle(
-                  fontSize: 15.sp,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   color: isDark ? AppColors.neonCyan : AppColors.lightAccent,
+                  letterSpacing: 0.5,
                   shadows: isDark
                       ? [
                           Shadow(
-                            color: AppColors.neonCyan.withValues(alpha: 0.5),
-                            blurRadius: 8,
+                            color: AppColors.getNeonGlow(AppColors.neonCyan),
+                            blurRadius: AppDimensions.glowIntensitySoft,
                           ),
                         ]
                       : null,
@@ -467,13 +520,15 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
               width: 36.w,
               height: 36.w,
               decoration: BoxDecoration(
-                color: isDark ? AppColors.neonCyan : AppColors.lightAccent,
+                color: isDark
+                    ? AppColors.neonCyan
+                    : AppColors.getAccentColor(isDark),
                 borderRadius: BorderRadius.circular(10.r),
                 boxShadow: isDark
                     ? [
                         BoxShadow(
-                          color: AppColors.neonCyan.withValues(alpha: 0.4),
-                          blurRadius: 10,
+                          color: AppColors.getNeonGlow(AppColors.neonCyan),
+                          blurRadius: AppDimensions.glowIntensityMedium,
                           spreadRadius: 0,
                         ),
                       ]

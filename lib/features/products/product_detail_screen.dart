@@ -82,8 +82,16 @@ class ProductDetailScreen extends ConsumerWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: isDark
-                    ? [AppColors.darkGradientStart, AppColors.darkGradientMiddle, AppColors.darkGradientEnd]
-                    : [AppColors.lightGradientStart, AppColors.lightGradientMiddle, AppColors.lightGradientEnd],
+                    ? [
+                        AppColors.darkGradientStart,
+                        AppColors.darkGradientMiddle,
+                        AppColors.darkGradientEnd,
+                      ]
+                    : [
+                        AppColors.lightGradientStart,
+                        AppColors.lightGradientMiddle,
+                        AppColors.lightGradientEnd,
+                      ],
               ),
             ),
           ),
@@ -111,8 +119,14 @@ class ProductDetailScreen extends ConsumerWidget {
                 center: Alignment.topCenter,
                 radius: 1.5,
                 colors: isDark
-                    ? [AppColors.neonCyan.withValues(alpha: 0.1), Colors.transparent]
-                    : [AppColors.lightAccent.withValues(alpha: 0.08), Colors.transparent],
+                    ? [
+                        AppColors.neonCyan.withValues(alpha: 0.08),
+                        Colors.transparent,
+                      ]
+                    : [
+                        AppColors.lightAccent.withValues(alpha: 0.08),
+                        Colors.transparent,
+                      ],
               ),
             ),
           ),
@@ -127,50 +141,52 @@ class ProductDetailScreen extends ConsumerWidget {
 
   Widget _buildAppBar(BuildContext context, bool isDark) {
     return Padding(
-      // ✅ استبدال 16.w و 8.h بـ spacingMD و spacingXS
-      padding: EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacingMD, 
-        vertical: AppDimensions.spacingXS
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Back button
-          _buildGlassButton(
-            context,
-            isDark,
-            icon: Icons.arrow_back_rounded,
-            onTap: () => Navigator.of(context).pop(),
+          // ✅ استبدال 16.w و 8.h بـ spacingMD و spacingXS
+          padding: EdgeInsets.symmetric(
+            horizontal: AppDimensions.spacingMD,
+            vertical: AppDimensions.spacingXS,
           ),
-
-          // Actions
-          Row(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Back button
               _buildGlassButton(
                 context,
                 isDark,
-                icon: Icons.share_rounded,
-                onTap: () {
-                  // TODO: Share product
-                },
+                icon: Icons.arrow_back_rounded,
+                onTap: () => Navigator.of(context).pop(),
               ),
-              SizedBox(width: AppDimensions.spacingXS), // ✅ 8.w
-              _buildGlassButton(
-                context,
-                isDark,
-                icon: Icons.favorite_border_rounded,
-                onTap: () {
-                  // TODO: Add to favorites
-                },
+
+              // Actions
+              Row(
+                children: [
+                  _buildGlassButton(
+                    context,
+                    isDark,
+                    icon: Icons.share_rounded,
+                    onTap: () {
+                      // TODO: Share product
+                    },
+                  ),
+                  SizedBox(width: AppDimensions.spacingXS), // ✅ 8.w
+                  _buildGlassButton(
+                    context,
+                    isDark,
+                    icon: Icons.favorite_border_rounded,
+                    onTap: () {
+                      // TODO: Add to favorites
+                    },
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-    )
-    .animate()
-    .fadeIn(duration: const Duration(milliseconds: AppDimensions.animationNormal))
-    .slideY(begin: -0.5, end: 0);
+        )
+        .animate()
+        .fadeIn(
+          duration: const Duration(milliseconds: AppDimensions.animationNormal),
+        )
+        .slideY(begin: -0.5, end: 0);
   }
 
   Widget _buildGlassButton(
@@ -204,7 +220,9 @@ class ProductDetailScreen extends ConsumerWidget {
             child: Icon(
               icon,
               size: 22.w, // يمكن استخدام iconMD (24) أو تركه
-              color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+              color: isDark
+                  ? AppColors.darkTextPrimary
+                  : AppColors.lightTextPrimary,
             ),
           ),
         ),
@@ -218,78 +236,94 @@ class ProductDetailScreen extends ConsumerWidget {
 
   Widget _buildHeroImage(BuildContext context, bool isDark) {
     return Container(
-      height: 280.h,
-      width: double.infinity,
-      // ✅ استبدال 40.w بـ spacingXXL (48) أو spacingXL (32) - اخترنا XL للتقريب
-      padding: EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacingXL, 
-        vertical: AppDimensions.spacingMD // ✅ 16.h
-      ),
-      child: Hero(
-        tag: 'product_${product.id}',
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusXL), // ✅ 24.r -> radiusXL
-            boxShadow: [
-              BoxShadow(
-                color: isDark
-                    ? AppColors.neonCyan.withValues(alpha: 0.2)
-                    : Colors.black.withValues(alpha: 0.15),
-                blurRadius: 40,
-                offset: const Offset(0, 20),
-              ),
-            ],
+          height: 280.h,
+          width: double.infinity,
+          // ✅ استبدال 40.w بـ spacingXXL (48) أو spacingXL (32) - اخترنا XL للتقريب
+          padding: EdgeInsets.symmetric(
+            horizontal: AppDimensions.spacingXL,
+            vertical: AppDimensions.spacingMD, // ✅ 16.h
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusXL), // ✅
-            child: Image.network(
-              product.imageUrl,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Container(
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkGlassSurface : Colors.white.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusXL), // ✅
+          child: Hero(
+            tag: 'product_${product.id}',
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  AppDimensions.radiusXL,
+                ), // ✅ 24.r -> radiusXL
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark
+                        ? AppColors.neonCyan.withValues(alpha: 0.2)
+                        : Colors.black.withValues(alpha: 0.15),
+                    blurRadius: 40,
+                    offset: const Offset(0, 20),
                   ),
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation(
-                        isDark ? AppColors.neonCyan : AppColors.lightAccent,
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(
+                  AppDimensions.radiusXL,
+                ), // ✅
+                child: Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? AppColors.darkGlassSurface
+                            : Colors.white.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusXL,
+                        ), // ✅
                       ),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation(
+                            isDark ? AppColors.neonCyan : AppColors.lightAccent,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  errorBuilder: (_, __, ___) => Container(
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.darkGlassSurface
+                          : Colors.white.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusXL,
+                      ), // ✅
+                    ),
+                    child: Icon(
+                      Icons.devices_rounded,
+                      size: 80.w, // حجم كبير خاص
+                      color: isDark
+                          ? AppColors.darkTextMuted
+                          : AppColors.lightTextMuted,
                     ),
                   ),
-                );
-              },
-              errorBuilder: (_, __, ___) => Container(
-                decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkGlassSurface : Colors.white.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(AppDimensions.radiusXL), // ✅
-                ),
-                child: Icon(
-                  Icons.devices_rounded,
-                  size: 80.w, // حجم كبير خاص
-                  color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
                 ),
               ),
             ),
           ),
-        ),
-      ),
-    )
-    .animate()
-    .fadeIn(
-      delay: const Duration(milliseconds: 200), // يمكن استخدام animationFast
-      duration: const Duration(milliseconds: AppDimensions.animationNormal),
-    )
-    .scale(
-      begin: const Offset(0.9, 0.9),
-      end: const Offset(1, 1),
-      delay: const Duration(milliseconds: 200),
-      duration: const Duration(milliseconds: AppDimensions.animationNormal),
-      curve: Curves.easeOutBack,
-    );
+        )
+        .animate()
+        .fadeIn(
+          delay: const Duration(
+            milliseconds: 200,
+          ), // يمكن استخدام animationFast
+          duration: const Duration(milliseconds: AppDimensions.animationNormal),
+        )
+        .scale(
+          begin: const Offset(0.9, 0.9),
+          end: const Offset(1, 1),
+          delay: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: AppDimensions.animationNormal),
+          curve: Curves.easeOutBack,
+        );
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -298,178 +332,231 @@ class ProductDetailScreen extends ConsumerWidget {
 
   Widget _buildDetailSheet(BuildContext context, bool isDark, bool isArabic) {
     return ClipRRect(
-      // ✅ استبدال 32.r بـ radiusXXL
-      borderRadius: BorderRadius.vertical(top: Radius.circular(AppDimensions.radiusXXL)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: AppColors.getBlurSigma(isDark),
-          sigmaY: AppColors.getBlurSigma(isDark),
-        ),
-        child: Container(
-          width: double.infinity,
-          // ✅ استبدال الحشوات بـ spacingLG (24) و spacingLG للـ 20 لتوحيدها
-          padding: EdgeInsets.fromLTRB(
-            AppDimensions.spacingLG, 
-            AppDimensions.spacingLG, 
-            AppDimensions.spacingLG, 
-            120.h
+          // ✅ استبدال 32.r بـ radiusXXL
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppDimensions.radiusXXL),
           ),
-          decoration: BoxDecoration(
-            color: AppColors.getGlassSurface(isDark).withValues(alpha: AppColors.getGlassOpacity(isDark) + 0.1),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(AppDimensions.radiusXXL)), // ✅
-            border: Border(
-              top: BorderSide(
-                color: isDark
-                    ? AppColors.neonCyan.withValues(alpha: 0.3)
-                    : Colors.white.withValues(alpha: 0.6),
-                width: AppDimensions.glassBorderWidth, // ✅
-              ),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: AppColors.getBlurSigma(isDark),
+              sigmaY: AppColors.getBlurSigma(isDark),
             ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Handle indicator
-              Center(
-                child: Container(
-                  width: 40.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: (isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted).withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(2.r),
+            child: Container(
+              width: double.infinity,
+              // ✅ استبدال الحشوات بـ spacingLG (24) و spacingLG للـ 20 لتوحيدها
+              padding: EdgeInsets.fromLTRB(
+                AppDimensions.spacingLG,
+                AppDimensions.spacingLG,
+                AppDimensions.spacingLG,
+                120.h,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.getGlassSurface(
+                  isDark,
+                ).withValues(alpha: AppColors.getGlassOpacity(isDark) + 0.1),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(AppDimensions.radiusXXL),
+                ), // ✅
+                border: Border(
+                  top: BorderSide(
+                    color: isDark
+                        ? AppColors.neonCyan.withValues(alpha: 0.3)
+                        : Colors.white.withValues(alpha: 0.6),
+                    width: AppDimensions.glassBorderWidth, // ✅
                   ),
                 ),
               ),
-
-              SizedBox(height: AppDimensions.spacingLG), // ✅ 20.h -> 24
-
-              // Category & Rating row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Category badge
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: AppDimensions.spacingSM, vertical: 6.h), // ✅ 12.w -> SM
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? AppColors.neonMagenta.withValues(alpha: 0.2)
-                          : AppColors.lightAccent.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(AppDimensions.radiusLG), // ✅ 20.r
-                      border: Border.all(
-                        color: isDark
-                            ? AppColors.neonMagenta.withValues(alpha: 0.3)
-                            : AppColors.lightAccent.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Text(
-                      product.category.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? AppColors.neonMagenta : AppColors.lightAccent,
-                        letterSpacing: 1,
+                  // Handle indicator
+                  Center(
+                    child: Container(
+                      width: 40.w,
+                      height: 4.h,
+                      decoration: BoxDecoration(
+                        color:
+                            (isDark
+                                    ? AppColors.darkTextMuted
+                                    : AppColors.lightTextMuted)
+                                .withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(2.r),
                       ),
                     ),
                   ),
 
-                  // Rating
+                  SizedBox(height: AppDimensions.spacingLG), // ✅ 20.h -> 24
+                  // Category & Rating row
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(Icons.star_rounded, size: AppDimensions.iconSM, color: AppColors.neonOrange), // ✅ 20.w
-                      SizedBox(width: 4.w),
-                      Text(
-                        product.rating.toStringAsFixed(1),
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                      // Category badge
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppDimensions.spacingSM,
+                          vertical: 6.h,
+                        ), // ✅ 12.w -> SM
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? AppColors.neonMagenta.withValues(alpha: 0.2)
+                              : AppColors.lightAccent.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(
+                            AppDimensions.radiusLG,
+                          ), // ✅ 20.r
+                          border: Border.all(
+                            color: isDark
+                                ? AppColors.neonMagenta.withValues(alpha: 0.3)
+                                : AppColors.lightAccent.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Text(
+                          product.category.toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? AppColors.neonMagenta
+                                : AppColors.lightAccent,
+                            letterSpacing: 1,
+                          ),
                         ),
                       ),
-                      SizedBox(width: 4.w),
-                      Text(
-                        '(${product.reviewCount})',
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
-                        ),
+
+                      // Rating
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.star_rounded,
+                            size: AppDimensions.iconSM,
+                            color: AppColors.neonOrange,
+                          ), // ✅ 20.w
+                          SizedBox(width: 4.w),
+                          Text(
+                            product.rating.toStringAsFixed(1),
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                              color: isDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.lightTextPrimary,
+                            ),
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            '(${product.reviewCount})',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: isDark
+                                  ? AppColors.darkTextMuted
+                                  : AppColors.lightTextMuted,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
+
+                  SizedBox(height: AppDimensions.spacingMD), // ✅ 16.h
+                  // Product name
+                  Text(
+                    isArabic ? product.nameAr : product.name,
+                    style: TextStyle(
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.bold,
+                      height: 1.2,
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.lightTextPrimary,
+                      shadows: isDark
+                          ? [
+                              Shadow(
+                                color: Colors.black.withValues(alpha: 0.3),
+                                blurRadius: AppDimensions.textShadowSubtle,
+                              ),
+                            ]
+                          : null,
+                    ),
+                  ),
+
+                  SizedBox(height: AppDimensions.spacingMD), // ✅ 16.h
+                  // Description
+                  Text(
+                    isArabic ? product.descriptionAr : product.description,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      height: 1.6,
+                      color: isDark
+                          ? AppColors.darkTextPrimary.withValues(alpha: 0.85)
+                          : AppColors.lightTextSecondary,
+                    ),
+                  ),
+
+                  SizedBox(height: AppDimensions.spacingLG), // ✅ 24.h
+                  // Specs section
+                  if (product.specs.isNotEmpty) ...[
+                    Text(
+                      'specs'.tr(),
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.lightTextPrimary,
+                        shadows: isDark
+                            ? [
+                                Shadow(
+                                  color: Colors.black.withValues(alpha: 0.2),
+                                  blurRadius: AppDimensions.textShadowSubtle,
+                                ),
+                              ]
+                            : null,
+                      ),
+                    ),
+                    SizedBox(height: AppDimensions.spacingSM), // ✅ 12.h
+                    _buildSpecsGrid(context, isDark),
+                  ],
+
+                  SizedBox(height: AppDimensions.spacingLG), // ✅ 24.h
+                  // Color options (if available)
+                  if (product.colors.isNotEmpty) ...[
+                    Text(
+                      'available_colors'.tr(),
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.lightTextPrimary,
+                        shadows: isDark
+                            ? [
+                                Shadow(
+                                  color: Colors.black.withValues(alpha: 0.2),
+                                  blurRadius: AppDimensions.textShadowSubtle,
+                                ),
+                              ]
+                            : null,
+                      ),
+                    ),
+                    SizedBox(height: AppDimensions.spacingSM), // ✅ 12.h
+                    _buildColorOptions(context, isDark),
+                  ],
                 ],
               ),
-
-              SizedBox(height: AppDimensions.spacingMD), // ✅ 16.h
-
-              // Product name
-              Text(
-                isArabic ? product.nameAr : product.name,
-                style: TextStyle(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                ),
-              ),
-
-              SizedBox(height: AppDimensions.spacingMD), // ✅ 16.h
-
-              // Description
-              Text(
-                isArabic ? product.descriptionAr : product.description,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  height: 1.6,
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                ),
-              ),
-
-              SizedBox(height: AppDimensions.spacingLG), // ✅ 24.h
-
-              // Specs section
-              if (product.specs.isNotEmpty) ...[
-                Text(
-                  'specs'.tr(),
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                  ),
-                ),
-                SizedBox(height: AppDimensions.spacingSM), // ✅ 12.h
-                _buildSpecsGrid(context, isDark),
-              ],
-
-              SizedBox(height: AppDimensions.spacingLG), // ✅ 24.h
-
-              // Color options (if available)
-              if (product.colors.isNotEmpty) ...[
-                Text(
-                  'available_colors'.tr(),
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                  ),
-                ),
-                SizedBox(height: AppDimensions.spacingSM), // ✅ 12.h
-                _buildColorOptions(context, isDark),
-              ],
-            ],
+            ),
           ),
-        ),
-      ),
-    )
-    .animate()
-    .fadeIn(
-      delay: const Duration(milliseconds: AppDimensions.animationNormal),
-      duration: const Duration(milliseconds: AppDimensions.animationNormal),
-    )
-    .slideY(
-      begin: 0.2,
-      end: 0,
-      delay: const Duration(milliseconds: AppDimensions.animationNormal),
-      duration: const Duration(milliseconds: AppDimensions.animationNormal),
-      curve: Curves.easeOutCubic,
-    );
+        )
+        .animate()
+        .fadeIn(
+          delay: const Duration(milliseconds: AppDimensions.animationNormal),
+          duration: const Duration(milliseconds: AppDimensions.animationNormal),
+        )
+        .slideY(
+          begin: 0.2,
+          end: 0,
+          delay: const Duration(milliseconds: AppDimensions.animationNormal),
+          duration: const Duration(milliseconds: AppDimensions.animationNormal),
+          curve: Curves.easeOutCubic,
+        );
   }
 
   Widget _buildSpecsGrid(BuildContext context, bool isDark) {
@@ -493,50 +580,54 @@ class ProductDetailScreen extends ConsumerWidget {
     int index,
   ) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        color: isDark
-            ? AppColors.darkGlassSurface.withValues(alpha: 0.5)
-            : Colors.white.withValues(alpha: 0.6),
-        // ✅ استبدال 12.r بـ radiusSM
-        borderRadius: BorderRadius.circular(AppDimensions.radiusSM),
-        border: Border.all(
-          color: isDark
-              ? AppColors.neonCyan.withValues(alpha: 0.2)
-              : AppColors.lightAccent.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10.sp,
-              color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+          decoration: BoxDecoration(
+            color: isDark
+                ? AppColors.darkGlassSurface.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.6),
+            // ✅ استبدال 12.r بـ radiusSM
+            borderRadius: BorderRadius.circular(AppDimensions.radiusSM),
+            border: Border.all(
+              color: isDark
+                  ? AppColors.getNeonGlow(AppColors.neonCyan, subtle: true)
+                  : AppColors.lightAccent.withValues(alpha: 0.2),
             ),
           ),
-          SizedBox(height: 2.h),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w600,
-              color: isDark ? AppColors.neonCyan : AppColors.lightAccent,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  color: isDark
+                      ? AppColors.darkTextMuted
+                      : AppColors.lightTextMuted,
+                ),
+              ),
+              SizedBox(height: 2.h),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? AppColors.neonCyan : AppColors.lightAccent,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    )
-    .animate(delay: Duration(milliseconds: 100 * index))
-    .fadeIn(duration: const Duration(milliseconds: AppDimensions.animationNormal))
-    .scale(
-      begin: const Offset(0.8, 0.8),
-      end: const Offset(1, 1),
-      duration: const Duration(milliseconds: AppDimensions.animationNormal),
-      curve: Curves.easeOutBack,
-    );
+        )
+        .animate(delay: Duration(milliseconds: 100 * index))
+        .fadeIn(
+          duration: const Duration(milliseconds: AppDimensions.animationNormal),
+        )
+        .scale(
+          begin: const Offset(0.8, 0.8),
+          end: const Offset(1, 1),
+          duration: const Duration(milliseconds: AppDimensions.animationNormal),
+          curve: Curves.easeOutBack,
+        );
   }
 
   Widget _buildColorOptions(BuildContext context, bool isDark) {
@@ -547,36 +638,42 @@ class ProductDetailScreen extends ConsumerWidget {
         final color = Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
 
         return Container(
-          // ✅ استبدال 12.w بـ spacingSM
-          margin: EdgeInsets.only(right: AppDimensions.spacingSM),
-          width: 36.w,
-          height: 36.w,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.3)
-                  : Colors.black.withValues(alpha: 0.1),
-              width: 2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: color.withValues(alpha: 0.4),
-                blurRadius: 10,
-                spreadRadius: 1,
+              // ✅ استبدال 12.w بـ spacingSM
+              margin: EdgeInsets.only(right: AppDimensions.spacingSM),
+              width: 36.w,
+              height: 36.w,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.3)
+                      : Colors.black.withValues(alpha: 0.1),
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.4),
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                  ),
+                ],
               ),
-            ],
-          ),
-        )
-        .animate(delay: Duration(milliseconds: 100 * index))
-        .fadeIn(duration: const Duration(milliseconds: AppDimensions.animationNormal))
-        .scale(
-          begin: const Offset(0.5, 0.5),
-          end: const Offset(1, 1),
-          duration: const Duration(milliseconds: AppDimensions.animationNormal),
-          curve: Curves.easeOutBack,
-        );
+            )
+            .animate(delay: Duration(milliseconds: 100 * index))
+            .fadeIn(
+              duration: const Duration(
+                milliseconds: AppDimensions.animationNormal,
+              ),
+            )
+            .scale(
+              begin: const Offset(0.5, 0.5),
+              end: const Offset(1, 1),
+              duration: const Duration(
+                milliseconds: AppDimensions.animationNormal,
+              ),
+              curve: Curves.easeOutBack,
+            );
       }).toList(),
     );
   }
@@ -592,185 +689,229 @@ class ProductDetailScreen extends ConsumerWidget {
     bool isArabic,
   ) {
     return ClipRRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          // ✅ توحيد الحشوات بـ spacingSM (10/12) و spacingMD (16)
-          padding: EdgeInsets.fromLTRB(
-            AppDimensions.spacingSM, 
-            AppDimensions.spacingMD, 
-            AppDimensions.spacingSM, 
-            28.h + MediaQuery.of(context).padding.bottom,
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.getGlassSurface(isDark).withValues(alpha: AppColors.getGlassOpacity(isDark) + 0.2),
-            border: Border(
-              top: BorderSide(
-                color: isDark
-                    ? AppColors.neonCyan.withValues(alpha: 0.2)
-                    : Colors.white.withValues(alpha: 0.5),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              // ✅ توحيد الحشوات بـ spacingSM (10/12) و spacingMD (16)
+              padding: EdgeInsets.fromLTRB(
+                AppDimensions.spacingSM,
+                AppDimensions.spacingMD,
+                AppDimensions.spacingSM,
+                28.h + MediaQuery.of(context).padding.bottom,
               ),
-            ),
-          ),
-          child: Row(
-            children: [
-              // Price section
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'price'.tr(),
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Row(
+              decoration: BoxDecoration(
+                color: AppColors.getGlassSurface(
+                  isDark,
+                ).withValues(alpha: AppColors.getGlassOpacity(isDark) + 0.2),
+                border: Border(
+                  top: BorderSide(
+                    color: isDark
+                        ? AppColors.neonCyan.withValues(alpha: 0.2)
+                        : Colors.white.withValues(alpha: 0.5),
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  // Price section
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (product.originalPrice != null) ...[
-                          Text(
-                            '\$${product.originalPrice!.toStringAsFixed(0)}',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted,
-                              decoration: TextDecoration.lineThrough,
-                            ),
-                          ),
-                          SizedBox(width: AppDimensions.spacingXS), // ✅ 8.w
-                        ],
                         Text(
-                          '\$${product.price.toStringAsFixed(2)}',
+                          'price'.tr(),
                           style: TextStyle(
-                            fontSize: 26.sp,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? AppColors.neonCyan : AppColors.lightAccent,
-                            shadows: isDark
-                                ? [
-                                    Shadow(
-                                      color: AppColors.neonCyan.withValues(alpha: 0.5),
-                                      blurRadius: 10,
-                                    ),
-                                  ]
-                                : null,
+                            fontSize: 12.sp,
+                            color: isDark
+                                ? AppColors.darkTextMuted
+                                : AppColors.lightTextMuted,
                           ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Row(
+                          children: [
+                            if (product.originalPrice != null) ...[
+                              Text(
+                                '\$${product.originalPrice!.toStringAsFixed(0)}',
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: isDark
+                                      ? AppColors.darkTextMuted
+                                      : AppColors.lightTextMuted,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                              SizedBox(width: AppDimensions.spacingXS), // ✅ 8.w
+                            ],
+                            Text(
+                              '\$${product.price.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                fontSize: 26.sp,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                                color: isDark
+                                    ? AppColors.neonCyan
+                                    : AppColors.lightAccent,
+                                shadows: isDark
+                                    ? [
+                                        Shadow(
+                                          color: AppColors.getNeonGlow(
+                                            AppColors.neonCyan,
+                                          ),
+                                          blurRadius:
+                                              AppDimensions.glowIntensityMedium,
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
 
-              // Add to Cart button
-              GestureDetector(
-                onTap: () {
-                  ref.read(cartProvider.notifier).addItem(product);
-                  final itemCount = ref.read(cartItemCountProvider);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Row(
+                  // Add to Cart button
+                  GestureDetector(
+                    onTap: () {
+                      ref.read(cartProvider.notifier).addItem(product);
+                      final itemCount = ref.read(cartItemCountProvider);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Row(
+                            children: [
+                              Icon(
+                                Icons.check_circle_rounded,
+                                color: isDark
+                                    ? AppColors.darkGradientStart
+                                    : Colors.white,
+                                size: AppDimensions.iconSM, // ✅ 20.w
+                              ),
+                              SizedBox(width: 10.w),
+                              Expanded(
+                                child: Text(
+                                  '${isArabic ? product.nameAr : product.name} ${'added_to_cart'.tr()}',
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? AppColors.darkGradientStart
+                                        : Colors.white,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w,
+                                  vertical: 4.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? AppColors.darkGradientStart.withValues(
+                                          alpha: 0.3,
+                                        )
+                                      : Colors.white.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(
+                                    AppDimensions.radiusSM,
+                                  ), // ✅ 12.r
+                                ),
+                                child: Text(
+                                  '$itemCount',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark
+                                        ? AppColors.darkGradientStart
+                                        : Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          backgroundColor: isDark
+                              ? AppColors.neonCyan
+                              : AppColors.lightAccent,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.radiusSM,
+                            ), // ✅ 12.r
+                          ),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 25.w,
+                        vertical: 13.h,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: isDark
+                              ? [AppColors.neonCyan, AppColors.neonBlue]
+                              : [
+                                  AppColors.lightAccent,
+                                  AppColors.lightAccentSecondary,
+                                ],
+                        ),
+                        // ✅ استبدال 16.r بـ radiusMD
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusMD,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                (isDark
+                                        ? AppColors.neonCyan
+                                        : AppColors.lightAccent)
+                                    .withValues(alpha: 0.4),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Row(
                         children: [
                           Icon(
-                            Icons.check_circle_rounded,
-                            color: isDark ? AppColors.darkGradientStart : Colors.white,
+                            Icons.shopping_cart_rounded,
                             size: AppDimensions.iconSM, // ✅ 20.w
+                            color: isDark
+                                ? AppColors.darkGradientStart
+                                : Colors.white,
                           ),
-                          SizedBox(width: 10.w),
-                          Expanded(
-                            child: Text(
-                              '${isArabic ? product.nameAr : product.name} ${'added_to_cart'.tr()}',
-                              style: TextStyle(
-                                color: isDark ? AppColors.darkGradientStart : Colors.white,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                            decoration: BoxDecoration(
+                          SizedBox(width: AppDimensions.spacingXS), // ✅ 8.w
+                          Text(
+                            'add_to_cart'.tr(),
+                            style: TextStyle(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.bold,
                               color: isDark
-                                  ? AppColors.darkGradientStart.withValues(alpha: 0.3)
-                                  : Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(AppDimensions.radiusSM), // ✅ 12.r
-                            ),
-                            child: Text(
-                              '$itemCount',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.bold,
-                                color: isDark ? AppColors.darkGradientStart : Colors.white,
-                              ),
+                                  ? AppColors.darkGradientStart
+                                  : Colors.white,
                             ),
                           ),
                         ],
                       ),
-                      backgroundColor: isDark ? AppColors.neonCyan : AppColors.lightAccent,
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusSM), // ✅ 12.r
-                      ),
-                      duration: const Duration(seconds: 2),
                     ),
-                  );
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 13.h),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: isDark
-                          ? [AppColors.neonCyan, AppColors.neonBlue]
-                          : [AppColors.lightAccent, AppColors.lightAccentSecondary],
-                    ),
-                    // ✅ استبدال 16.r بـ radiusMD
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusMD),
-                    boxShadow: [
-                      BoxShadow(
-                        color: (isDark ? AppColors.neonCyan : AppColors.lightAccent)
-                            .withValues(alpha: 0.4),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
                   ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.shopping_cart_rounded,
-                        size: AppDimensions.iconSM, // ✅ 20.w
-                        color: isDark ? AppColors.darkGradientStart : Colors.white,
-                      ),
-                      SizedBox(width: AppDimensions.spacingXS), // ✅ 8.w
-                      Text(
-                        'add_to_cart'.tr(),
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? AppColors.darkGradientStart : Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    )
-    .animate()
-    .fadeIn(
-      delay: const Duration(milliseconds: 400),
-      duration: const Duration(milliseconds: AppDimensions.animationNormal),
-    )
-    .slideY(
-      begin: 1,
-      end: 0,
-      delay: const Duration(milliseconds: 400),
-      duration: const Duration(milliseconds: AppDimensions.animationNormal),
-      curve: Curves.easeOutCubic,
-    );
+        )
+        .animate()
+        .fadeIn(
+          delay: const Duration(milliseconds: 400),
+          duration: const Duration(milliseconds: AppDimensions.animationNormal),
+        )
+        .slideY(
+          begin: 1,
+          end: 0,
+          delay: const Duration(milliseconds: 400),
+          duration: const Duration(milliseconds: AppDimensions.animationNormal),
+          curve: Curves.easeOutCubic,
+        );
   }
 }

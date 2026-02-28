@@ -99,6 +99,23 @@ class AppDimensions {
   static double get avatarIconSize => 32.w;
 
   // ═══════════════════════════════════════════════════════════════════════════
+  // ACCESSIBILITY & UX
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /// Minimum touch target size (WCAG AA compliance)
+  static double get minTouchTarget => 44.w;
+
+  /// Glow intensity levels for consistent neon effects
+  static const double glowIntensitySoft = 6.0;
+  static const double glowIntensityMedium = 10.0;
+  static const double glowIntensityStrong = 15.0;
+
+  /// Text shadow blur radii
+  static const double textShadowSubtle = 4.0;
+  static const double textShadowMedium = 8.0;
+  static const double textShadowStrong = 12.0;
+
+  // ═══════════════════════════════════════════════════════════════════════════
   // ANIMATION DURATIONS (in milliseconds)
   // ═══════════════════════════════════════════════════════════════════════════
 
@@ -109,4 +126,7 @@ class AppDimensions {
 
   /// Stagger delay for list item animations
   static const int staggerDelay = 50;
+
+  /// Tap feedback animation duration
+  static const int tapFeedback = 150;
 }

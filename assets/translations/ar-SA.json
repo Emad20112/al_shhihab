@@ -87,5 +87,14 @@
   "try_different": "جرب كلمة بحث مختلفة",
   "results_found": "نتيجة",
   "added_to_wishlist": "تمت الإضافة للمفضلة",
-  "removed_from_wishlist": "تمت الإزالة من المفضلة"
+  "removed_from_wishlist": "تمت الإزالة من المفضلة",
+  "select_location": "حدد منطقتك",
+  "select_location_subtitle": "اختر المنطقة الأقرب إليك لتحصل على أفضل تجربة",
+  "northern_cities": "المدن الشمالية",
+  "southern_cities": "المدن الجنوبية",
+  "northern_cities_list": "صنعاء • إب • ذمار • عمران • حجة",
+  "southern_cities_list": "عدن • تعز • أبين • لحج • الضالع",
+  "confirm_location": "تأكيد الموقع",
+  "change_region": "تغيير المنطقة",
+  "change_region_hint": "يمكنك تغيير المنطقة لاحقاً من الإعدادات"
 }

@@ -41,6 +41,7 @@ dependencies:
   google_fonts: ^6.3.3
   easy_localization: ^3.0.8
   shared_preferences: ^2.2.2
+  audioplayers: ^6.5.1
 
 dev_dependencies:
   flutter_test:
