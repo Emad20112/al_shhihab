@@ -8,7 +8,7 @@ import 'core/theme/glassmorphism_theme.dart';
 import 'core/providers/app_providers.dart';
 import 'core/providers/location_provider.dart';
 import 'features/onboarding/location_selection_screen.dart';
-import 'widgets/animated_gradient_background.dart';
+import 'widgets/animated_gradient_background.dart'; // SimpleGradientBackground
 import 'widgets/glass_bottom_nav.dart';
 import 'features/home/home_screen.dart';
 import 'features/cart/cart_screen.dart';
@@ -90,12 +90,16 @@ class TechVaultApp extends ConsumerWidget {
           darkTheme: GlassmorphismTheme.darkTheme,
           themeMode: themeState.themeMode,
 
-          // Builder to limit textScaleFactor for responsive UI
+          // Builder to limit text scale for responsive UI
           builder: (context, child) {
             final mediaQueryData = MediaQuery.of(context);
-            final scaleFactor = mediaQueryData.textScaleFactor.clamp(1.0, 1.2);
             return MediaQuery(
-              data: mediaQueryData.copyWith(textScaleFactor: scaleFactor),
+              data: mediaQueryData.copyWith(
+                textScaler: mediaQueryData.textScaler.clamp(
+                  minScaleFactor: 1.0,
+                  maxScaleFactor: 1.2,
+                ),
+              ),
               child: child!,
             );
           },
@@ -130,7 +134,6 @@ class MainLayout extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(navigationProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       // Transparent to show gradient background
@@ -138,36 +141,23 @@ class MainLayout extends ConsumerWidget {
       // Extend body behind bottom nav
       extendBody: true,
 
-      body: AnimatedGradientBackground(
+      body: SimpleGradientBackground(
         child: SafeArea(
           bottom: false,
-          child: _buildCurrentPage(context, ref, currentIndex, isDark),
+          child: IndexedStack(
+            index: currentIndex,
+            children: const [
+              HomeScreen(),
+              CategoriesScreen(),
+              CartScreen(),
+              SettingsScreen(),
+            ],
+          ),
         ),
       ),
 
-      // Floating glass bottom navigation
-      bottomNavigationBar: const GlassBottomNav(),
+      // Floating glass bottom navigation (isolated repaint)
+      bottomNavigationBar: const RepaintBoundary(child: GlassBottomNav()),
     );
-  }
-
-  Widget _buildCurrentPage(
-    BuildContext context,
-    WidgetRef ref,
-    int index,
-    bool isDark,
-  ) {
-    // Screen pages based on navigation index
-    switch (index) {
-      case 0:
-        return const HomeScreen();
-      case 1:
-        return const CategoriesScreen();
-      case 2:
-        return const CartScreen();
-      case 3:
-        return const SettingsScreen();
-      default:
-        return const HomeScreen();
-    }
   }
 }

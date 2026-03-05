@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +22,7 @@ class HomeScreen extends ConsumerWidget {
     final baseMedia = MediaQuery.of(context);
 
     return MediaQuery(
-      data: baseMedia.copyWith(textScaleFactor: 1.0),
+      data: baseMedia.copyWith(textScaler: const TextScaler.linear(1.0)),
       child: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -314,16 +313,11 @@ class HomeScreen extends ConsumerWidget {
                           ]
                         : null,
                   ),
-                  child: ClipOval(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: Center(
-                        child: Icon(
-                          category.icon,
-                          size: 30.w, // يمكن استخدام iconLG
-                          color: category.color,
-                        ),
-                      ),
+                  child: Center(
+                    child: Icon(
+                      category.icon,
+                      size: 30.w,
+                      color: category.color,
                     ),
                   ),
                 ),
@@ -347,7 +341,9 @@ class HomeScreen extends ConsumerWidget {
         )
         // ✅ استخدام staggerDelay الموحد
         .animate(
-          delay: Duration(milliseconds: AppDimensions.staggerDelay * index),
+          delay: Duration(
+            milliseconds: (AppDimensions.staggerDelay * index).clamp(0, 400),
+          ),
         )
         .fadeIn(
           duration: const Duration(milliseconds: AppDimensions.animationNormal),

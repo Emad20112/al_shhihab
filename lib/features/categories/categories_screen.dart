@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +29,7 @@ class CategoriesScreen extends ConsumerWidget {
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
-        // Header
+        // Header with back button
         SliverToBoxAdapter(child: _buildHeader(context, isDark)),
 
         // Spacer
@@ -54,6 +53,37 @@ class CategoriesScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Back button row
+              if (Navigator.of(context).canPop())
+                Padding(
+                  padding: EdgeInsets.only(bottom: AppDimensions.spacingSM),
+                  child: GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.arrow_back_ios_rounded,
+                          size: 20.w,
+                          color: isDark
+                              ? AppColors.neonCyan
+                              : AppColors.lightAccent,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'back'.tr(),
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: isDark
+                                ? AppColors.neonCyan
+                                : AppColors.lightAccent,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               Text(
                 'all_categories'.tr(),
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -92,7 +122,7 @@ class CategoriesScreen extends ConsumerWidget {
           return GlassCategoryCard(
             category: category,
             animationDelay: Duration(
-              milliseconds: AppDimensions.staggerDelay * index,
+              milliseconds: (AppDimensions.staggerDelay * index).clamp(0, 400),
             ),
             onTap: () {
               // TODO: Navigate to category products
@@ -147,12 +177,12 @@ class GlassCategoryCard extends StatelessWidget {
         boxShadow: isDark
             ? [
                 BoxShadow(
-                  color: category.color.withOpacity(0.2),
+                  color: category.color.withValues(alpha: 0.2),
                   blurRadius: 20,
                   spreadRadius: -5,
                 ),
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 15,
                   spreadRadius: -5,
                   offset: const Offset(0, 8),
@@ -160,80 +190,73 @@ class GlassCategoryCard extends StatelessWidget {
               ]
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
+                  color: Colors.black.withValues(alpha: 0.08),
                   blurRadius: 25,
                   spreadRadius: -5,
                   offset: const Offset(0, 12),
                 ),
               ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: isDark ? 15 : 20,
-            sigmaY: isDark ? 15 : 20,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark
+              ? AppColors.darkGlassSurface.withValues(alpha: 0.6)
+              : Colors.white.withValues(alpha: 0.6),
+          borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
+          border: Border.all(
+            color: isDark
+                ? category.color.withValues(alpha: 0.4)
+                : Colors.white.withValues(alpha: 0.4),
+            width: isDark ? AppDimensions.glassBorderWidth : 1,
           ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: isDark
-                  ? AppColors.darkGlassSurface.withOpacity(0.4)
-                  : Colors.white.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
-              border: Border.all(
-                color: isDark
-                    ? category.color.withOpacity(0.4)
-                    : Colors.white.withOpacity(0.4),
-                width: isDark ? AppDimensions.glassBorderWidth : 1,
-              ),
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: onTap,
-                borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
-                splashColor: category.color.withOpacity(0.2),
-                highlightColor: category.color.withOpacity(0.1),
-                child: Padding(
-                  padding: EdgeInsets.all(AppDimensions.spacingMD),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Large Glass Circle with Icon
-                      _buildIconCircle(isDark),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
+            splashColor: category.color.withValues(alpha: 0.2),
+            highlightColor: category.color.withValues(alpha: 0.1),
+            child: Padding(
+              padding: EdgeInsets.all(AppDimensions.spacingSM),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Large Glass Circle with Icon
+                  _buildIconCircle(isDark),
 
-                      SizedBox(height: AppDimensions.spacingMD),
+                  SizedBox(height: AppDimensions.spacingSM),
 
-                      // Category Name
-                      Text(
-                        isArabic ? category.nameAr : category.name,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? AppColors.darkTextPrimary
-                                  : AppColors.lightTextPrimary,
-                            ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                  // Category Name
+                  Flexible(
+                    child: Text(
+                      isArabic ? category.nameAr : category.name,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.lightTextPrimary,
                       ),
-
-                      SizedBox(height: 4.h),
-
-                      // Product count placeholder
-                      Text(
-                        '${getProductsByCategory(category.id).length} ${'products'.tr()}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: isDark
-                              ? AppColors.darkTextMuted
-                              : AppColors.lightTextMuted,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
+
+                  SizedBox(height: 2.h),
+
+                  // Product count placeholder
+                  Text(
+                    '${getProductsByCategory(category.id).length} ${'products'.tr()}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: isDark
+                          ? AppColors.darkTextMuted
+                          : AppColors.lightTextMuted,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
           ),
@@ -262,40 +285,21 @@ class GlassCategoryCard extends StatelessWidget {
       height: 80.w,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: category.color.withOpacity(isDark ? 0.15 : 0.1),
+        color: category.color.withValues(alpha: isDark ? 0.15 : 0.1),
         border: Border.all(
-          color: category.color.withOpacity(isDark ? 0.5 : 0.3),
+          color: category.color.withValues(alpha: isDark ? 0.5 : 0.3),
           width: isDark ? 2 : 1.5,
         ),
-        boxShadow: isDark
-            ? [
-                // Neon glow effect
-                BoxShadow(
-                  color: category.color.withOpacity(0.4),
-                  blurRadius: 20,
-                  spreadRadius: 0,
-                ),
-                BoxShadow(
-                  color: category.color.withOpacity(0.2),
-                  blurRadius: 40,
-                  spreadRadius: 5,
-                ),
-              ]
-            : [
-                BoxShadow(
-                  color: category.color.withOpacity(0.2),
-                  blurRadius: 15,
-                  spreadRadius: 0,
-                ),
-              ],
-      ),
-      child: ClipOval(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Center(
-            child: Icon(category.icon, size: 36.w, color: category.color),
+        boxShadow: [
+          BoxShadow(
+            color: category.color.withValues(alpha: isDark ? 0.4 : 0.2),
+            blurRadius: isDark ? 20 : 15,
+            spreadRadius: 0,
           ),
-        ),
+        ],
+      ),
+      child: Center(
+        child: Icon(category.icon, size: 36.w, color: category.color),
       ),
     );
   }

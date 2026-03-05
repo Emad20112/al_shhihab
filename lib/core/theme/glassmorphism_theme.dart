@@ -92,14 +92,14 @@ class GlassmorphismTheme {
       // Input Decoration
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.3),
+        fillColor: Colors.white.withValues(alpha: 0.3),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.4)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.4)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.4)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.4)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
@@ -114,7 +114,7 @@ class GlassmorphismTheme {
 
       // Card Theme
       cardTheme: CardThemeData(
-        color: Colors.white.withOpacity(0.25),
+        color: Colors.white.withValues(alpha: 0.25),
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.r),
@@ -123,7 +123,7 @@ class GlassmorphismTheme {
 
       // Divider
       dividerTheme: DividerThemeData(
-        color: Colors.white.withOpacity(0.3),
+        color: Colors.white.withValues(alpha: 0.3),
         thickness: 1,
       ),
     );
@@ -206,14 +206,18 @@ class GlassmorphismTheme {
       // Input Decoration
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.darkGlassSurface.withOpacity(0.5),
+        fillColor: AppColors.darkGlassSurface.withValues(alpha: 0.5),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
-          borderSide: BorderSide(color: AppColors.neonCyan.withOpacity(0.3)),
+          borderSide: BorderSide(
+            color: AppColors.neonCyan.withValues(alpha: 0.3),
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
-          borderSide: BorderSide(color: AppColors.neonCyan.withOpacity(0.3)),
+          borderSide: BorderSide(
+            color: AppColors.neonCyan.withValues(alpha: 0.3),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
@@ -228,7 +232,7 @@ class GlassmorphismTheme {
 
       // Card Theme
       cardTheme: CardThemeData(
-        color: AppColors.darkGlassSurface.withOpacity(0.35),
+        color: AppColors.darkGlassSurface.withValues(alpha: 0.35),
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.r),
@@ -237,7 +241,7 @@ class GlassmorphismTheme {
 
       // Divider
       dividerTheme: DividerThemeData(
-        color: AppColors.neonCyan.withOpacity(0.2),
+        color: AppColors.neonCyan.withValues(alpha: 0.2),
         thickness: 1,
       ),
     );

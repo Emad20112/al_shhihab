@@ -96,5 +96,6 @@
   "southern_cities_list": "Aden • Taiz • Abyan • Lahij • Al-Dhale'e",
   "confirm_location": "Confirm Location",
   "change_region": "Change Region",
-  "change_region_hint": "You can change your region later from Settings"
+  "change_region_hint": "You can change your region later from Settings",
+  "back": "Back"
 }

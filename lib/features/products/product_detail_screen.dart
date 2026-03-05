@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -103,10 +104,10 @@ class ProductDetailScreen extends ConsumerWidget {
               scale: 1.5,
               child: ImageFiltered(
                 imageFilter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
-                child: Image.network(
-                  product.imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: product.imageUrl,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                  errorWidget: (_, __, ___) => const SizedBox.shrink(),
                 ),
               ),
             ),
@@ -264,42 +265,39 @@ class ProductDetailScreen extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(
                   AppDimensions.radiusXL,
                 ), // ✅
-                child: Image.network(
-                  product.imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: product.imageUrl,
                   fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? AppColors.darkGlassSurface
-                            : Colors.white.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(
-                          AppDimensions.radiusXL,
-                        ), // ✅
-                      ),
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation(
-                            isDark ? AppColors.neonCyan : AppColors.lightAccent,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  errorBuilder: (_, __, ___) => Container(
+                  placeholder: (context, url) => Container(
                     decoration: BoxDecoration(
                       color: isDark
                           ? AppColors.darkGlassSurface
                           : Colors.white.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(
                         AppDimensions.radiusXL,
-                      ), // ✅
+                      ),
+                    ),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation(
+                          isDark ? AppColors.neonCyan : AppColors.lightAccent,
+                        ),
+                      ),
+                    ),
+                  ),
+                  errorWidget: (_, __, ___) => Container(
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.darkGlassSurface
+                          : Colors.white.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusXL,
+                      ),
                     ),
                     child: Icon(
                       Icons.devices_rounded,
-                      size: 80.w, // حجم كبير خاص
+                      size: 80.w,
                       color: isDark
                           ? AppColors.darkTextMuted
                           : AppColors.lightTextMuted,

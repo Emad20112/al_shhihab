@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -98,98 +99,80 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
         height: widget.height ?? 240.h,
         transform: Matrix4.identity()..scale(_isPressed ? 0.98 : 1.0),
         transformAlignment: Alignment.center,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(
-            isDark ? AppDimensions.radiusLG : AppDimensions.radiusXL,
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDark
+                ? AppColors.darkGlassSurface.withValues(alpha: 0.75)
+                : Colors.white.withValues(alpha: 0.85),
+            borderRadius: BorderRadius.circular(
+              isDark ? AppDimensions.radiusLG : AppDimensions.radiusXL,
+            ),
+            border: Border.all(
+              color: isDark
+                  ? (_isPressed
+                        ? AppColors.neonCyan.withValues(
+                            alpha: AppColors.neonGlowStrong,
+                          )
+                        : AppColors.neonCyan.withValues(
+                            alpha: AppColors.neonGlowReduced,
+                          ))
+                  : Colors.white.withValues(alpha: 0.4),
+              width: isDark ? 1.5 : 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: isDark
+                    ? AppColors.getSoftShadow(isDark)
+                    : AppColors.getSoftShadow(isDark),
+                blurRadius: AppDimensions.glowIntensityMedium,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: AppColors.getBlurSigma(isDark),
-              sigmaY: AppColors.getBlurSigma(isDark),
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.getGlassSurface(
-                  isDark,
-                ).withValues(alpha: AppColors.getGlassOpacity(isDark)),
-                borderRadius: BorderRadius.circular(
-                  isDark ? AppDimensions.radiusLG : AppDimensions.radiusXL,
-                ),
-                border: Border.all(
-                  color: isDark
-                      ? (_isPressed
-                            ? AppColors.neonCyan.withValues(
-                                alpha: AppColors.neonGlowStrong,
-                              )
-                            : AppColors.neonCyan.withValues(
-                                alpha: AppColors.neonGlowReduced,
-                              ))
-                      : Colors.white.withValues(alpha: 0.4),
-                  width: isDark ? 1.5 : 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: isDark
-                        ? (_isPressed
-                              ? AppColors.neonCyan.withValues(alpha: 0.3)
-                              : AppColors.getSoftShadow(isDark))
-                        : AppColors.getSoftShadow(isDark),
-                    blurRadius: _isPressed
-                        ? AppDimensions.glowIntensityStrong
-                        : AppDimensions.glowIntensityMedium,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Image section
-                  _buildImageSection(context, isDark, product),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image section
+              _buildImageSection(context, isDark, product),
 
-                  // Content section
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.all(isDark ? 14.w : 16.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Title with text shadow for readability
-                          Text(
-                            isArabic ? product.nameAr : product.name,
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? AppColors.darkTextPrimary
-                                  : AppColors.lightTextPrimary,
-                              shadows: isDark
-                                  ? [
-                                      Shadow(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.5,
-                                        ),
-                                        blurRadius:
-                                            AppDimensions.textShadowSubtle,
-                                      ),
-                                    ]
-                                  : null,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-
-                          const Spacer(),
-
-                          // Price row
-                          _buildPriceRow(context, isDark, product),
-                        ],
+              // Content section
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(isDark ? 14.w : 16.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title with text shadow for readability
+                      Text(
+                        isArabic ? product.nameAr : product.name,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w600,
+                          color: isDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.lightTextPrimary,
+                          shadows: isDark
+                              ? [
+                                  Shadow(
+                                    color: Colors.black.withValues(alpha: 0.5),
+                                    blurRadius: AppDimensions.textShadowSubtle,
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
+
+                      const Spacer(),
+
+                      // Price row
+                      _buildPriceRow(context, isDark, product),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -237,21 +220,18 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
                 borderRadius: BorderRadius.vertical(
                   top: Radius.circular(AppDimensions.radiusLG),
                 ),
-                child: Image.network(
-                  product.imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: product.imageUrl,
                   fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation(
-                          isDark ? AppColors.neonCyan : AppColors.lightAccent,
-                        ),
+                  placeholder: (context, url) => Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation(
+                        isDark ? AppColors.neonCyan : AppColors.lightAccent,
                       ),
-                    );
-                  },
-                  errorBuilder: (_, __, ___) => Center(
+                    ),
+                  ),
+                  errorWidget: (_, __, ___) => Center(
                     child: Icon(
                       Icons.devices_rounded,
                       size: 40.w,
@@ -601,186 +581,172 @@ class _HeroProductCardState extends State<HeroProductCard> {
               bottom: 0,
               left: 0,
               right: 0,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: AppColors.getBlurSigma(isDark),
-                    sigmaY: AppColors.getBlurSigma(isDark),
+              child: Container(
+                height: 160.h,
+                padding: EdgeInsets.fromLTRB(16.w, 50.h, 16.w, 12.h),
+                decoration: BoxDecoration(
+                  gradient: isDark
+                      ? LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            AppColors.darkGlassSurface.withValues(alpha: 0.85),
+                            AppColors.darkGlassSurface.withValues(alpha: 0.7),
+                          ],
+                        )
+                      : LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.white.withValues(alpha: 0.85),
+                            Colors.white.withValues(alpha: 0.7),
+                          ],
+                        ),
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
+                  border: Border.all(
+                    color: isDark
+                        ? AppColors.neonCyan.withValues(alpha: 0.3)
+                        : Colors.white.withValues(alpha: 0.5),
+                    width: isDark ? 2 : 1.5,
                   ),
-                  child: Container(
-                    height: 160.h,
-                    padding: EdgeInsets.fromLTRB(16.w, 50.h, 16.w, 12.h),
-                    decoration: BoxDecoration(
-                      gradient: isDark
-                          ? LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                AppColors.darkGlassSurface.withValues(
-                                  alpha: 0.6,
-                                ),
-                                AppColors.darkGlassSurface.withValues(
-                                  alpha: 0.4,
-                                ),
-                              ],
-                            )
-                          : LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Colors.white.withValues(alpha: 0.5),
-                                Colors.white.withValues(alpha: 0.3),
-                              ],
-                            ),
-                      borderRadius: BorderRadius.circular(
-                        AppDimensions.radiusXL,
-                      ),
-                      border: Border.all(
-                        color: isDark
-                            ? AppColors.neonCyan.withValues(alpha: 0.3)
-                            : Colors.white.withValues(alpha: 0.5),
-                        width: isDark ? 2 : 1.5,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: isDark
-                              ? AppColors.neonCyan.withValues(alpha: 0.15)
-                              : Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 30,
-                          offset: const Offset(0, 15),
-                        ),
-                      ],
+                  boxShadow: [
+                    BoxShadow(
+                      color: isDark
+                          ? AppColors.neonCyan.withValues(alpha: 0.15)
+                          : Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 30,
+                      offset: const Offset(0, 15),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Category tag
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 3.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? AppColors.neonMagenta.withValues(alpha: 0.2)
+                            : AppColors.lightAccent.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        product.category.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 9.sp,
+                          fontWeight: FontWeight.w600,
+                          color: isDark
+                              ? AppColors.neonMagenta
+                              : AppColors.lightAccent,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 2.h),
+
+                    // Title
+                    Flexible(
+                      child: Text(
+                        isArabic ? product.nameAr : product.name,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.bold,
+                          color: isDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.lightTextPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+
+                    SizedBox(height: 4.h),
+
+                    // Price + Button row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Category tag
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                            vertical: 3.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? AppColors.neonMagenta.withValues(alpha: 0.2)
-                                : AppColors.lightAccent.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: Text(
-                            product.category.toUpperCase(),
-                            style: TextStyle(
-                              fontSize: 9.sp,
-                              fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? AppColors.neonMagenta
-                                  : AppColors.lightAccent,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 2.h),
-
-                        // Title
-                        Flexible(
-                          child: Text(
-                            isArabic ? product.nameAr : product.name,
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.bold,
-                              color: isDark
-                                  ? AppColors.darkTextPrimary
-                                  : AppColors.lightTextPrimary,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-
-                        SizedBox(height: 4.h),
-
-                        // Price + Button row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // Price
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Price
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (product.originalPrice != null)
-                                  Text(
-                                    '\$${product.originalPrice!.toStringAsFixed(0)}',
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: isDark
-                                          ? AppColors.darkTextMuted
-                                          : AppColors.lightTextMuted,
-                                      decoration: TextDecoration.lineThrough,
-                                    ),
-                                  ),
-                                Text(
-                                  '\$${product.price.toStringAsFixed(0)}',
-                                  style: TextStyle(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: isDark
-                                        ? AppColors.neonCyan
-                                        : AppColors.lightAccent,
-                                    shadows: isDark
-                                        ? [
-                                            Shadow(
-                                              color: AppColors.neonCyan
-                                                  .withValues(alpha: 0.5),
-                                              blurRadius: 10,
-                                            ),
-                                          ]
-                                        : null,
-                                  ),
+                            if (product.originalPrice != null)
+                              Text(
+                                '\$${product.originalPrice!.toStringAsFixed(0)}',
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: isDark
+                                      ? AppColors.darkTextMuted
+                                      : AppColors.lightTextMuted,
+                                  decoration: TextDecoration.lineThrough,
                                 ),
-                              ],
-                            ),
-
-                            // Buy button
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 14.w,
-                                vertical: 8.h,
                               ),
-                              decoration: BoxDecoration(
+                            Text(
+                              '\$${product.price.toStringAsFixed(0)}',
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.bold,
                                 color: isDark
                                     ? AppColors.neonCyan
                                     : AppColors.lightAccent,
-                                borderRadius: BorderRadius.circular(14.r),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color:
-                                        (isDark
-                                                ? AppColors.neonCyan
-                                                : AppColors.lightAccent)
-                                            .withValues(alpha: 0.4),
-                                    blurRadius: 15,
-                                    spreadRadius: 0,
-                                  ),
-                                ],
-                              ),
-                              child: Text(
-                                'buy_now'.tr(),
-                                style: TextStyle(
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.bold,
-                                  color: isDark
-                                      ? AppColors.darkGradientStart
-                                      : Colors.white,
-                                ),
+                                shadows: isDark
+                                    ? [
+                                        Shadow(
+                                          color: AppColors.neonCyan.withValues(
+                                            alpha: 0.5,
+                                          ),
+                                          blurRadius: 10,
+                                        ),
+                                      ]
+                                    : null,
                               ),
                             ),
                           ],
                         ),
+
+                        // Buy button
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 8.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? AppColors.neonCyan
+                                : AppColors.lightAccent,
+                            borderRadius: BorderRadius.circular(14.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    (isDark
+                                            ? AppColors.neonCyan
+                                            : AppColors.lightAccent)
+                                        .withValues(alpha: 0.4),
+                                blurRadius: 15,
+                                spreadRadius: 0,
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            'buy_now'.tr(),
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.bold,
+                              color: isDark
+                                  ? AppColors.darkGradientStart
+                                  : Colors.white,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),
@@ -806,31 +772,28 @@ class _HeroProductCardState extends State<HeroProductCard> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20.r),
-                    child: Image.network(
-                      product.imageUrl,
+                    child: CachedNetworkImage(
+                      imageUrl: product.imageUrl,
                       fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? AppColors.darkGlassSurface
-                                : Colors.white.withValues(alpha: 0.5),
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation(
-                                isDark
-                                    ? AppColors.neonCyan
-                                    : AppColors.lightAccent,
-                              ),
+                      placeholder: (context, url) => Container(
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? AppColors.darkGlassSurface
+                              : Colors.white.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation(
+                              isDark
+                                  ? AppColors.neonCyan
+                                  : AppColors.lightAccent,
                             ),
                           ),
-                        );
-                      },
-                      errorBuilder: (_, __, ___) => Container(
+                        ),
+                      ),
+                      errorWidget: (_, __, ___) => Container(
                         decoration: BoxDecoration(
                           color: isDark
                               ? AppColors.darkGlassSurface

@@ -309,50 +309,42 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             _searchController.text = tag;
             ref.read(searchQueryProvider.notifier).state = tag;
           },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppDimensions.spacingMD,
-                  vertical: AppDimensions.spacingSM,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppDimensions.spacingMD,
+              vertical: AppDimensions.spacingSM,
+            ),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? AppColors.darkGlassSurface.withValues(alpha: 0.6)
+                  : Colors.white.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
+              border: Border.all(
+                color: isDark
+                    ? AppColors.neonCyan.withValues(alpha: 0.3)
+                    : Colors.white.withValues(alpha: 0.4),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.tag_rounded,
+                  size: 14.w,
+                  color: isDark ? AppColors.neonCyan : AppColors.lightAccent,
                 ),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? AppColors.darkGlassSurface.withOpacity(0.4)
-                      : Colors.white.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
-                  border: Border.all(
+                SizedBox(width: 6.w),
+                Text(
+                  tag,
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w500,
                     color: isDark
-                        ? AppColors.neonCyan.withOpacity(0.3)
-                        : Colors.white.withOpacity(0.4),
+                        ? AppColors.darkTextPrimary
+                        : AppColors.lightTextPrimary,
                   ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.tag_rounded,
-                      size: 14.w,
-                      color: isDark
-                          ? AppColors.neonCyan
-                          : AppColors.lightAccent,
-                    ),
-                    SizedBox(width: 6.w),
-                    Text(
-                      tag,
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w500,
-                        color: isDark
-                            ? AppColors.darkTextPrimary
-                            : AppColors.lightTextPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              ],
             ),
           ),
         )
@@ -365,82 +357,74 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     return Center(
           child: Padding(
             padding: EdgeInsets.all(AppDimensions.spacingXL),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                child: Container(
-                  padding: EdgeInsets.all(AppDimensions.spacingXL),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? AppColors.darkGlassSurface.withOpacity(0.4)
-                        : Colors.white.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
-                    border: Border.all(
+            child: Container(
+              padding: EdgeInsets.all(AppDimensions.spacingXL),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? AppColors.darkGlassSurface.withValues(alpha: 0.6)
+                    : Colors.white.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
+                border: Border.all(
+                  color: isDark
+                      ? AppColors.neonCyan.withValues(alpha: 0.2)
+                      : Colors.white.withValues(alpha: 0.4),
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Icon
+                  Container(
+                    width: 80.w,
+                    height: 80.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
                       color: isDark
-                          ? AppColors.neonCyan.withOpacity(0.2)
-                          : Colors.white.withOpacity(0.4),
+                          ? AppColors.neonMagenta.withValues(alpha: 0.15)
+                          : AppColors.error.withValues(alpha: 0.1),
+                    ),
+                    child: Icon(
+                      Icons.search_off_rounded,
+                      size: 40.w,
+                      color: isDark ? AppColors.neonMagenta : AppColors.error,
                     ),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Icon
-                      Container(
-                        width: 80.w,
-                        height: 80.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isDark
-                              ? AppColors.neonMagenta.withOpacity(0.15)
-                              : AppColors.error.withOpacity(0.1),
-                        ),
-                        child: Icon(
-                          Icons.search_off_rounded,
-                          size: 40.w,
-                          color: isDark
-                              ? AppColors.neonMagenta
-                              : AppColors.error,
-                        ),
-                      ),
 
-                      SizedBox(height: AppDimensions.spacingLG),
+                  SizedBox(height: AppDimensions.spacingLG),
 
-                      Text(
-                        'no_results'.tr(),
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      SizedBox(height: AppDimensions.spacingSM),
-
-                      Text(
-                        'no_results_desc'.tr(),
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          color: isDark
-                              ? AppColors.darkTextSecondary
-                              : AppColors.lightTextSecondary,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-
-                      SizedBox(height: AppDimensions.spacingMD),
-
-                      Text(
-                        'try_different'.tr(),
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: isDark
-                              ? AppColors.neonCyan
-                              : AppColors.lightAccent,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'no_results'.tr(),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
+
+                  SizedBox(height: AppDimensions.spacingSM),
+
+                  Text(
+                    'no_results_desc'.tr(),
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.lightTextSecondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+
+                  SizedBox(height: AppDimensions.spacingMD),
+
+                  Text(
+                    'try_different'.tr(),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: isDark
+                          ? AppColors.neonCyan
+                          : AppColors.lightAccent,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -491,7 +475,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               return GlassProductCard(
                 product: product,
                 animationDelay: Duration(
-                  milliseconds: AppDimensions.staggerDelay * index,
+                  milliseconds: (AppDimensions.staggerDelay * index).clamp(
+                    0,
+                    400,
+                  ),
                 ),
                 onTap: () {
                   // TODO: Navigate to product detail

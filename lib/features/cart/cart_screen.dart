@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,7 +61,7 @@ class CartScreen extends ConsumerWidget {
           // ✅ استبدال 20.w و 16.h
           padding: EdgeInsets.symmetric(
             horizontal: AppDimensions.spacingLG, // كانت 20 (قريبة من 24)
-            vertical: AppDimensions.spacingMD,   // كانت 16
+            vertical: AppDimensions.spacingMD, // كانت 16
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,14 +83,17 @@ class CartScreen extends ConsumerWidget {
                     Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: AppDimensions.spacingSM, // ✅ كانت 12.w
-                        vertical: 6.h, // قيمة صغيرة جداً يمكن إبقاؤها أو استخدام spacingXXS
+                        vertical: 6
+                            .h, // قيمة صغيرة جداً يمكن إبقاؤها أو استخدام spacingXXS
                       ),
                       decoration: BoxDecoration(
                         color: isDark
                             ? AppColors.neonCyan.withValues(alpha: 0.2)
                             : AppColors.lightAccent.withValues(alpha: 0.15),
                         // ✅ استبدال 20.r بـ radiusLG
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusLG),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusLG,
+                        ),
                         border: Border.all(
                           color: isDark
                               ? AppColors.neonCyan.withValues(alpha: 0.3)
@@ -115,20 +119,25 @@ class CartScreen extends ConsumerWidget {
                 GestureDetector(
                   onTap: () => _showClearCartDialog(context, ref, isDark),
                   child: Container(
-                    padding: EdgeInsets.all(10.w), // يمكن جعلها spacingXS (8) أو SM (12)
+                    padding: EdgeInsets.all(
+                      10.w,
+                    ), // يمكن جعلها spacingXS (8) أو SM (12)
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.red.withValues(alpha: 0.15)
                           : Colors.red.withValues(alpha: 0.1),
                       // ✅ استبدال 12.r بـ radiusSM
-                      borderRadius: BorderRadius.circular(AppDimensions.radiusSM),
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusSM,
+                      ),
                       border: Border.all(
                         color: Colors.red.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Icon(
                       Icons.delete_outline_rounded,
-                      size: AppDimensions.iconMD, // ✅ كانت 22.w، جعلناها 24 للمعيارية
+                      size: AppDimensions
+                          .iconMD, // ✅ كانت 22.w، جعلناها 24 للمعيارية
                       color: Colors.red,
                     ),
                   ),
@@ -137,7 +146,9 @@ class CartScreen extends ConsumerWidget {
           ),
         )
         .animate()
-        .fadeIn(duration: Duration(milliseconds: AppDimensions.animationNormal)) // ✅ استخدام التوقيت الموحد
+        .fadeIn(
+          duration: Duration(milliseconds: AppDimensions.animationNormal),
+        ) // ✅ استخدام التوقيت الموحد
         .slideY(begin: -0.3, end: 0);
   }
 
@@ -195,8 +206,8 @@ class CartScreen extends ConsumerWidget {
             SizedBox(height: AppDimensions.spacingLG), // ✅ كانت 24.h
             Container(
               padding: EdgeInsets.symmetric(
-                  horizontal: AppDimensions.spacingXL, // ✅ كانت 32.w
-                  vertical: 14.h
+                horizontal: AppDimensions.spacingXL, // ✅ كانت 32.w
+                vertical: 14.h,
               ),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -244,10 +255,10 @@ class CartScreen extends ConsumerWidget {
     return ListView.builder(
       // ✅ استخدام spacingLG (24) بدلاً من 20 لتوحيد الحواف
       padding: EdgeInsets.fromLTRB(
-          AppDimensions.spacingLG, 
-          AppDimensions.spacingXS, 
-          AppDimensions.spacingLG, 
-          200.h
+        AppDimensions.spacingLG,
+        AppDimensions.spacingXS,
+        AppDimensions.spacingLG,
+        200.h,
       ),
       physics: const BouncingScrollPhysics(),
       itemCount: cartItems.length,
@@ -298,29 +309,47 @@ class CartScreen extends ConsumerWidget {
                     color: isDark
                         ? AppColors.neonCyan.withValues(alpha: 0.3)
                         : Colors.white.withValues(alpha: 0.5),
-                    width: AppDimensions.glassBorderWidth, // ✅ استخدام المتغير الموحد 1.5
+                    width: AppDimensions
+                        .glassBorderWidth, // ✅ استخدام المتغير الموحد 1.5
                   ),
                 ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildPriceRow(context, isDark, 'subtotal'.tr(), subtotal, isHighlighted: false),
+                  _buildPriceRow(
+                    context,
+                    isDark,
+                    'subtotal'.tr(),
+                    subtotal,
+                    isHighlighted: false,
+                  ),
                   SizedBox(height: AppDimensions.spacingXS), // ✅ 8.h
-                  _buildPriceRow(context, isDark, 'tax'.tr(), tax, isHighlighted: false),
+                  _buildPriceRow(
+                    context,
+                    isDark,
+                    'tax'.tr(),
+                    tax,
+                    isHighlighted: false,
+                  ),
                   SizedBox(height: AppDimensions.spacingSM), // ✅ 12.h
-                  
+
                   Divider(
-                     height: 1, 
-                     color: isDark
+                    height: 1,
+                    color: isDark
                         ? AppColors.neonCyan.withValues(alpha: 0.2)
                         : Colors.grey.withValues(alpha: 0.2),
                   ),
 
                   SizedBox(height: AppDimensions.spacingSM), // ✅ 12.h
-                  _buildPriceRow(context, isDark, 'total'.tr(), total, isHighlighted: true),
+                  _buildPriceRow(
+                    context,
+                    isDark,
+                    'total'.tr(),
+                    total,
+                    isHighlighted: true,
+                  ),
                   SizedBox(height: AppDimensions.spacingLG), // ✅ 20.h
-
                   // Checkout button
                   GestureDetector(
                     onTap: () {
@@ -333,13 +362,21 @@ class CartScreen extends ConsumerWidget {
                         gradient: LinearGradient(
                           colors: isDark
                               ? [AppColors.neonCyan, AppColors.neonBlue]
-                              : [AppColors.lightAccent, AppColors.lightAccentSecondary],
+                              : [
+                                  AppColors.lightAccent,
+                                  AppColors.lightAccentSecondary,
+                                ],
                         ),
                         // ✅ استبدال 16.r بـ radiusMD
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusMD),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusMD,
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: (isDark ? AppColors.neonCyan : AppColors.lightAccent)
+                            color:
+                                (isDark
+                                        ? AppColors.neonCyan
+                                        : AppColors.lightAccent)
                                     .withValues(alpha: 0.4),
                             blurRadius: 20,
                             offset: const Offset(0, 8),
@@ -352,7 +389,9 @@ class CartScreen extends ConsumerWidget {
                           Icon(
                             Icons.shopping_bag_rounded,
                             size: AppDimensions.iconMD, // ✅ كانت 22.w -> 24
-                            color: isDark ? AppColors.darkGradientStart : Colors.white,
+                            color: isDark
+                                ? AppColors.darkGradientStart
+                                : Colors.white,
                           ),
                           SizedBox(width: 10.w),
                           Text(
@@ -360,7 +399,9 @@ class CartScreen extends ConsumerWidget {
                             style: TextStyle(
                               fontSize: 17.sp,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? AppColors.darkGradientStart : Colors.white,
+                              color: isDark
+                                  ? AppColors.darkGradientStart
+                                  : Colors.white,
                             ),
                           ),
                         ],
@@ -393,8 +434,12 @@ class CartScreen extends ConsumerWidget {
             fontSize: isHighlighted ? 18.sp : 14.sp,
             fontWeight: isHighlighted ? FontWeight.bold : FontWeight.w500,
             color: isHighlighted
-                ? (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary)
-                : (isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary),
+                ? (isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.lightTextPrimary)
+                : (isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.lightTextSecondary),
           ),
         ),
         Text(
@@ -404,7 +449,9 @@ class CartScreen extends ConsumerWidget {
             fontWeight: FontWeight.bold,
             color: isHighlighted
                 ? (isDark ? AppColors.neonCyan : AppColors.lightAccent)
-                : (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary),
+                : (isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.lightTextPrimary),
             // ...shadows
           ),
         ),
@@ -463,10 +510,14 @@ class GlassCartItem extends StatelessWidget {
             margin: EdgeInsets.only(bottom: AppDimensions.spacingMD), // ✅ 16.h
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.transparent, Colors.red.withValues(alpha: 0.3), Colors.red.withValues(alpha: 0.6)],
+                colors: [
+                  Colors.transparent,
+                  Colors.red.withValues(alpha: 0.3),
+                  Colors.red.withValues(alpha: 0.6),
+                ],
               ),
               // ✅ 20.r -> radiusLG
-              borderRadius: BorderRadius.circular(AppDimensions.radiusLG), 
+              borderRadius: BorderRadius.circular(AppDimensions.radiusLG),
             ),
             alignment: Alignment.centerRight,
             padding: EdgeInsets.only(right: AppDimensions.spacingLG), // ✅ 24.w
@@ -484,10 +535,16 @@ class GlassCartItem extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(AppDimensions.spacingSM), // ✅ 12.w
                   decoration: BoxDecoration(
-                    color: AppColors.getGlassSurface(isDark).withValues(alpha: AppColors.getGlassOpacity(isDark)),
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusLG), // ✅
+                    color: AppColors.getGlassSurface(
+                      isDark,
+                    ).withValues(alpha: AppColors.getGlassOpacity(isDark)),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusLG,
+                    ), // ✅
                     border: Border.all(
-                      color: isDark ? AppColors.neonCyan.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.4),
+                      color: isDark
+                          ? AppColors.neonCyan.withValues(alpha: 0.2)
+                          : Colors.white.withValues(alpha: 0.4),
                       width: 1, // يمكن استخدام glassBorderWidth هنا أيضاً
                     ),
                   ),
@@ -495,16 +552,24 @@ class GlassCartItem extends StatelessWidget {
                     children: [
                       // Product image
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(14.r), // لا يوجد 14 بالضبط، يمكن إبقاؤها أو استخدام radiusSM (12)
+                        borderRadius: BorderRadius.circular(
+                          14.r,
+                        ), // لا يوجد 14 بالضبط، يمكن إبقاؤها أو استخدام radiusSM (12)
                         child: Container(
                           width: 80.w, // حجم ثابت للصورة
                           height: 80.w,
-                          color: isDark ? Colors.black.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.5),
-                          child: Image.network(product.imageUrl, fit: BoxFit.cover),
+                          color: isDark
+                              ? Colors.black.withValues(alpha: 0.3)
+                              : Colors.white.withValues(alpha: 0.5),
+                          child: CachedNetworkImage(
+                            imageUrl: product.imageUrl,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                      SizedBox(width: 14.w), // يمكن استخدام spacingSM (12) أو MD (16)
-                      
+                      SizedBox(
+                        width: 14.w,
+                      ), // يمكن استخدام spacingSM (12) أو MD (16)
                       // Product info
                       Expanded(
                         child: Column(
@@ -515,7 +580,9 @@ class GlassCartItem extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w600,
-                                color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                color: isDark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.lightTextPrimary,
                               ),
                               maxLines: 2,
                             ),
@@ -525,7 +592,9 @@ class GlassCartItem extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.bold,
-                                color: isDark ? AppColors.neonCyan : AppColors.lightAccent,
+                                color: isDark
+                                    ? AppColors.neonCyan
+                                    : AppColors.lightAccent,
                               ),
                             ),
                           ],
@@ -540,7 +609,9 @@ class GlassCartItem extends StatelessWidget {
             ),
           ),
         )
-        .animate(delay: Duration(milliseconds: 100 * index)) // يمكن استخدام staggerDelay هنا
+        .animate(
+          delay: Duration(milliseconds: 100 * index),
+        ) // يمكن استخدام staggerDelay هنا
         .fadeIn(duration: const Duration(milliseconds: 400));
   }
 
@@ -554,10 +625,16 @@ class GlassCartItem extends StatelessWidget {
           width: 36.w,
           height: 36.w,
           decoration: BoxDecoration(
-            color: isDark ? AppColors.neonCyan.withValues(alpha: 0.1) : AppColors.lightAccent.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10.r), // يمكن استخدام radiusXS (8) أو SM (12)
+            color: isDark
+                ? AppColors.neonCyan.withValues(alpha: 0.1)
+                : AppColors.lightAccent.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(
+              10.r,
+            ), // يمكن استخدام radiusXS (8) أو SM (12)
             border: Border.all(
-              color: isDark ? AppColors.neonCyan.withValues(alpha: 0.3) : AppColors.lightAccent.withValues(alpha: 0.3),
+              color: isDark
+                  ? AppColors.neonCyan.withValues(alpha: 0.3)
+                  : AppColors.lightAccent.withValues(alpha: 0.3),
             ),
           ),
           child: Center(
@@ -572,34 +649,42 @@ class GlassCartItem extends StatelessWidget {
           ),
         ),
         SizedBox(height: AppDimensions.spacingXS), // ✅ 8.h
-        _buildQuantityButton(context, isDark, Icons.remove_rounded, onDecrement),
+        _buildQuantityButton(
+          context,
+          isDark,
+          Icons.remove_rounded,
+          onDecrement,
+        ),
       ],
     );
   }
 
-  Widget _buildQuantityButton(BuildContext context, bool isDark, IconData icon, VoidCallback onTap) {
+  Widget _buildQuantityButton(
+    BuildContext context,
+    bool isDark,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10.r),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(
-            width: 36.w,
-            height: 36.w,
-            decoration: BoxDecoration(
-              color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(10.r),
-              border: Border.all(
-                color: isDark ? AppColors.neonCyan.withValues(alpha: 0.3) : AppColors.lightAccent.withValues(alpha: 0.3),
-              ),
-            ),
-            child: Icon(
-              icon,
-              size: 18.w, // يمكن استخدام iconXS
-              color: isDark ? AppColors.neonCyan : AppColors.lightAccent,
-            ),
+      child: Container(
+        width: 36.w,
+        height: 36.w,
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.black.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(10.r),
+          border: Border.all(
+            color: isDark
+                ? AppColors.neonCyan.withValues(alpha: 0.3)
+                : AppColors.lightAccent.withValues(alpha: 0.3),
           ),
+        ),
+        child: Icon(
+          icon,
+          size: 18.w,
+          color: isDark ? AppColors.neonCyan : AppColors.lightAccent,
         ),
       ),
     );

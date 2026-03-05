@@ -130,7 +130,7 @@ class AppColors {
   static LinearGradient get imageTextGradient => LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+    colors: [Colors.transparent, Colors.black.withValues(alpha: 0.7)],
     stops: const [0.5, 1.0],
   );
 
@@ -192,9 +192,9 @@ class AppColors {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      neonCyan.withOpacity(0.5),
-      neonMagenta.withOpacity(0.5),
-      neonBlue.withOpacity(0.5),
+      neonCyan.withValues(alpha: 0.5),
+      neonMagenta.withValues(alpha: 0.5),
+      neonBlue.withValues(alpha: 0.5),
     ],
   );
 
@@ -242,7 +242,9 @@ class AppColors {
 
   /// Get neon glow with reduced intensity for secondary elements
   static Color getNeonGlow(Color neonColor, {bool subtle = false}) {
-    return neonColor.withOpacity(subtle ? neonGlowSubtle : neonGlowReduced);
+    return neonColor.withValues(
+      alpha: subtle ? neonGlowSubtle : neonGlowReduced,
+    );
   }
 
   /// Get shadow color for depth

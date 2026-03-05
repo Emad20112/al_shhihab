@@ -96,5 +96,6 @@
   "southern_cities_list": "عدن • تعز • أبين • لحج • الضالع",
   "confirm_location": "تأكيد الموقع",
   "change_region": "تغيير المنطقة",
-  "change_region_hint": "يمكنك تغيير المنطقة لاحقاً من الإعدادات"
+  "change_region_hint": "يمكنك تغيير المنطقة لاحقاً من الإعدادات",
+  "back": "رجوع"
 }
