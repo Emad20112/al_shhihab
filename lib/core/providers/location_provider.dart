@@ -2,132 +2,113 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
-/// LOCATION PROVIDER - Region Selection & Persistence
+/// CITY PROVIDER - Yemeni City Selection & Persistence
 /// ═══════════════════════════════════════════════════════════════════════════
 ///
-/// Manages user's selected region (Northern vs Southern cities).
-/// Persists choice via SharedPreferences so the onboarding screen
-/// is only shown on the very first app launch.
+/// Manages the user's selected city. Persists via SharedPreferences.
+/// Default city: صنعاء (Sana'a)
 /// ═══════════════════════════════════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SHARED PREFERENCES KEY
-// ═══════════════════════════════════════════════════════════════════════════
-
-const String _regionPreferenceKey = 'app_user_region';
+const String _cityPreferenceKey = 'app_selected_city';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// LOCATION REGION ENUM
+// YEMENI CITY MODEL
 // ═══════════════════════════════════════════════════════════════════════════
 
-/// The two geographical zones the user can pick from
-enum LocationRegion {
-  north('north'),
-  south('south');
+class YemeniCity {
+  final String id;
+  final String nameEn;
+  final String nameAr;
 
-  final String value;
-  const LocationRegion(this.value);
+  const YemeniCity({
+    required this.id,
+    required this.nameEn,
+    required this.nameAr,
+  });
+}
 
-  static LocationRegion? fromString(String? value) {
-    if (value == null) return null;
-    return LocationRegion.values.firstWhere(
-      (e) => e.value == value,
-      orElse: () => LocationRegion.north,
-    );
+/// All available Yemeni cities
+const List<YemeniCity> yemeniCities = [
+  YemeniCity(id: 'sanaa', nameEn: "Sana'a", nameAr: 'صنعاء'),
+  YemeniCity(id: 'aden', nameEn: 'Aden', nameAr: 'عدن'),
+  YemeniCity(id: 'taiz', nameEn: 'Taiz', nameAr: 'تعز'),
+  YemeniCity(id: 'ibb', nameEn: 'Ibb', nameAr: 'إب'),
+  YemeniCity(id: 'dhamar', nameEn: 'Dhamar', nameAr: 'ذمار'),
+  YemeniCity(id: 'amran', nameEn: 'Amran', nameAr: 'عمران'),
+  YemeniCity(id: 'hajjah', nameEn: 'Hajjah', nameAr: 'حجة'),
+  YemeniCity(id: 'hudaydah', nameEn: 'Al Hudaydah', nameAr: 'الحديدة'),
+  YemeniCity(id: 'mukalla', nameEn: 'Al Mukalla', nameAr: 'المكلا'),
+  YemeniCity(id: 'sayoun', nameEn: 'Sayoun', nameAr: 'سيئون'),
+  YemeniCity(id: 'marib', nameEn: 'Marib', nameAr: 'مأرب'),
+  YemeniCity(id: 'abyan', nameEn: 'Abyan', nameAr: 'أبين'),
+  YemeniCity(id: 'lahij', nameEn: 'Lahij', nameAr: 'لحج'),
+  YemeniCity(id: 'dhale', nameEn: "Al-Dhale'e", nameAr: 'الضالع'),
+  YemeniCity(id: 'sadah', nameEn: "Sa'dah", nameAr: 'صعدة'),
+  YemeniCity(id: 'bayda', nameEn: 'Al Bayda', nameAr: 'البيضاء'),
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CITY STATE
+// ═══════════════════════════════════════════════════════════════════════════
+
+class CityState {
+  final YemeniCity selectedCity;
+
+  const CityState({required this.selectedCity});
+
+  /// Default: Sana'a
+  factory CityState.initial() {
+    return CityState(selectedCity: yemeniCities.first);
   }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// LOCATION STATE
+// CITY NOTIFIER
 // ═══════════════════════════════════════════════════════════════════════════
 
-class LocationState {
-  final bool isFirstLaunch;
-  final LocationRegion? selectedRegion;
-
-  const LocationState({required this.isFirstLaunch, this.selectedRegion});
-
-  /// Default – assume first launch until prefs are read
-  factory LocationState.initial() {
-    return const LocationState(isFirstLaunch: true, selectedRegion: null);
-  }
-
-  LocationState copyWith({
-    bool? isFirstLaunch,
-    LocationRegion? selectedRegion,
-  }) {
-    return LocationState(
-      isFirstLaunch: isFirstLaunch ?? this.isFirstLaunch,
-      selectedRegion: selectedRegion ?? this.selectedRegion,
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════
-// LOCATION NOTIFIER (RIVERPOD v3 API)
-// ═══════════════════════════════════════════════════════════════════════════
-
-class LocationNotifier extends Notifier<LocationState> {
+class CityNotifier extends Notifier<CityState> {
   @override
-  LocationState build() {
-    _loadRegionPreference();
-    return LocationState.initial();
+  CityState build() {
+    _loadCityPreference();
+    return CityState.initial();
   }
 
-  /// Load saved region preference from SharedPreferences
-  Future<void> _loadRegionPreference() async {
+  Future<void> _loadCityPreference() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final regionValue = prefs.getString(_regionPreferenceKey);
+      final cityId = prefs.getString(_cityPreferenceKey);
 
-      if (regionValue != null) {
-        // User has selected a region before
-        state = LocationState(
-          isFirstLaunch: false,
-          selectedRegion: LocationRegion.fromString(regionValue),
+      if (cityId != null) {
+        final city = yemeniCities.firstWhere(
+          (c) => c.id == cityId,
+          orElse: () => yemeniCities.first,
         );
-      } else {
-        // No region saved → first launch
-        state = const LocationState(isFirstLaunch: true, selectedRegion: null);
+        state = CityState(selectedCity: city);
       }
-    } catch (e) {
-      // On error keep first-launch state
+    } catch (_) {
+      // Keep default (Sana'a)
     }
   }
 
-  /// Select a region, persist it, and dismiss onboarding
-  Future<void> selectRegion(LocationRegion region) async {
-    state = LocationState(isFirstLaunch: false, selectedRegion: region);
+  Future<void> selectCity(YemeniCity city) async {
+    state = CityState(selectedCity: city);
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_regionPreferenceKey, region.value);
-    } catch (e) {
+      await prefs.setString(_cityPreferenceKey, city.id);
+    } catch (_) {
       // Silently handle save errors
     }
   }
-
-  /// Get the currently selected region
-  LocationRegion? get currentRegion => state.selectedRegion;
-
-  /// Check if this is the first launch
-  bool get isFirstLaunch => state.isFirstLaunch;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
 // PROVIDERS
 // ═══════════════════════════════════════════════════════════════════════════
 
-/// Provider for location state
-final locationProvider = NotifierProvider<LocationNotifier, LocationState>(() {
-  return LocationNotifier();
+final cityProvider = NotifierProvider<CityNotifier, CityState>(() {
+  return CityNotifier();
 });
 
-/// Convenience provider for first-launch check
-final isFirstLaunchProvider = Provider<bool>((ref) {
-  return ref.watch(locationProvider).isFirstLaunch;
-});
-
-/// Convenience provider for selected region
-final selectedRegionProvider = Provider<LocationRegion?>((ref) {
-  return ref.watch(locationProvider).selectedRegion;
+final selectedCityProvider = Provider<YemeniCity>((ref) {
+  return ref.watch(cityProvider).selectedCity;
 });

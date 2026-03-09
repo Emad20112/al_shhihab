@@ -97,5 +97,7 @@
   "confirm_location": "Confirm Location",
   "change_region": "Change Region",
   "change_region_hint": "You can change your region later from Settings",
-  "back": "Back"
+  "back": "Back",
+  "select_city": "Select City",
+  "change_city": "Change City"
 }

@@ -1,10 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../core/constants/app_colors.dart';
 import '../core/constants/app_dimensions.dart';
+import '../core/providers/location_provider.dart';
+import 'city_selector.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// GLASS APP BAR - Premium Transparent App Bar
@@ -20,7 +23,7 @@ import '../core/constants/app_dimensions.dart';
 /// • Fully theme-aware
 /// ═══════════════════════════════════════════════════════════════════════════
 
-class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
+class GlassAppBar extends ConsumerWidget implements PreferredSizeWidget {
   /// User's name for greeting
   final String userName;
 
@@ -61,7 +64,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => Size.fromHeight(height ?? 80.h);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     Widget appBar = Container(
@@ -103,7 +106,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Row(
               children: [
                 // Avatar + Greeting
-                Expanded(child: _buildUserSection(context, isDark)),
+                Expanded(child: _buildUserSection(context, ref, isDark)),
 
                 // Action buttons
                 Row(
@@ -138,7 +141,10 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
     return appBar;
   }
 
-  Widget _buildUserSection(BuildContext context, bool isDark) {
+  Widget _buildUserSection(BuildContext context, WidgetRef ref, bool isDark) {
+    final city = ref.watch(selectedCityProvider);
+    final isArabic = context.locale.languageCode == 'ar';
+
     return GestureDetector(
       onTap: onAvatarTap,
       child: Row(
@@ -196,7 +202,7 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
 
           SizedBox(width: 12.w),
 
-          // Greeting text
+          // Greeting + City selector
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,17 +219,44 @@ class GlassAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   maxLines: 1,
                 ),
-                Text(
-                  userName,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: isDark
-                        ? AppColors.darkTextPrimary
-                        : AppColors.lightTextPrimary,
+                // City selector row
+                GestureDetector(
+                  onTap: () => showCitySelector(context),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.location_on_rounded,
+                        size: 13.w,
+                        color: isDark
+                            ? AppColors.neonCyan
+                            : AppColors.lightAccent,
+                      ),
+                      SizedBox(width: 3.w),
+                      Flexible(
+                        child: Text(
+                          isArabic ? city.nameAr : city.nameEn,
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.lightTextPrimary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      SizedBox(width: 2.w),
+                      Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        size: 16.w,
+                        color: isDark
+                            ? AppColors.neonCyan.withValues(alpha: 0.7)
+                            : AppColors.lightAccent.withValues(alpha: 0.7),
+                      ),
+                    ],
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

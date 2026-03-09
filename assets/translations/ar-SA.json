@@ -97,5 +97,7 @@
   "confirm_location": "تأكيد الموقع",
   "change_region": "تغيير المنطقة",
   "change_region_hint": "يمكنك تغيير المنطقة لاحقاً من الإعدادات",
-  "back": "رجوع"
+  "back": "رجوع",
+  "select_city": "اختر المدينة",
+  "change_city": "تغيير المدينة"
 }
