@@ -108,15 +108,15 @@ class _CartBadge extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: isDark
-                      ? [AppColors.neonMagenta, AppColors.neonCyan]
+                      ? [AppColors.neonCyan, AppColors.goldLight]
                       : [AppColors.lightAccent, AppColors.lightAccentSecondary],
                 ),
                 borderRadius: BorderRadius.circular(10.r),
                 boxShadow: [
                   BoxShadow(
                     color:
-                        (isDark ? AppColors.neonMagenta : AppColors.lightAccent)
-                            .withValues(alpha: 0.5),
+                        (isDark ? AppColors.neonCyan : AppColors.lightAccent)
+                            .withValues(alpha: 0.3),
                     blurRadius: 8,
                     spreadRadius: 0,
                   ),
@@ -128,7 +128,7 @@ class _CartBadge extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? AppColors.darkGradientStart : Colors.white,
+                    color: isDark ? Colors.black : Colors.white,
                     height: 1.2,
                   ),
                 ),
@@ -183,7 +183,7 @@ class GlassCartIconButton extends ConsumerWidget {
               borderRadius: BorderRadius.circular(14.r),
               border: Border.all(
                 color: isDark
-                    ? AppColors.neonCyan.withValues(alpha: 0.3)
+                    ? Colors.white.withValues(alpha: 0.1)
                     : Colors.white.withValues(alpha: 0.6),
               ),
             ),

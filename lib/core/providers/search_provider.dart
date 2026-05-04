@@ -59,27 +59,18 @@ final isNoResultsProvider = Provider<bool>((ref) {
 /// Popular search tags for suggestions
 final popularTagsProvider = Provider<List<String>>((ref) {
   return [
-    'iPhone',
-    'Samsung',
-    'Headphones',
-    'Laptop',
+    'Sneakers',
+    'Dress',
+    'Shirt',
+    'Bag',
     'Watch',
-    'Gaming',
-    'Wireless',
-    'Tablet',
+    'Sportswear',
+    'Leather',
+    'Kids',
   ];
 });
 
 /// Arabic popular tags
 final popularTagsArProvider = Provider<List<String>>((ref) {
-  return [
-    'آيفون',
-    'سامسونج',
-    'سماعات',
-    'لابتوب',
-    'ساعة',
-    'ألعاب',
-    'لاسلكي',
-    'تابلت',
-  ];
+  return ['أحذية', 'فستان', 'قميص', 'حقيبة', 'ساعة', 'رياضي', 'جلد', 'أطفال'];
 });

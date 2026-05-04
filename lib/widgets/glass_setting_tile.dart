@@ -106,9 +106,9 @@ class GlassSettingTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(effectiveRadius),
               border: Border.all(
                 color: isDark
-                    ? effectiveIconColor.withOpacity(0.3)
+                    ? Colors.white.withValues(alpha: 0.1)
                     : Colors.white.withOpacity(0.3),
-                width: isDark ? 1.5 : 1,
+                width: 1,
               ),
             ),
             child: Material(

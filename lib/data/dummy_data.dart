@@ -1,24 +1,13 @@
 import 'package:flutter/material.dart';
 
-/// ═══════════════════════════════════════════════════════════════════════════
-/// DUMMY DATA - Electronics Store Mock Data
-/// ═══════════════════════════════════════════════════════════════════════════
-///
-/// Contains models and mock data for:
-/// • Products (high-end electronics with futuristic names)
-/// • Categories (with icons and colors)
-/// ═══════════════════════════════════════════════════════════════════════════
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PRODUCT MODEL
-// ═══════════════════════════════════════════════════════════════════════════
+/// Mock data for a fashion store: clothing, shoes, bags, and accessories.
 
 class ProductModel {
   final String id;
   final String name;
   final String nameAr;
   final double price;
-  final double? originalPrice; // For showing discounts
+  final double? originalPrice;
   final String description;
   final String descriptionAr;
   final double rating;
@@ -30,6 +19,10 @@ class ProductModel {
   final int stockCount;
   final Map<String, String> specs;
   final List<String> colors;
+
+  final String unit;
+  final String unitAr;
+  final double? coveragePerUnit;
 
   const ProductModel({
     required this.id,
@@ -43,6 +36,9 @@ class ProductModel {
     required this.reviewCount,
     required this.imageUrl,
     required this.category,
+    required this.unit,
+    required this.unitAr,
+    this.coveragePerUnit,
     this.isFeatured = false,
     this.isNew = false,
     this.stockCount = 10,
@@ -50,19 +46,13 @@ class ProductModel {
     this.colors = const [],
   });
 
-  /// Calculate discount percentage
   int? get discountPercent {
     if (originalPrice == null || originalPrice! <= price) return null;
     return ((originalPrice! - price) / originalPrice! * 100).round();
   }
 
-  /// Check if in stock
   bool get inStock => stockCount > 0;
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// CATEGORY MODEL
-// ═══════════════════════════════════════════════════════════════════════════
 
 class CategoryModel {
   final String id;
@@ -82,426 +72,343 @@ class CategoryModel {
   });
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// DUMMY CATEGORIES
-// ═══════════════════════════════════════════════════════════════════════════
+enum AdPlacement { homeHero, homeStrip, category }
+
+class AdvertisementModel {
+  final String id;
+  final String title;
+  final String titleAr;
+  final String subtitle;
+  final String subtitleAr;
+  final String imageUrl;
+  final String ctaLabel;
+  final String ctaLabelAr;
+  final AdPlacement placement;
+  final String campaignType;
+  final int? discountPercent;
+  final String? productId;
+  final String? categoryId;
+  final int priority;
+  final DateTime startsAt;
+  final DateTime endsAt;
+
+  const AdvertisementModel({
+    required this.id,
+    required this.title,
+    required this.titleAr,
+    required this.subtitle,
+    required this.subtitleAr,
+    required this.imageUrl,
+    required this.ctaLabel,
+    required this.ctaLabelAr,
+    required this.placement,
+    required this.campaignType,
+    required this.priority,
+    required this.startsAt,
+    required this.endsAt,
+    this.discountPercent,
+    this.productId,
+    this.categoryId,
+  });
+
+  bool get isActive {
+    final now = DateTime.now();
+    return now.isAfter(startsAt) && now.isBefore(endsAt);
+  }
+}
 
 final List<CategoryModel> dummyCategories = [
   CategoryModel(
-    id: 'smartphones',
-    name: 'Smartphones',
-    nameAr: 'الهواتف الذكية',
-    icon: Icons.phone_iphone_rounded,
-    color: const Color(0xFF00D9FF),
+    id: 'men',
+    name: 'Men Clothing',
+    nameAr: 'ملابس رجالية',
+    icon: Icons.man_rounded,
+    color: const Color(0xFF2F80ED),
+    imageUrl: 'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=400',
+  ),
+  CategoryModel(
+    id: 'women',
+    name: 'Women Clothing',
+    nameAr: 'ملابس نسائية',
+    icon: Icons.woman_rounded,
+    color: const Color(0xFFE84A7A),
     imageUrl:
-        'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400',
+        'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400',
   ),
   CategoryModel(
-    id: 'laptops',
-    name: 'Laptops',
-    nameAr: 'اللابتوب',
-    icon: Icons.laptop_mac_rounded,
-    color: const Color(0xFFBB00FF),
+    id: 'sneakers',
+    name: 'Sneakers',
+    nameAr: 'أحذية رياضية',
+    icon: Icons.directions_run_rounded,
+    color: const Color(0xFF00A676),
+    imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',
+  ),
+  CategoryModel(
+    id: 'formal_shoes',
+    name: 'Formal Shoes',
+    nameAr: 'أحذية رسمية',
+    icon: Icons.work_rounded,
+    color: const Color(0xFF8B5E3C),
     imageUrl:
-        'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400',
+        'https://images.unsplash.com/photo-1614252369475-531eba835eb1?w=400',
   ),
   CategoryModel(
-    id: 'headphones',
-    name: 'Headphones',
-    nameAr: 'سماعات الرأس',
-    icon: Icons.headphones_rounded,
-    color: const Color(0xFFFF00E5),
+    id: 'kids',
+    name: 'Kids Fashion',
+    nameAr: 'أزياء الأطفال',
+    icon: Icons.child_care_rounded,
+    color: const Color(0xFFFFB703),
     imageUrl:
-        'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
+        'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=400',
   ),
   CategoryModel(
-    id: 'smartwatches',
-    name: 'Smartwatches',
-    nameAr: 'الساعات الذكية',
-    icon: Icons.watch_rounded,
-    color: const Color(0xFF00FF88),
+    id: 'sportswear',
+    name: 'Sportswear',
+    nameAr: 'ملابس رياضية',
+    icon: Icons.fitness_center_rounded,
+    color: const Color(0xFF7B61FF),
     imageUrl:
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
+        'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400',
   ),
   CategoryModel(
-    id: 'gaming',
-    name: 'Gaming',
-    nameAr: 'الألعاب',
-    icon: Icons.sports_esports_rounded,
-    color: const Color(0xFFFF6B00),
+    id: 'bags',
+    name: 'Bags',
+    nameAr: 'الحقائب',
+    icon: Icons.shopping_bag_rounded,
+    color: const Color(0xFF00B4D8),
     imageUrl:
-        'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400',
-  ),
-  CategoryModel(
-    id: 'audio',
-    name: 'Audio',
-    nameAr: 'الصوتيات',
-    icon: Icons.speaker_rounded,
-    color: const Color(0xFF6C63FF),
-    imageUrl: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?w=400',
-  ),
-  CategoryModel(
-    id: 'tablets',
-    name: 'Tablets',
-    nameAr: 'الأجهزة اللوحية',
-    icon: Icons.tablet_mac_rounded,
-    color: const Color(0xFF00A3FF),
-    imageUrl: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400',
+        'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=400',
   ),
   CategoryModel(
     id: 'accessories',
     name: 'Accessories',
     nameAr: 'الإكسسوارات',
-    icon: Icons.cable_rounded,
-    color: const Color(0xFFFFAB00),
+    icon: Icons.watch_rounded,
+    color: const Color(0xFFEF476F),
     imageUrl:
-        'https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?w=400',
+        'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400',
   ),
 ];
 
-// ═══════════════════════════════════════════════════════════════════════════
-// DUMMY PRODUCTS - High-End Futuristic Electronics
-// ═══════════════════════════════════════════════════════════════════════════
-
 final List<ProductModel> dummyProducts = [
-  // ─────────────────────────────────────────────────────────────────────────
-  // FEATURED HERO PRODUCTS
-  // ─────────────────────────────────────────────────────────────────────────
   ProductModel(
     id: 'p001',
-    name: 'Neon Gaming Headset Pro',
-    nameAr: 'سماعة الألعاب نيون برو',
-    price: 299.99,
-    originalPrice: 399.99,
+    name: 'Premium Cotton Overshirt',
+    nameAr: 'قميص قطني فاخر',
+    price: 149.00,
+    originalPrice: 199.00,
     description:
-        'Immersive 7.1 surround sound with RGB lighting that syncs with your gameplay. Features active noise cancellation and a retractable boom mic.',
+        'Soft mid-weight cotton overshirt with a relaxed cut, clean stitching, and everyday styling for work or weekends.',
     descriptionAr:
-        'صوت محيطي غامر 7.1 مع إضاءة RGB تتزامن مع ألعابك. تتميز بإلغاء الضوضاء النشط وميكروفون قابل للسحب.',
-    rating: 4.9,
-    reviewCount: 2847,
+        'قميص قطني متوسط السماكة بقصة مريحة وخياطة أنيقة، مناسب للإطلالات اليومية والعمل ونهاية الأسبوع.',
+    rating: 4.8,
+    reviewCount: 1240,
     imageUrl:
-        'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=800',
-    category: 'headphones',
+        'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800',
+    category: 'men',
     isFeatured: true,
     isNew: true,
+    unit: 'Piece',
+    unitAr: 'قطعة',
     specs: {
-      'Driver Size': '50mm Neodymium',
-      'Frequency': '20Hz - 40kHz',
-      'Impedance': '32Ω',
-      'Connectivity': 'Wireless 2.4GHz / Bluetooth 5.2',
-      'Battery': '30 hours',
+      'Material': '100% Cotton',
+      'Fit': 'Relaxed',
+      'Sizes': 'S - XXL',
+      'Care': 'Machine Wash',
     },
-    colors: ['#00F5FF', '#FF00E5', '#00FF88'],
+    colors: ['#1F2937', '#E5E7EB', '#6B7280'],
   ),
   ProductModel(
     id: 'p002',
-    name: 'Cyberpunk Laptop X1',
-    nameAr: 'لابتوب سايبربانك X1',
-    price: 2499.99,
-    originalPrice: 2999.99,
+    name: 'Pleated Midi Dress',
+    nameAr: 'فستان ميدي بكسرات',
+    price: 229.00,
+    originalPrice: 279.00,
     description:
-        'Ultra-thin powerhouse with holographic display technology. RTX 5090 graphics and 14th Gen processor for next-level performance.',
+        'Elegant pleated midi dress with a flowing silhouette and breathable fabric for occasions and refined daily looks.',
     descriptionAr:
-        'محطة طاقة رفيعة للغاية مع تقنية العرض الهولوغرافي. رسومات RTX 5090 ومعالج الجيل 14 للأداء المتفوق.',
-    rating: 4.8,
-    reviewCount: 1256,
+        'فستان ميدي أنيق بكسرات وقماش مريح بقصة انسيابية، مناسب للمناسبات والإطلالات اليومية الراقية.',
+    rating: 4.9,
+    reviewCount: 980,
     imageUrl:
-        'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800',
-    category: 'laptops',
+        'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=800',
+    category: 'women',
     isFeatured: true,
+    unit: 'Piece',
+    unitAr: 'قطعة',
     specs: {
-      'Display': '16" 4K OLED 240Hz',
-      'Processor': 'Intel Core i9-14900HX',
-      'GPU': 'NVIDIA RTX 5090 16GB',
-      'RAM': '64GB DDR5',
-      'Storage': '2TB NVMe SSD',
+      'Material': 'Crepe Blend',
+      'Length': 'Midi',
+      'Sizes': 'XS - XL',
+      'Fit': 'Regular',
     },
-    colors: ['#1A1A2E', '#0D0D1A'],
+    colors: ['#111827', '#B45309', '#F3E8FF'],
   ),
   ProductModel(
     id: 'p003',
-    name: 'Holographic Smartwatch Ultra',
-    nameAr: 'ساعة هولوغرافية ألترا',
-    price: 899.99,
-    originalPrice: 1099.99,
+    name: 'AirFlex Running Sneakers',
+    nameAr: 'حذاء إيرفلكس للجري',
+    price: 319.00,
+    originalPrice: 399.00,
     description:
-        'Project notifications in mid-air with our revolutionary holographic display. Health monitoring with AI-powered insights.',
+        'Lightweight running sneakers with cushioned soles, breathable mesh, and stable grip for training and daily walks.',
     descriptionAr:
-        'اعرض الإشعارات في الهواء مع شاشتنا الهولوغرافية الثورية. مراقبة صحية مع رؤى مدعومة بالذكاء الاصطناعي.',
-    rating: 4.7,
-    reviewCount: 892,
-    imageUrl:
-        'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800',
-    category: 'smartwatches',
+        'حذاء رياضي خفيف للجري بنعل مبطن وشبك قابل للتهوية وثبات ممتاز للتمارين والمشي اليومي.',
+    rating: 4.9,
+    reviewCount: 2100,
+    imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800',
+    category: 'sneakers',
     isFeatured: true,
     isNew: true,
+    unit: 'Pair',
+    unitAr: 'زوج',
     specs: {
-      'Display': '2.1" AMOLED + Hologram',
-      'Battery': '7 days',
-      'Water Resistance': '10ATM',
-      'Sensors': 'Heart, SpO2, ECG, Temp',
-      'Connectivity': 'LTE / WiFi / BT 5.3',
+      'Upper': 'Breathable Mesh',
+      'Sole': 'EVA Cushion',
+      'Sizes': '39 - 46',
+      'Use': 'Running',
     },
-    colors: ['#00D9FF', '#BB00FF', '#FF6B00'],
+    colors: ['#FFFFFF', '#111827', '#EF4444'],
   ),
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // SMARTPHONES
-  // ─────────────────────────────────────────────────────────────────────────
   ProductModel(
     id: 'p004',
-    name: 'Quantum Phone 15 Pro',
-    nameAr: 'كوانتم فون 15 برو',
-    price: 1299.99,
+    name: 'Leather Oxford Shoes',
+    nameAr: 'حذاء أوكسفورد جلدي',
+    price: 389.00,
+    originalPrice: 449.00,
     description:
-        'Quantum processor with neural AI engine. 200MP camera system captures light beyond human perception.',
+        'Polished genuine leather Oxford shoes with padded lining and a timeless profile for formal outfits.',
     descriptionAr:
-        'معالج كمي مع محرك ذكاء اصطناعي عصبي. نظام كاميرا 200 ميجابكسل يلتقط الضوء فوق الإدراك البشري.',
-    rating: 4.9,
-    reviewCount: 5621,
+        'حذاء أوكسفورد من الجلد الطبيعي ببطانة مريحة وتصميم كلاسيكي يناسب الإطلالات الرسمية.',
+    rating: 4.7,
+    reviewCount: 640,
     imageUrl:
-        'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800',
-    category: 'smartphones',
-    isNew: true,
+        'https://images.unsplash.com/photo-1614252369475-531eba835eb1?w=800',
+    category: 'formal_shoes',
+    unit: 'Pair',
+    unitAr: 'زوج',
     specs: {
-      'Display': '6.8" LTPO OLED 144Hz',
-      'Processor': 'Quantum A20 Bionic',
-      'Camera': '200MP + 50MP + 12MP',
-      'Battery': '6000mAh',
-      'Charging': '200W Wired / 80W Wireless',
+      'Material': 'Genuine Leather',
+      'Lining': 'Padded',
+      'Sizes': '40 - 45',
+      'Style': 'Oxford',
     },
-    colors: ['#F5F5FF', '#1A1A2E', '#00D9FF'],
+    colors: ['#3B2415', '#111111'],
   ),
   ProductModel(
     id: 'p005',
-    name: 'Nebula Fold Z',
-    nameAr: 'نيبولا فولد زد',
-    price: 1899.99,
-    originalPrice: 2199.99,
+    name: 'Kids Denim Jacket',
+    nameAr: 'جاكيت جينز للأطفال',
+    price: 119.00,
     description:
-        'Triple-fold design transforms from phone to tablet to laptop mode. Seamless multitasking on a borderless display.',
+        'Durable kids denim jacket with soft lining, snap buttons, and an easy fit for active days.',
     descriptionAr:
-        'تصميم ثلاثي الطي يتحول من هاتف إلى جهاز لوحي إلى وضع لابتوب. تعدد مهام سلس على شاشة بدون حدود.',
+        'جاكيت جينز متين للأطفال ببطانة ناعمة وأزرار سهلة وقصة مريحة للأيام النشطة.',
     rating: 4.6,
-    reviewCount: 1823,
+    reviewCount: 420,
     imageUrl:
-        'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800',
-    category: 'smartphones',
-    isFeatured: true,
+        'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=800',
+    category: 'kids',
+    isNew: true,
+    unit: 'Piece',
+    unitAr: 'قطعة',
     specs: {
-      'Display': '8.5" Foldable AMOLED',
-      'Processor': 'Nebula X2 Chip',
-      'RAM': '16GB',
-      'Storage': '512GB',
-      'Hinges': 'Titanium Multi-Axis',
+      'Material': 'Denim',
+      'Age': '4 - 10 Years',
+      'Closure': 'Snap Buttons',
+      'Fit': 'Comfort',
     },
-    colors: ['#BB00FF', '#00FF88'],
+    colors: ['#2563EB', '#93C5FD'],
   ),
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // GAMING
-  // ─────────────────────────────────────────────────────────────────────────
   ProductModel(
     id: 'p006',
-    name: 'Void Controller Elite',
-    nameAr: 'وحدة تحكم فويد إيليت',
-    price: 199.99,
+    name: 'Performance Training Set',
+    nameAr: 'طقم رياضي للتمارين',
+    price: 179.00,
+    originalPrice: 219.00,
     description:
-        'Haptic feedback that puts you in the game. Customizable RGB, hall-effect triggers, and zero-latency wireless.',
+        'Moisture-wicking sportswear set with stretch fabric for gym sessions, outdoor runs, and relaxed movement.',
     descriptionAr:
-        'ردود فعل لمسية تضعك في اللعبة. RGB قابل للتخصيص، محفزات تأثير هول، ولاسلكي بدون تأخير.',
+        'طقم رياضي بقماش مرن يمتص الرطوبة، مناسب للنادي والجري والحركة اليومية المريحة.',
     rating: 4.8,
-    reviewCount: 3421,
+    reviewCount: 760,
     imageUrl:
-        'https://images.unsplash.com/photo-1592840496694-26d035b52b48?w=800',
-    category: 'gaming',
-    isNew: true,
+        'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800',
+    category: 'sportswear',
+    isFeatured: true,
+    unit: 'Set',
+    unitAr: 'طقم',
     specs: {
-      'Connectivity': 'Wireless 2.4GHz / Bluetooth',
-      'Battery': '40 hours',
-      'Triggers': 'Hall Effect Analog',
-      'Compatibility': 'PC, PlayStation, Xbox, Switch',
-      'Features': 'Programmable Back Buttons',
+      'Fabric': 'Stretch Knit',
+      'Pieces': 'Top + Pants',
+      'Sizes': 'S - XL',
+      'Feature': 'Quick Dry',
     },
-    colors: ['#00F5FF', '#FF00E5', '#1A1A2E'],
+    colors: ['#111827', '#0EA5E9', '#22C55E'],
   ),
   ProductModel(
     id: 'p007',
-    name: 'Aurora Gaming Monitor 32"',
-    nameAr: 'شاشة أورورا للألعاب 32 بوصة',
-    price: 1299.99,
-    originalPrice: 1599.99,
+    name: 'Minimal Crossbody Bag',
+    nameAr: 'حقيبة كروس بودي بسيطة',
+    price: 135.00,
     description:
-        'OLED perfection with 360Hz refresh rate and 0.03ms response time. Immerse yourself in true HDR 1400.',
+        'Compact crossbody bag with adjustable strap, secure zipper, and enough room for daily essentials.',
     descriptionAr:
-        'كمال OLED مع معدل تحديث 360Hz ووقت استجابة 0.03 مللي ثانية. انغمس في HDR 1400 الحقيقي.',
-    rating: 4.9,
-    reviewCount: 987,
+        'حقيبة كروس بودي صغيرة بحزام قابل للتعديل وسحاب آمن ومساحة مناسبة للاحتياجات اليومية.',
+    rating: 4.7,
+    reviewCount: 530,
     imageUrl:
-        'https://images.unsplash.com/photo-1616588589676-62b3bd4ff6d2?w=800',
-    category: 'gaming',
-    isFeatured: true,
+        'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=800',
+    category: 'bags',
+    unit: 'Piece',
+    unitAr: 'قطعة',
     specs: {
-      'Panel': '32" QD-OLED',
-      'Resolution': '4K UHD',
-      'Refresh Rate': '360Hz',
-      'Response Time': '0.03ms',
-      'HDR': 'HDR 1400',
+      'Material': 'Vegan Leather',
+      'Strap': 'Adjustable',
+      'Closure': 'Zip',
+      'Size': 'Small',
     },
-    colors: ['#1A1A2E'],
+    colors: ['#000000', '#C08457', '#F8FAFC'],
   ),
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // AUDIO
-  // ─────────────────────────────────────────────────────────────────────────
   ProductModel(
     id: 'p008',
-    name: 'Pulse Earbuds Pro',
-    nameAr: 'سماعات بالس برو',
-    price: 249.99,
+    name: 'Classic Steel Watch',
+    nameAr: 'ساعة ستانلس كلاسيكية',
+    price: 259.00,
+    originalPrice: 299.00,
     description:
-        'Spatial audio that adapts to your environment. Crystal-clear calls with AI voice isolation technology.',
+        'Classic stainless-steel watch with a clean dial, water resistance, and an adjustable bracelet.',
     descriptionAr:
-        'صوت مكاني يتكيف مع بيئتك. مكالمات واضحة تماماً مع تقنية عزل الصوت بالذكاء الاصطناعي.',
-    rating: 4.7,
-    reviewCount: 4532,
-    imageUrl:
-        'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800',
-    category: 'audio',
-    isNew: true,
-    specs: {
-      'Driver': '11mm Custom',
-      'ANC': 'Adaptive AI-Powered',
-      'Battery': '8h + 32h case',
-      'Codec': 'LDAC, aptX Lossless',
-      'Water Resistance': 'IPX5',
-    },
-    colors: ['#F5F5FF', '#1A1A2E', '#00D9FF'],
-  ),
-  ProductModel(
-    id: 'p009',
-    name: 'Titan Soundbar Pro',
-    nameAr: 'ساوند بار تيتان برو',
-    price: 799.99,
-    originalPrice: 999.99,
-    description:
-        'Dolby Atmos 11.1.4 channel sound from a single bar. AI upscaling makes everything sound like a concert.',
-    descriptionAr:
-        'صوت Dolby Atmos 11.1.4 قناة من شريط واحد. ترقية الذكاء الاصطناعي تجعل كل شيء يبدو كحفل موسيقي.',
+        'ساعة كلاسيكية من الستانلس ستيل بميناء أنيق ومقاومة للماء وسوار قابل للتعديل.',
     rating: 4.8,
-    reviewCount: 1267,
-    imageUrl: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800',
-    category: 'audio',
-    specs: {
-      'Channels': '11.1.4',
-      'Power': '1100W',
-      'Dolby': 'Atmos, Vision, TrueHD',
-      'Connectivity': 'HDMI eARC, WiFi, BT',
-      'Subwoofer': '12" Wireless',
-    },
-    colors: ['#1A1A2E'],
-  ),
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // TABLETS
-  // ─────────────────────────────────────────────────────────────────────────
-  ProductModel(
-    id: 'p010',
-    name: 'Canvas Pro Tablet 14"',
-    nameAr: 'جهاز كانفاس برو 14 بوصة',
-    price: 1199.99,
-    description:
-        'The ultimate creative tool with pressure-sensitive stylus and infinite canvas. Desktop-class performance.',
-    descriptionAr:
-        'الأداة الإبداعية المثلى مع قلم حساس للضغط ولوحة لا نهائية. أداء بمستوى سطح المكتب.',
-    rating: 4.8,
-    reviewCount: 2156,
-    imageUrl: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800',
-    category: 'tablets',
-    isFeatured: true,
-    specs: {
-      'Display': '14.6" OLED 120Hz',
-      'Processor': 'M4 Max Chip',
-      'RAM': '32GB',
-      'Storage': '1TB',
-      'Stylus': '4096 Pressure Levels',
-    },
-    colors: ['#F5F5FF', '#1A1A2E'],
-  ),
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // ACCESSORIES
-  // ─────────────────────────────────────────────────────────────────────────
-  ProductModel(
-    id: 'p011',
-    name: 'Infinity Charging Pad',
-    nameAr: 'قاعدة شحن إنفينيتي',
-    price: 149.99,
-    description:
-        'Charge up to 5 devices simultaneously with our maglev technology. No more tangled cables.',
-    descriptionAr:
-        'اشحن حتى 5 أجهزة في وقت واحد مع تقنية المغناطيس. لا مزيد من الكابلات المتشابكة.',
-    rating: 4.6,
-    reviewCount: 1823,
+    reviewCount: 870,
     imageUrl:
-        'https://images.unsplash.com/photo-1586816879360-004f5b0c51e3?w=800',
+        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800',
     category: 'accessories',
-    isNew: true,
+    unit: 'Piece',
+    unitAr: 'قطعة',
     specs: {
-      'Power': '100W Total',
-      'Devices': 'Up to 5',
-      'Fast Charge': 'Qi2, MagSafe',
-      'Material': 'Glass + Aluminum',
-      'Features': 'Device Detection',
+      'Case': 'Stainless Steel',
+      'Water Resist': '3 ATM',
+      'Movement': 'Quartz',
+      'Warranty': '1 Year',
     },
-    colors: ['#F5F5FF', '#1A1A2E'],
-  ),
-  ProductModel(
-    id: 'p012',
-    name: 'HyperDrive USB-C Hub',
-    nameAr: 'موزع USB-C هايبر درايف',
-    price: 89.99,
-    description:
-        '12-in-1 connectivity solution with 8K HDMI, 10Gbps data, and 100W passthrough charging.',
-    descriptionAr:
-        'حل اتصال 12 في 1 مع HDMI 8K ونقل بيانات 10Gbps وشحن مرور 100W.',
-    rating: 4.5,
-    reviewCount: 2934,
-    imageUrl:
-        'https://images.unsplash.com/photo-1625772452859-1c03d5bf1137?w=800',
-    category: 'accessories',
-    specs: {
-      'Ports': '12-in-1',
-      'HDMI': '8K@60Hz / 4K@120Hz',
-      'USB': '2x USB-A, 2x USB-C',
-      'Card Reader': 'SD / microSD UHS-II',
-      'Charging': '100W PD Passthrough',
-    },
-    colors: ['#B8B8D0'],
+    colors: ['#D1D5DB', '#111827'],
   ),
 ];
 
-// ═══════════════════════════════════════════════════════════════════════════
-// HELPER GETTERS
-// ═══════════════════════════════════════════════════════════════════════════
-
-/// Get featured products
 List<ProductModel> get featuredProducts =>
     dummyProducts.where((p) => p.isFeatured).toList();
 
-/// Get new arrivals
 List<ProductModel> get newArrivals =>
     dummyProducts.where((p) => p.isNew).toList();
 
-/// Get products by category
 List<ProductModel> getProductsByCategory(String categoryId) =>
     dummyProducts.where((p) => p.category == categoryId).toList();
 
-/// Get products with discount
 List<ProductModel> get discountedProducts =>
     dummyProducts.where((p) => p.discountPercent != null).toList();
 
-/// Get top rated products
 List<ProductModel> get topRatedProducts {
   final sorted = List<ProductModel>.from(dummyProducts)
     ..sort((a, b) => b.rating.compareTo(a.rating));

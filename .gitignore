@@ -4,6 +4,7 @@
 *.pyc
 *.swp
 .DS_Store
+Thumbs.db
 .atom/
 .build/
 .buildlog/
@@ -11,6 +12,37 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+
+# Environment files and local secrets. Keep examples for reviewers/demo setup.
+.env
+.env.*
+!.env.example
+!.env.*.example
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.*.example
+
+# API exports and local testing collections may contain tokens, old endpoints,
+# or proprietary headers. Share sanitized examples in README instead.
+postman_collection*.json
+*.postman_collection.json
+*.postman_environment.json
+
+# Signing keys, certificates, and platform private configuration.
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+*.crt
+*.cer
+*.mobileprovision
+*.provisionprofile
+android/key.properties
+android/local.properties
+ios/Runner/GoogleService-Info.plist
+android/app/google-services.json
 
 # IntelliJ related
 *.iml
@@ -43,3 +75,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Local NestJS backend runtime artifacts.
+backend/node_modules/
+backend/dist/
+backend/coverage/
+backend/.logs/
+backend/*.log
+backend/.mysql-data/
+backend/.mysql-runtime/
+backend/public/uploads/

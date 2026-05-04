@@ -190,7 +190,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   SizedBox(height: 24.h),
 
                   Text(
-                    'TechVault',
+                    'StyleHub',
                     style: TextStyle(
                       fontSize: 28.sp,
                       fontWeight: FontWeight.bold,

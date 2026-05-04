@@ -11,7 +11,7 @@ import '../core/constants/app_colors.dart';
 /// Features floating gradient orbs that move slowly and blend together.
 ///
 /// • Light Mode: Soft pastel orbs (ice blue, lavender, pink)
-/// • Dark Mode: Deep cosmic orbs (purple, blue, void) with subtle glow
+/// • Dark Mode: Subtle warm gold orbs with elegant depth
 /// ═══════════════════════════════════════════════════════════════════════════
 
 class AnimatedGradientBackground extends StatefulWidget {
@@ -141,9 +141,9 @@ class _AnimatedGradientBackgroundState extends State<AnimatedGradientBackground>
     ];
 
     final List<Color> darkColors = [
-      const Color(0xFF4A00E0).withValues(alpha: 0.4), // Deep purple
-      const Color(0xFF0066FF).withValues(alpha: 0.3), // Electric blue
-      const Color(0xFF00D9FF).withValues(alpha: 0.25), // Cyan
+      const Color(0xFFD4AF37).withValues(alpha: 0.15), // Subtle gold
+      const Color(0xFFB8962E).withValues(alpha: 0.10), // Dark gold
+      const Color(0xFFA8842D).withValues(alpha: 0.08), // Deep gold
     ];
 
     final colors = isDark ? darkColors : lightColors;
@@ -258,8 +258,8 @@ class _MeshGradientPainter extends CustomPainter {
       center: Alignment.topLeft,
       radius: 1.0,
       colors: [
-        (isDark ? AppColors.neonPurple : const Color(0xFFB8E0FF)).withValues(
-          alpha: isDark ? 0.1 : 0.15,
+        (isDark ? AppColors.neonCyan : const Color(0xFFB8E0FF)).withValues(
+          alpha: isDark ? 0.06 : 0.15,
         ),
         Colors.transparent,
       ],
@@ -271,8 +271,8 @@ class _MeshGradientPainter extends CustomPainter {
       center: Alignment.bottomRight,
       radius: 1.0,
       colors: [
-        (isDark ? AppColors.neonCyan : const Color(0xFFFFD0E8)).withValues(
-          alpha: isDark ? 0.08 : 0.12,
+        (isDark ? AppColors.neonMagenta : const Color(0xFFFFD0E8)).withValues(
+          alpha: isDark ? 0.04 : 0.12,
         ),
         Colors.transparent,
       ],
@@ -314,7 +314,7 @@ class SimpleGradientBackground extends StatelessWidget {
             child: _StaticOrb(
               size: 400.w,
               color: isDark
-                  ? AppColors.neonPurple.withValues(alpha: 0.3)
+                  ? AppColors.neonCyan.withValues(alpha: 0.08)
                   : const Color(0xFFB8E0FF).withValues(alpha: 0.5),
             ),
           ),
@@ -324,7 +324,7 @@ class SimpleGradientBackground extends StatelessWidget {
             child: _StaticOrb(
               size: 500.w,
               color: isDark
-                  ? AppColors.neonCyan.withValues(alpha: 0.2)
+                  ? AppColors.neonMagenta.withValues(alpha: 0.06)
                   : const Color(0xFFFFD0E8).withValues(alpha: 0.4),
             ),
           ),
@@ -334,7 +334,7 @@ class SimpleGradientBackground extends StatelessWidget {
             child: _StaticOrb(
               size: 300.w,
               color: isDark
-                  ? AppColors.neonBlue.withValues(alpha: 0.15)
+                  ? AppColors.neonBlue.withValues(alpha: 0.05)
                   : const Color(0xFFE8D0FF).withValues(alpha: 0.4),
             ),
           ),

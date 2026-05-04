@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/dummy_data.dart';
+import '../../features/auth/providers/auth_providers.dart';
+import '../../features/cart/data/cart_repository.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// CART PROVIDER - Shopping Cart State Management
@@ -19,12 +23,17 @@ import '../../data/dummy_data.dart';
 class CartItem {
   final ProductModel product;
   final int quantity;
+  final int? rowId;
 
-  const CartItem({required this.product, required this.quantity});
+  const CartItem({required this.product, required this.quantity, this.rowId});
 
   /// Create a copy with updated quantity
-  CartItem copyWith({int? quantity}) {
-    return CartItem(product: product, quantity: quantity ?? this.quantity);
+  CartItem copyWith({int? quantity, int? rowId}) {
+    return CartItem(
+      product: product,
+      quantity: quantity ?? this.quantity,
+      rowId: rowId ?? this.rowId,
+    );
   }
 
   /// Total price for this item (price × quantity)
@@ -40,6 +49,9 @@ class CartNotifier extends Notifier<List<CartItem>> {
   @override
   List<CartItem> build() => [];
 
+  CartRepository get _repository =>
+      CartRepository(apiClient: ref.read(apiClientProvider));
+
   /// Add item to cart (increment if exists)
   void addItem(ProductModel product) {
     final existingIndex = state.indexWhere(
@@ -49,30 +61,65 @@ class CartNotifier extends Notifier<List<CartItem>> {
     if (existingIndex >= 0) {
       // Product exists, increment quantity
       final updatedItems = [...state];
+      final nextQuantity = updatedItems[existingIndex].quantity + 1;
       updatedItems[existingIndex] = updatedItems[existingIndex].copyWith(
-        quantity: updatedItems[existingIndex].quantity + 1,
+        quantity: nextQuantity,
       );
       state = updatedItems;
+      _syncQuantity(updatedItems[existingIndex], nextQuantity);
     } else {
       // New product, add to cart
       state = [...state, CartItem(product: product, quantity: 1)];
+      _syncAdd(product, 1);
+    }
+  }
+
+  /// Set specific quantity for a product
+  void setQuantity(ProductModel product, int quantity) {
+    final existingIndex = state.indexWhere(
+      (item) => item.product.id == product.id,
+    );
+
+    if (existingIndex >= 0) {
+      final updatedItems = [...state];
+      updatedItems[existingIndex] = updatedItems[existingIndex].copyWith(
+        quantity: quantity,
+      );
+      state = updatedItems;
+      _syncQuantity(updatedItems[existingIndex], quantity);
+    } else {
+      state = [...state, CartItem(product: product, quantity: quantity)];
+      _syncAdd(product, quantity);
     }
   }
 
   /// Remove item from cart completely
   void removeItem(String productId) {
+    CartItem? existing;
+    for (final item in state) {
+      if (item.product.id == productId) {
+        existing = item;
+        break;
+      }
+    }
     state = state.where((item) => item.product.id != productId).toList();
+    if (existing?.rowId != null) {
+      unawaited(_repository.deleteItem(existing!.rowId!).catchError((_) {}));
+    }
   }
 
   /// Increment quantity by 1
   void incrementQuantity(String productId) {
+    CartItem? changed;
     final updatedItems = state.map((item) {
       if (item.product.id == productId) {
-        return item.copyWith(quantity: item.quantity + 1);
+        changed = item.copyWith(quantity: item.quantity + 1);
+        return changed!;
       }
       return item;
     }).toList();
     state = updatedItems;
+    if (changed != null) _syncQuantity(changed!, changed!.quantity);
   }
 
   /// Decrement quantity by 1 (remove if reaches 0)
@@ -90,19 +137,23 @@ class CartNotifier extends Notifier<List<CartItem>> {
       removeItem(productId);
     } else {
       // Decrement quantity
+      CartItem? changed;
       final updatedItems = state.map((item) {
         if (item.product.id == productId) {
-          return item.copyWith(quantity: item.quantity - 1);
+          changed = item.copyWith(quantity: item.quantity - 1);
+          return changed!;
         }
         return item;
       }).toList();
       state = updatedItems;
+      if (changed != null) _syncQuantity(changed!, changed!.quantity);
     }
   }
 
   /// Clear all items from cart
   void clearCart() {
     state = [];
+    unawaited(_repository.clearCart().catchError((_) {}));
   }
 
   /// Get total price of all items
@@ -130,6 +181,36 @@ class CartNotifier extends Notifier<List<CartItem>> {
       orElse: () => CartItem(product: dummyProducts.first, quantity: 0),
     );
     return item.quantity;
+  }
+
+  void _syncAdd(ProductModel product, int quantity) {
+    unawaited(
+      _repository
+          .addItem(productId: product.id, quantity: quantity)
+          .then((rowId) {
+            if (rowId == null) return;
+            state = state
+                .map(
+                  (item) => item.product.id == product.id
+                      ? item.copyWith(rowId: rowId)
+                      : item,
+                )
+                .toList();
+          })
+          .catchError((_) {}),
+    );
+  }
+
+  void _syncQuantity(CartItem item, int quantity) {
+    if (item.rowId == null) {
+      _syncAdd(item.product, quantity);
+      return;
+    }
+    unawaited(
+      _repository
+          .updateQuantity(rowId: item.rowId!, quantity: quantity)
+          .catchError((_) {}),
+    );
   }
 }
 

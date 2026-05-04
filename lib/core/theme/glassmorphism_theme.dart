@@ -9,7 +9,7 @@ import '../constants/app_colors.dart';
 ///
 /// Two distinct visual themes:
 /// • Light Mode: "Frosted Ice" ❄️ - Soft, pastel, blurry
-/// • Dark Mode: "Smoked Glass" 🌙 - Deep dark, neon accents, glossy edges
+/// • Dark Mode: "Dark Luxury" ✨ - Deep black, gold accents, elegant
 /// ═══════════════════════════════════════════════════════════════════════════
 
 class GlassmorphismTheme {
@@ -76,7 +76,7 @@ class GlassmorphismTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.lightAccent,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.lightGradientStart,
           elevation: 0,
           padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
           shape: RoundedRectangleBorder(
@@ -130,7 +130,7 @@ class GlassmorphismTheme {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // DARK THEME: "Smoked Glass" 🌙
+  // DARK THEME: "Dark Luxury" ✨
   // ═══════════════════════════════════════════════════════════════════════════
 
   static ThemeData get darkTheme {
@@ -143,8 +143,8 @@ class GlassmorphismTheme {
         primary: AppColors.neonCyan,
         secondary: AppColors.neonMagenta,
         surface: AppColors.darkGlassSurface,
-        onPrimary: AppColors.darkGradientStart,
-        onSecondary: AppColors.darkGradientStart,
+        onPrimary: Colors.black,
+        onSecondary: Colors.black,
         onSurface: AppColors.darkTextPrimary,
         error: AppColors.error,
         onError: Colors.white,
@@ -190,11 +190,11 @@ class GlassmorphismTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.neonCyan,
-          foregroundColor: AppColors.darkGradientStart,
+          foregroundColor: Colors.black,
           elevation: 0,
           padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(12.r),
           ),
           textStyle: GoogleFonts.poppins(
             fontSize: 16.sp,
@@ -232,16 +232,19 @@ class GlassmorphismTheme {
 
       // Card Theme
       cardTheme: CardThemeData(
-        color: AppColors.darkGlassSurface.withValues(alpha: 0.35),
+        color: AppColors.darkGlassSurface.withValues(alpha: 0.85),
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.r),
+          borderRadius: BorderRadius.circular(14.r),
+          side: BorderSide(
+            color: Colors.white.withValues(alpha: 0.1),
+          ),
         ),
       ),
 
       // Divider
       dividerTheme: DividerThemeData(
-        color: AppColors.neonCyan.withValues(alpha: 0.2),
+        color: Colors.white.withValues(alpha: 0.1),
         thickness: 1,
       ),
     );

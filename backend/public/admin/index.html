@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>لوحة تحكم المتجر</title>
+    <link rel="stylesheet" href="/admin/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Al Shihab Admin</p>
+        <h1>إدارة الإعلانات والعروض</h1>
+      </div>
+      <div class="key-box">
+        <label for="adminKey">مفتاح الإدارة</label>
+        <input id="adminKey" type="password" autocomplete="off" />
+        <button id="saveKeyButton" type="button">حفظ</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel summary-panel" aria-label="ملخص الإعلانات">
+        <div class="stat">
+          <span id="totalCount">0</span>
+          <p>كل الحملات</p>
+        </div>
+        <div class="stat">
+          <span id="activeCount">0</span>
+          <p>نشطة</p>
+        </div>
+        <div class="stat">
+          <span id="offerCount">0</span>
+          <p>عروض خصم</p>
+        </div>
+        <div class="toolbar">
+          <select id="placementFilter">
+            <option value="">كل المواضع</option>
+            <option value="home_hero">واجهة الرئيسية</option>
+            <option value="home_strip">شريط الرئيسية</option>
+            <option value="category">التصنيفات</option>
+          </select>
+          <button id="refreshButton" type="button">تحديث</button>
+          <button id="newButton" type="button">إعلان جديد</button>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <section class="panel form-panel" aria-label="نموذج الإعلان">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Campaign Form</p>
+              <h2 id="formTitle">إعلان جديد</h2>
+            </div>
+            <button id="cancelEditButton" class="ghost hidden" type="button">
+              إلغاء التعديل
+            </button>
+          </div>
+
+          <form id="advertForm" class="form-grid">
+            <input id="advertId" type="hidden" />
+
+            <label>
+              المعرف الفريد
+              <input id="slug" required maxlength="80" placeholder="summer-shoes-30" />
+            </label>
+
+            <label>
+              الموضع
+              <select id="placement" required>
+                <option value="home_hero">واجهة الرئيسية</option>
+                <option value="home_strip">شريط الرئيسية</option>
+                <option value="category">التصنيفات</option>
+              </select>
+            </label>
+
+            <label>
+              العنوان بالعربي
+              <input id="titleAr" required maxlength="160" placeholder="خصم على الأحذية" />
+            </label>
+
+            <label>
+              العنوان بالإنجليزي
+              <input id="title" required maxlength="160" placeholder="Shoes Sale" />
+            </label>
+
+            <label class="wide">
+              الوصف بالعربي
+              <textarea id="subtitleAr" required maxlength="500"></textarea>
+            </label>
+
+            <label class="wide">
+              الوصف بالإنجليزي
+              <textarea id="subtitle" required maxlength="500"></textarea>
+            </label>
+
+            <label class="wide">
+              رابط الصورة
+              <input id="imageUrl" required type="url" maxlength="700" />
+            </label>
+
+            <label>
+              نص الزر بالعربي
+              <input id="ctaLabelAr" required maxlength="80" placeholder="تسوق الآن" />
+            </label>
+
+            <label>
+              نص الزر بالإنجليزي
+              <input id="ctaLabel" required maxlength="80" placeholder="Shop Now" />
+            </label>
+
+            <label>
+              نوع الحملة
+              <select id="campaignType" required>
+                <option value="offer">عرض خصم</option>
+                <option value="seasonal">موسمية</option>
+                <option value="collection">مجموعة</option>
+                <option value="marketing">تسويق</option>
+              </select>
+            </label>
+
+            <label>
+              نسبة الخصم
+              <input id="discountPercent" type="number" min="0" max="100" />
+            </label>
+
+            <label>
+              رقم المنتج
+              <input id="productId" maxlength="80" placeholder="p003" />
+            </label>
+
+            <label>
+              التصنيف
+              <input id="categoryId" maxlength="80" placeholder="sneakers" />
+            </label>
+
+            <label>
+              الأولوية
+              <input id="priority" type="number" min="1" max="9999" value="10" required />
+            </label>
+
+            <label>
+              بداية العرض
+              <input id="startsAt" type="datetime-local" required />
+            </label>
+
+            <label>
+              نهاية العرض
+              <input id="endsAt" type="datetime-local" required />
+            </label>
+
+            <label class="switch">
+              <input id="active" type="checkbox" checked />
+              <span>الإعلان نشط</span>
+            </label>
+
+            <div class="preview wide">
+              <img id="imagePreview" alt="" />
+              <div>
+                <p id="previewTitle">معاينة الإعلان</p>
+                <span id="previewMeta">سيظهر الشكل هنا بعد إدخال البيانات</span>
+              </div>
+            </div>
+
+            <div class="actions wide">
+              <button id="submitButton" type="submit">حفظ الإعلان</button>
+              <button id="resetButton" class="ghost" type="button">تفريغ</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel list-panel" aria-label="قائمة الإعلانات">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Campaigns</p>
+              <h2>الحملات الحالية</h2>
+            </div>
+            <span id="statusText" class="status">جاهز</span>
+          </div>
+          <div id="advertsList" class="adverts-list"></div>
+        </section>
+      </section>
+
+      <section class="panel users-panel" aria-label="إدارة المستخدمين">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Users</p>
+            <h2>إدارة المستخدمين</h2>
+          </div>
+          <div class="toolbar users-toolbar">
+            <input id="userSearch" placeholder="بحث بالاسم أو البريد أو الهاتف" />
+            <button id="refreshUsersButton" type="button">تحديث المستخدمين</button>
+          </div>
+        </div>
+
+        <div class="users-summary">
+          <div class="stat">
+            <span id="usersCount">0</span>
+            <p>كل المستخدمين</p>
+          </div>
+          <div class="stat">
+            <span id="activeUsersCount">0</span>
+            <p>حسابات نشطة</p>
+          </div>
+          <div class="stat">
+            <span id="verifiedUsersCount">0</span>
+            <p>حسابات موثقة</p>
+          </div>
+        </div>
+
+        <form id="userForm" class="form-grid user-form hidden">
+          <input id="userId" type="hidden" />
+          <label>
+            الاسم
+            <input id="userName" required maxlength="120" />
+          </label>
+          <label>
+            البريد
+            <input id="userEmail" type="email" maxlength="160" />
+          </label>
+          <label>
+            الهاتف
+            <input id="userPhone" maxlength="40" />
+          </label>
+          <label class="switch">
+            <input id="userActive" type="checkbox" />
+            <span>الحساب نشط</span>
+          </label>
+          <label class="switch">
+            <input id="userVerified" type="checkbox" />
+            <span>الحساب موثق</span>
+          </label>
+          <div class="actions">
+            <button id="saveUserButton" type="submit">حفظ المستخدم</button>
+            <button id="cancelUserEditButton" class="ghost" type="button">
+              إلغاء
+            </button>
+          </div>
+        </form>
+
+        <div id="usersList" class="users-list"></div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="/admin/app.js"></script>
+  </body>
+</html>

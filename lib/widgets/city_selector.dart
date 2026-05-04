@@ -1,3 +1,4 @@
+import 'package:al_shihab/widgets/glass_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,28 +41,13 @@ class _CityPickerSheet extends ConsumerWidget {
     final selectedCity = ref.watch(selectedCityProvider);
     final isArabic = context.locale.languageCode == 'ar';
 
-    return Container(
-      constraints: BoxConstraints(maxHeight: 520.h),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141428) : const Color(0xFFF8FBFF),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
-        border: Border(
-          top: BorderSide(
-            color: isDark
-                ? AppColors.neonCyan.withValues(alpha: 0.3)
-                : AppColors.lightAccent.withValues(alpha: 0.15),
-            width: 1.5,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.1),
-            blurRadius: 30,
-            offset: const Offset(0, -10),
-          ),
-        ],
-      ),
-      child: Column(
+    return GlassContainer(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+      animate: false,
+      padding: EdgeInsets.zero,
+      child: Container(
+        constraints: BoxConstraints(maxHeight: 520.h),
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // ── Handle bar ───────────────────────────────────────────
@@ -101,7 +87,7 @@ class _CityPickerSheet extends ConsumerWidget {
                   child: Icon(
                     Icons.location_city_rounded,
                     size: 18.w,
-                    color: Colors.white,
+                    color: isDark ? Colors.white : AppColors.lightGradientStart,
                   ),
                 ),
                 SizedBox(width: 12.w),
@@ -301,7 +287,7 @@ class _CityPickerSheet extends ConsumerWidget {
                                 child: Icon(
                                   Icons.check_rounded,
                                   size: 14.w,
-                                  color: Colors.white,
+                                  color: isDark ? Colors.white : AppColors.lightGradientStart,
                                 ),
                               ),
                           ],
@@ -315,6 +301,7 @@ class _CityPickerSheet extends ConsumerWidget {
           ),
         ],
       ),
+     ),
     );
   }
 }

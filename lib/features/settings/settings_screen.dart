@@ -9,6 +9,8 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimensions.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/providers/location_provider.dart';
+import '../../features/auth/auth_screen.dart';
+import '../../features/auth/providers/auth_providers.dart';
 import '../../widgets/city_selector.dart';
 import '../../widgets/glass_setting_tile.dart';
 
@@ -31,6 +33,8 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isArabic = context.locale.languageCode == 'ar';
+    final authAsync = ref.watch(authControllerProvider);
+    final isAuthenticated = authAsync.value?.isAuthenticated == true;
 
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
@@ -39,7 +43,7 @@ class SettingsScreen extends ConsumerWidget {
         SliverToBoxAdapter(child: _buildHeader(context, isDark)),
 
         // User Profile Section
-        SliverToBoxAdapter(child: _buildProfileSection(context, isDark)),
+        SliverToBoxAdapter(child: _buildProfileSection(context, ref, isDark)),
 
         SliverToBoxAdapter(child: SizedBox(height: AppDimensions.spacingXL)),
 
@@ -176,15 +180,22 @@ class SettingsScreen extends ConsumerWidget {
 
         SliverToBoxAdapter(child: SizedBox(height: AppDimensions.spacingLG)),
 
-        // Logout
+        // Account action
         SliverToBoxAdapter(
           child: GlassSettingTile(
-            icon: Icons.logout_rounded,
-            iconColor: AppColors.error,
-            title: 'logout'.tr(),
+            icon: isAuthenticated ? Icons.logout_rounded : Icons.login_rounded,
+            iconColor: isAuthenticated
+                ? AppColors.error
+                : (isDark ? AppColors.neonCyan : AppColors.lightAccent),
+            title: isAuthenticated ? 'logout'.tr() : 'login'.tr(),
+            subtitle: isAuthenticated ? null : 'login_required_subtitle'.tr(),
             animationDelay: const Duration(milliseconds: 550),
             onTap: () {
-              _showLogoutDialog(context, isDark);
+              if (isAuthenticated) {
+                _showLogoutDialog(context, ref, isDark);
+              } else {
+                _openAuth(context);
+              }
             },
           ),
         ),
@@ -213,7 +224,24 @@ class SettingsScreen extends ConsumerWidget {
         .slideY(begin: -0.1, end: 0);
   }
 
-  Widget _buildProfileSection(BuildContext context, bool isDark) {
+  Widget _buildProfileSection(
+    BuildContext context,
+    WidgetRef ref,
+    bool isDark,
+  ) {
+    final authAsync = ref.watch(authControllerProvider);
+    final authState = authAsync.value;
+    final isAuthenticated = authState?.isAuthenticated == true;
+    final user = authState?.user;
+    final displayName = isAuthenticated
+        ? (user?.name?.isNotEmpty == true ? user!.name! : 'account'.tr())
+        : 'guest_user'.tr();
+    final subtitle = isAuthenticated
+        ? (user?.email?.isNotEmpty == true
+              ? user!.email!
+              : user?.phone ?? 'verified_account'.tr())
+        : 'login_required_subtitle'.tr();
+
     return Container(
           margin: EdgeInsets.symmetric(horizontal: AppDimensions.spacingMD),
           decoration: BoxDecoration(
@@ -221,12 +249,12 @@ class SettingsScreen extends ConsumerWidget {
             boxShadow: isDark
                 ? [
                     BoxShadow(
-                      color: AppColors.neonCyan.withOpacity(0.15),
+                      color: AppColors.neonCyan.withValues(alpha: 0.15),
                       blurRadius: 25,
                       spreadRadius: -5,
                     ),
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       blurRadius: 20,
                       spreadRadius: -5,
                       offset: const Offset(0, 10),
@@ -234,7 +262,7 @@ class SettingsScreen extends ConsumerWidget {
                   ]
                 : [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 30,
                       spreadRadius: -5,
                       offset: const Offset(0, 15),
@@ -251,13 +279,13 @@ class SettingsScreen extends ConsumerWidget {
               child: Container(
                 decoration: BoxDecoration(
                   color: isDark
-                      ? AppColors.darkGlassSurface.withOpacity(0.4)
-                      : Colors.white.withOpacity(0.3),
+                      ? AppColors.darkGlassSurface.withValues(alpha: 0.4)
+                      : Colors.white.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
                   border: Border.all(
                     color: isDark
-                        ? AppColors.neonCyan.withOpacity(0.3)
-                        : Colors.white.withOpacity(0.4),
+                        ? AppColors.neonCyan.withValues(alpha: 0.3)
+                        : Colors.white.withValues(alpha: 0.4),
                     width: isDark ? AppDimensions.glassBorderWidth : 1,
                   ),
                 ),
@@ -275,13 +303,13 @@ class SettingsScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'TechVault User',
+                            displayName,
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            'user@techvault.com',
+                            subtitle,
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(
                                   color: isDark
@@ -298,7 +326,7 @@ class SettingsScreen extends ConsumerWidget {
                             decoration: BoxDecoration(
                               color:
                                   (isDark ? AppColors.neonGreen : Colors.green)
-                                      .withOpacity(0.15),
+                                      .withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(
                                 AppDimensions.radiusFull,
                               ),
@@ -307,7 +335,7 @@ class SettingsScreen extends ConsumerWidget {
                                     (isDark
                                             ? AppColors.neonGreen
                                             : Colors.green)
-                                        .withOpacity(0.3),
+                                        .withValues(alpha: 0.3),
                               ),
                             ),
                             child: Row(
@@ -325,7 +353,7 @@ class SettingsScreen extends ConsumerWidget {
                                         ? [
                                             BoxShadow(
                                               color: AppColors.neonGreen
-                                                  .withOpacity(0.5),
+                                                  .withValues(alpha: 0.5),
                                               blurRadius: 6,
                                             ),
                                           ]
@@ -334,7 +362,9 @@ class SettingsScreen extends ConsumerWidget {
                                 ),
                                 SizedBox(width: 6.w),
                                 Text(
-                                  'premium'.tr(),
+                                  isAuthenticated
+                                      ? 'verified_account'.tr()
+                                      : 'guest'.tr(),
                                   style: TextStyle(
                                     fontSize: 10.sp,
                                     fontWeight: FontWeight.w600,
@@ -350,31 +380,43 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ),
 
-                    // Edit Profile
-                    Container(
-                      width: 40.w,
-                      height: 40.w,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color:
-                            (isDark
-                                    ? AppColors.neonCyan
-                                    : AppColors.lightAccent)
-                                .withOpacity(0.15),
-                        border: Border.all(
+                    // Account action
+                    InkWell(
+                      onTap: isAuthenticated
+                          ? () => ref
+                                .read(authControllerProvider.notifier)
+                                .refreshMe()
+                          : () => _openAuth(context),
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusFull,
+                      ),
+                      child: Container(
+                        width: 40.w,
+                        height: 40.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
                           color:
                               (isDark
                                       ? AppColors.neonCyan
                                       : AppColors.lightAccent)
-                                  .withOpacity(0.3),
+                                  .withValues(alpha: 0.15),
+                          border: Border.all(
+                            color:
+                                (isDark
+                                        ? AppColors.neonCyan
+                                        : AppColors.lightAccent)
+                                    .withValues(alpha: 0.3),
+                          ),
                         ),
-                      ),
-                      child: Icon(
-                        Icons.edit_rounded,
-                        size: 18.w,
-                        color: isDark
-                            ? AppColors.neonCyan
-                            : AppColors.lightAccent,
+                        child: Icon(
+                          isAuthenticated
+                              ? Icons.refresh_rounded
+                              : Icons.login_rounded,
+                          size: 18.w,
+                          color: isDark
+                              ? AppColors.neonCyan
+                              : AppColors.lightAccent,
+                        ),
                       ),
                     ),
                   ],
@@ -411,14 +453,14 @@ class SettingsScreen extends ConsumerWidget {
         boxShadow: isDark
             ? [
                 BoxShadow(
-                  color: AppColors.neonCyan.withOpacity(0.4),
+                  color: AppColors.neonCyan.withValues(alpha: 0.4),
                   blurRadius: 15,
                   spreadRadius: 0,
                 ),
               ]
             : [
                 BoxShadow(
-                  color: AppColors.lightAccent.withOpacity(0.3),
+                  color: AppColors.lightAccent.withValues(alpha: 0.3),
                   blurRadius: 10,
                   spreadRadius: 0,
                 ),
@@ -476,7 +518,7 @@ class SettingsScreen extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: isDark
-            ? AppColors.darkGlassSurface.withOpacity(0.95)
+            ? AppColors.darkGlassSurface.withValues(alpha: 0.95)
             : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
@@ -486,7 +528,7 @@ class SettingsScreen extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('TechVault Electronics'),
+            Text('StyleHub Fashion Store'),
             SizedBox(height: 8.h),
             Text(
               'Version 1.0.0',
@@ -513,12 +555,18 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showLogoutDialog(BuildContext context, bool isDark) {
+  void _openAuth(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const AuthScreen()));
+  }
+
+  void _showLogoutDialog(BuildContext context, WidgetRef ref, bool isDark) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: isDark
-            ? AppColors.darkGlassSurface.withOpacity(0.95)
+            ? AppColors.darkGlassSurface.withValues(alpha: 0.95)
             : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
@@ -538,9 +586,25 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              _showComingSoon(context, isDark);
+              try {
+                await ref.read(authControllerProvider.notifier).logout();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('logout_success'.tr())),
+                  );
+                }
+              } catch (_) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('auth_error'.tr()),
+                      backgroundColor: AppColors.error,
+                    ),
+                  );
+                }
+              }
             },
             child: Text(
               'logout'.tr(),

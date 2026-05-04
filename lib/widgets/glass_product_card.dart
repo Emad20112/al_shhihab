@@ -102,29 +102,23 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
         child: Container(
           decoration: BoxDecoration(
             color: isDark
-                ? AppColors.darkGlassSurface.withValues(alpha: 0.75)
+                ? AppColors.darkGlassSurface.withValues(alpha: 0.85)
                 : Colors.white.withValues(alpha: 0.85),
             borderRadius: BorderRadius.circular(
-              isDark ? AppDimensions.radiusLG : AppDimensions.radiusXL,
+              isDark ? 14.0 : AppDimensions.radiusXL,
             ),
             border: Border.all(
               color: isDark
-                  ? (_isPressed
-                        ? AppColors.neonCyan.withValues(
-                            alpha: AppColors.neonGlowStrong,
-                          )
-                        : AppColors.neonCyan.withValues(
-                            alpha: AppColors.neonGlowReduced,
-                          ))
+                  ? Colors.white.withValues(alpha: 0.12)
                   : Colors.white.withValues(alpha: 0.4),
-              width: isDark ? 1.5 : 1,
+              width: 1,
             ),
             boxShadow: [
               BoxShadow(
                 color: isDark
-                    ? AppColors.getSoftShadow(isDark)
+                    ? Colors.black.withValues(alpha: 0.4)
                     : AppColors.getSoftShadow(isDark),
-                blurRadius: AppDimensions.glowIntensityMedium,
+                blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
             ],
@@ -138,7 +132,7 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
               // Content section
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.all(isDark ? 14.w : 16.w),
+                  padding: EdgeInsets.all(14.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -151,14 +145,7 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
                           color: isDark
                               ? AppColors.darkTextPrimary
                               : AppColors.lightTextPrimary,
-                          shadows: isDark
-                              ? [
-                                  Shadow(
-                                    color: Colors.black.withValues(alpha: 0.5),
-                                    blurRadius: AppDimensions.textShadowSubtle,
-                                  ),
-                                ]
-                              : null,
+                          letterSpacing: isDark ? 0.5 : 0,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -210,7 +197,7 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
               width: double.infinity,
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.black.withValues(alpha: 0.3)
+                    ? const Color(0xFF222222)
                     : Colors.white.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.vertical(
                   top: Radius.circular(AppDimensions.radiusLG),
@@ -233,7 +220,7 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
                   ),
                   errorWidget: (_, __, ___) => Center(
                     child: Icon(
-                      Icons.devices_rounded,
+                      Icons.checkroom_rounded,
                       size: 40.w,
                       color: isDark
                           ? AppColors.darkTextMuted
@@ -361,15 +348,12 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.neonMagenta : AppColors.error,
+        color: isDark ? AppColors.neonCyan : AppColors.error,
         borderRadius: BorderRadius.circular(8.r),
         boxShadow: isDark
             ? [
                 BoxShadow(
-                  color: AppColors.getNeonGlow(
-                    AppColors.neonMagenta,
-                    subtle: true,
-                  ),
+                  color: AppColors.neonCyan.withValues(alpha: 0.3),
                   blurRadius: AppDimensions.glowIntensitySoft,
                   spreadRadius: 0,
                 ),
@@ -411,7 +395,7 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
         style: TextStyle(
           fontSize: 9.sp,
           fontWeight: FontWeight.bold,
-          color: isDark ? AppColors.darkGradientStart : Colors.white,
+          color: isDark ? Colors.black : Colors.white,
         ),
       ),
     );
@@ -449,6 +433,77 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
     bool isDark,
     ProductModel product,
   ) {
+    final isArabic = context.locale.languageCode == 'ar';
+    if (isDark) {
+      // Dark mode: Veloria-style layout — price above full-width gold button
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Price row
+          Row(
+            children: [
+              Text(
+                '\$${product.price.toStringAsFixed(0)} / ${isArabic ? product.unitAr : product.unit}',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.darkTextPrimary,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              if (product.originalPrice != null) ...[
+                SizedBox(width: 6.w),
+                Text(
+                  '\$${product.originalPrice!.toStringAsFixed(0)}',
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    color: AppColors.darkTextMuted,
+                    decoration: TextDecoration.lineThrough,
+                  ),
+                ),
+              ],
+            ],
+          ),
+
+          SizedBox(height: 6.h),
+
+          // Full-width gold gradient "ADD TO CART" button
+          if (widget.showAddButton)
+            GestureDetector(
+              onTap: widget.onAddToCart,
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                decoration: BoxDecoration(
+                  gradient: AppColors.goldButtonGradient,
+                  borderRadius: BorderRadius.circular(10.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.neonCyan.withValues(alpha: 0.25),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    'add_to_cart'.tr().toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      );
+    }
+
+    // Light mode: original layout (side by side)
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -464,35 +519,25 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
                   '\$${product.originalPrice!.toStringAsFixed(0)}',
                   style: TextStyle(
                     fontSize: 10.sp,
-                    color: isDark
-                        ? AppColors.darkTextMuted
-                        : AppColors.lightTextMuted,
+                    color: AppColors.lightTextMuted,
                     decoration: TextDecoration.lineThrough,
                   ),
                 ),
-              // Current price - NEON in dark mode
+              // Current price
               Text(
-                '\$${product.price.toStringAsFixed(0)}',
+                '\$${product.price.toStringAsFixed(0)} / ${isArabic ? product.unitAr : product.unit}',
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? AppColors.neonCyan : AppColors.lightAccent,
+                  color: AppColors.lightAccent,
                   letterSpacing: 0.5,
-                  shadows: isDark
-                      ? [
-                          Shadow(
-                            color: AppColors.getNeonGlow(AppColors.neonCyan),
-                            blurRadius: AppDimensions.glowIntensitySoft,
-                          ),
-                        ]
-                      : null,
                 ),
               ),
             ],
           ),
         ),
 
-        // Add button
+        // Add button (icon)
         if (widget.showAddButton)
           GestureDetector(
             onTap: widget.onAddToCart,
@@ -500,30 +545,20 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
               width: 36.w,
               height: 36.w,
               decoration: BoxDecoration(
-                color: isDark
-                    ? AppColors.neonCyan
-                    : AppColors.getAccentColor(isDark),
-                borderRadius: BorderRadius.circular(10.r),
-                boxShadow: isDark
-                    ? [
-                        BoxShadow(
-                          color: AppColors.getNeonGlow(AppColors.neonCyan),
-                          blurRadius: AppDimensions.glowIntensityMedium,
-                          spreadRadius: 0,
-                        ),
-                      ]
-                    : [
-                        BoxShadow(
-                          color: AppColors.lightAccent.withValues(alpha: 0.3),
-                          blurRadius: 8,
-                          spreadRadius: 0,
-                        ),
-                      ],
+                color: AppColors.getAccentColor(false),
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.lightAccent.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    spreadRadius: 0,
+                  ),
+                ],
               ),
               child: Icon(
                 Icons.add_rounded,
                 size: 20.w,
-                color: isDark ? AppColors.darkGradientStart : Colors.white,
+                color: AppColors.lightGradientStart,
               ),
             ),
           ),
@@ -605,17 +640,17 @@ class _HeroProductCardState extends State<HeroProductCard> {
                   borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
                   border: Border.all(
                     color: isDark
-                        ? AppColors.neonCyan.withValues(alpha: 0.3)
+                        ? Colors.white.withValues(alpha: 0.12)
                         : Colors.white.withValues(alpha: 0.5),
-                    width: isDark ? 2 : 1.5,
+                    width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
                       color: isDark
-                          ? AppColors.neonCyan.withValues(alpha: 0.15)
+                          ? Colors.black.withValues(alpha: 0.4)
                           : Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 30,
-                      offset: const Offset(0, 15),
+                      blurRadius: 25,
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
@@ -631,7 +666,7 @@ class _HeroProductCardState extends State<HeroProductCard> {
                       ),
                       decoration: BoxDecoration(
                         color: isDark
-                            ? AppColors.neonMagenta.withValues(alpha: 0.2)
+                            ? AppColors.neonCyan.withValues(alpha: 0.15)
                             : AppColors.lightAccent.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(20.r),
                       ),
@@ -641,7 +676,7 @@ class _HeroProductCardState extends State<HeroProductCard> {
                           fontSize: 9.sp,
                           fontWeight: FontWeight.w600,
                           color: isDark
-                              ? AppColors.neonMagenta
+                              ? AppColors.neonCyan
                               : AppColors.lightAccent,
                           letterSpacing: 1,
                         ),
@@ -688,23 +723,13 @@ class _HeroProductCardState extends State<HeroProductCard> {
                                 ),
                               ),
                             Text(
-                              '\$${product.price.toStringAsFixed(0)}',
+                              '\$${product.price.toStringAsFixed(0)} / ${isArabic ? product.unitAr : product.unit}',
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
                                 color: isDark
-                                    ? AppColors.neonCyan
+                                    ? AppColors.darkTextPrimary
                                     : AppColors.lightAccent,
-                                shadows: isDark
-                                    ? [
-                                        Shadow(
-                                          color: AppColors.neonCyan.withValues(
-                                            alpha: 0.5,
-                                          ),
-                                          blurRadius: 10,
-                                        ),
-                                      ]
-                                    : null,
                               ),
                             ),
                           ],
@@ -720,14 +745,14 @@ class _HeroProductCardState extends State<HeroProductCard> {
                             color: isDark
                                 ? AppColors.neonCyan
                                 : AppColors.lightAccent,
-                            borderRadius: BorderRadius.circular(14.r),
+                            borderRadius: BorderRadius.circular(12.r),
                             boxShadow: [
                               BoxShadow(
                                 color:
                                     (isDark
                                             ? AppColors.neonCyan
                                             : AppColors.lightAccent)
-                                        .withValues(alpha: 0.4),
+                                        .withValues(alpha: 0.3),
                                 blurRadius: 15,
                                 spreadRadius: 0,
                               ),
@@ -738,9 +763,7 @@ class _HeroProductCardState extends State<HeroProductCard> {
                             style: TextStyle(
                               fontSize: 11.sp,
                               fontWeight: FontWeight.bold,
-                              color: isDark
-                                  ? AppColors.darkGradientStart
-                                  : Colors.white,
+                              color: isDark ? Colors.black : Colors.white,
                             ),
                           ),
                         ),
@@ -802,7 +825,7 @@ class _HeroProductCardState extends State<HeroProductCard> {
                         ),
                         child: Center(
                           child: Icon(
-                            Icons.devices_rounded,
+                            Icons.checkroom_rounded,
                             size: 60.w,
                             color: isDark
                                 ? AppColors.darkTextMuted
@@ -827,14 +850,12 @@ class _HeroProductCardState extends State<HeroProductCard> {
                     vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.neonMagenta : AppColors.error,
+                    color: isDark ? AppColors.neonCyan : AppColors.error,
                     borderRadius: BorderRadius.circular(10.r),
                     boxShadow: isDark
                         ? [
                             BoxShadow(
-                              color: AppColors.neonMagenta.withValues(
-                                alpha: 0.5,
-                              ),
+                              color: AppColors.neonCyan.withValues(alpha: 0.5),
                               blurRadius: 10,
                               spreadRadius: 0,
                             ),

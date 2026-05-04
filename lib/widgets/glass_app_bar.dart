@@ -75,51 +75,75 @@ class GlassAppBar extends ConsumerWidget implements PreferredSizeWidget {
         right: 20.w,
         bottom: 8.h,
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: AppColors.getBlurSigma(isDark) * 0.8,
-            sigmaY: AppColors.getBlurSigma(isDark) * 0.8,
-          ),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-            decoration: BoxDecoration(
-              color: AppColors.getGlassSurface(
-                isDark,
-              ).withValues(alpha: AppColors.getGlassOpacity(isDark)),
-              borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
-              border: Border.all(
-                color: isDark
-                    ? AppColors.neonCyan.withValues(alpha: 0.2)
-                    : Colors.white.withValues(alpha: 0.4),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.08),
-                  blurRadius: 20,
-                  offset: const Offset(0, 5),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Gold gradient strip at top (dark mode only)
+          if (isDark)
+            Container(
+              height: 1.5,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0x00D4AF37),
+                    Color(0xFFD4AF37),
+                    Color(0xFFF5D76E),
+                    Color(0xFFD4AF37),
+                    Color(0x00D4AF37),
+                  ],
+                  stops: [0.0, 0.2, 0.5, 0.8, 1.0],
                 ),
-              ],
+                borderRadius: BorderRadius.all(Radius.circular(1)),
+              ),
             ),
-            child: Row(
-              children: [
-                // Avatar + Greeting
-                Expanded(child: _buildUserSection(context, ref, isDark)),
-
-                // Action buttons
-                Row(
-                  children: [
-                    _buildSearchButton(context, isDark),
-                    SizedBox(width: 8.w),
-                    _buildNotificationButton(context, isDark),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: AppColors.getBlurSigma(isDark) * 0.8,
+                sigmaY: AppColors.getBlurSigma(isDark) * 0.8,
+              ),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: AppColors.getGlassSurface(
+                    isDark,
+                  ).withValues(alpha: AppColors.getGlassOpacity(isDark)),
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : Colors.white.withValues(alpha: 0.4),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color:
+                          Colors.black.withValues(alpha: isDark ? 0.2 : 0.08),
+                      blurRadius: 20,
+                      offset: const Offset(0, 5),
+                    ),
                   ],
                 ),
-              ],
+                child: Row(
+                  children: [
+                    // Avatar + Greeting
+                    Expanded(child: _buildUserSection(context, ref, isDark)),
+
+                    // Action buttons
+                    Row(
+                      children: [
+                        _buildSearchButton(context, isDark),
+                        SizedBox(width: 8.w),
+                        _buildNotificationButton(context, isDark),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
 
@@ -160,8 +184,8 @@ class GlassAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        AppColors.neonCyan.withValues(alpha: 0.3),
-                        AppColors.neonMagenta.withValues(alpha: 0.3),
+                        AppColors.neonCyan.withValues(alpha: 0.2),
+                        AppColors.neonMagenta.withValues(alpha: 0.2),
                       ],
                     )
                   : LinearGradient(
@@ -174,14 +198,14 @@ class GlassAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     ),
               border: Border.all(
                 color: isDark
-                    ? AppColors.neonCyan.withValues(alpha: 0.5)
+                    ? AppColors.neonCyan.withValues(alpha: 0.3)
                     : Colors.white.withValues(alpha: 0.6),
-                width: 2,
+                width: 1.5,
               ),
               boxShadow: isDark
                   ? [
                       BoxShadow(
-                        color: AppColors.neonCyan.withValues(alpha: 0.3),
+                        color: AppColors.neonCyan.withValues(alpha: 0.15),
                         blurRadius: 10,
                         spreadRadius: 1,
                       ),
@@ -359,7 +383,7 @@ class _GlassIconButtonState extends State<_GlassIconButton> {
               : Colors.white.withValues(alpha: 0.4),
           border: Border.all(
             color: widget.isDark
-                ? AppColors.neonCyan.withValues(alpha: _isPressed ? 0.5 : 0.2)
+                ? Colors.white.withValues(alpha: _isPressed ? 0.2 : 0.1)
                 : Colors.white.withValues(alpha: 0.5),
             width: 1,
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -8,7 +9,7 @@ import 'core/theme/glassmorphism_theme.dart';
 import 'core/providers/app_providers.dart';
 
 import 'features/splash/splash_screen.dart';
-import 'widgets/animated_gradient_background.dart'; // SimpleGradientBackground
+import 'widgets/animated_gradient_background.dart';
 import 'widgets/glass_bottom_nav.dart';
 import 'features/home/home_screen.dart';
 import 'features/cart/cart_screen.dart';
@@ -16,19 +17,21 @@ import 'features/categories/categories_screen.dart';
 import 'features/settings/settings_screen.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
-/// MAIN ENTRY POINT - TechVault Electronics Store
+/// MAIN ENTRY POINT - StyleHub Fashion Store
 /// ═══════════════════════════════════════════════════════════════════════════
 ///
-/// A futuristic Electronics Store App featuring:
+/// A fashion shopping app featuring:
 /// • Premium Glassmorphism design
-/// • Light Mode: "Frosted Ice" - Soft, pas
-/// tel, blurry
+/// • Light Mode: "Frosted Ice" - Soft, pastel, blurry
 /// • Dark Mode: "Smoked Glass" - Deep dark, neon accents, glossy edges
 /// • Full Arabic (RTL) and English (LTR) support
 /// ═══════════════════════════════════════════════════════════════════════════
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // تهيئة flutter_libphonenumber
+  await init();
 
   // Initialize Easy Localization
   await EasyLocalization.ensureInitialized();
@@ -56,14 +59,14 @@ void main() async {
       path: 'assets/translations',
       fallbackLocale: const Locale('en', 'US'),
       // Wrap with ProviderScope for Riverpod
-      child: const ProviderScope(child: TechVaultApp()),
+      child: const ProviderScope(child: StyleHubApp()),
     ),
   );
 }
 
 /// Main App Widget
-class TechVaultApp extends ConsumerWidget {
-  const TechVaultApp({super.key});
+class StyleHubApp extends ConsumerWidget {
+  const StyleHubApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -77,7 +80,7 @@ class TechVaultApp extends ConsumerWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp(
-          title: 'TechVault',
+          title: 'StyleHub',
           debugShowCheckedModeBanner: false,
 
           // Localization
@@ -129,8 +132,8 @@ class MainLayout extends ConsumerWidget {
     return Scaffold(
       // Transparent to show gradient background
       backgroundColor: Colors.transparent,
-      // Extend body behind bottom nav
-      extendBody: true,
+      // Keep page content above the fixed bottom navigation on every device.
+      extendBody: false,
 
       body: SimpleGradientBackground(
         child: SafeArea(
@@ -147,7 +150,7 @@ class MainLayout extends ConsumerWidget {
         ),
       ),
 
-      // Floating glass bottom navigation (isolated repaint)
+      // Fixed bottom navigation (isolated repaint)
       bottomNavigationBar: const RepaintBoundary(child: GlassBottomNav()),
     );
   }

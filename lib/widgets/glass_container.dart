@@ -33,7 +33,7 @@ class GlassContainer extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
 
   /// Border radius of the container
-  final double? borderRadius;
+  final BorderRadiusGeometry? borderRadius;
 
   /// Custom blur sigma (overrides theme default)
   final double? blurSigma;
@@ -101,7 +101,8 @@ class GlassContainer extends StatelessWidget {
     final double effectiveBlur = blurSigma ?? AppColors.getBlurSigma(isDark);
     final double effectiveOpacity =
         opacity ?? AppColors.getGlassOpacity(isDark);
-    final double effectiveRadius = borderRadius ?? AppDimensions.radiusLG;
+    final BorderRadiusGeometry effectiveRadius =
+        borderRadius ?? BorderRadius.circular(AppDimensions.radiusLG);
     final double effectiveBorderWidth =
         borderWidth ??
         (isDark
@@ -116,12 +117,12 @@ class GlassContainer extends StatelessWidget {
       height: height,
       margin: margin,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(effectiveRadius),
+        borderRadius: effectiveRadius,
         // Neon glow effect for dark mode
         boxShadow: _buildShadows(isDark, effectiveRadius),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(effectiveRadius),
+        borderRadius: effectiveRadius,
         child: BackdropFilter(
           filter: ImageFilter.blur(
             sigmaX: effectiveBlur,
@@ -133,7 +134,7 @@ class GlassContainer extends StatelessWidget {
               color: AppColors.getGlassSurface(
                 isDark,
               ).withOpacity(effectiveOpacity),
-              borderRadius: BorderRadius.circular(effectiveRadius),
+              borderRadius: effectiveRadius,
               // Border - Neon gradient for dark mode, subtle white for light mode
               border: _buildBorder(
                 isDark,
@@ -178,14 +179,14 @@ class GlassContainer extends StatelessWidget {
     bool isDark,
     List<Color> borderColors,
     double width,
-    double radius,
+    BorderRadiusGeometry radius,
   ) {
     if (isDark && enableNeonBorder) {
       // For dark mode, we use a gradient border effect
       // Since Border doesn't support gradients directly, we use a solid color
       // The gradient effect is achieved via the CustomPaint in GlassContainerWithGradientBorder
       return Border.all(
-        color: borderColors.first.withOpacity(0.7),
+        color: Colors.white.withOpacity(0.1),
         width: width,
       );
     } else {
@@ -198,7 +199,7 @@ class GlassContainer extends StatelessWidget {
   }
 
   /// Build shadows based on theme mode
-  List<BoxShadow> _buildShadows(bool isDark, double radius) {
+  List<BoxShadow> _buildShadows(bool isDark, BorderRadiusGeometry radius) {
     if (isDark) {
       // Dark mode shadows with optional neon glow
       final shadows = <BoxShadow>[
@@ -215,7 +216,7 @@ class GlassContainer extends StatelessWidget {
         shadows.add(
           BoxShadow(
             color: (neonBorderColors?.first ?? AppColors.neonCyan).withOpacity(
-              0.3,
+              0.15,
             ),
             blurRadius: glowBlur,
             spreadRadius: glowSpread,
@@ -267,7 +268,7 @@ class GlassContainerGradientBorder extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
-  final double? borderRadius;
+  final BorderRadiusGeometry? borderRadius;
   final double? blurSigma;
   final double? opacity;
   final double? width;
@@ -301,7 +302,8 @@ class GlassContainerGradientBorder extends StatelessWidget {
     final double effectiveBlur = blurSigma ?? AppColors.getBlurSigma(isDark);
     final double effectiveOpacity =
         opacity ?? AppColors.getGlassOpacity(isDark);
-    final double effectiveRadius = borderRadius ?? AppDimensions.radiusLG;
+    final BorderRadiusGeometry effectiveRadius =
+        borderRadius ?? BorderRadius.circular(AppDimensions.radiusLG);
 
     final List<Color> colors =
         gradientColors ??
@@ -324,7 +326,7 @@ class GlassContainerGradientBorder extends StatelessWidget {
           borderWidth: borderWidth,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(effectiveRadius),
+          borderRadius: effectiveRadius,
           child: BackdropFilter(
             filter: ImageFilter.blur(
               sigmaX: effectiveBlur,
@@ -335,7 +337,7 @@ class GlassContainerGradientBorder extends StatelessWidget {
                 color: AppColors.getGlassSurface(
                   isDark,
                 ).withOpacity(effectiveOpacity),
-                borderRadius: BorderRadius.circular(effectiveRadius),
+                borderRadius: effectiveRadius,
               ),
               padding:
                   padding ?? EdgeInsets.all(AppDimensions.glassInnerPadding),
@@ -369,7 +371,7 @@ class GlassContainerGradientBorder extends StatelessWidget {
 /// Custom painter for gradient border
 class _GradientBorderPainter extends CustomPainter {
   final Gradient gradient;
-  final double borderRadius;
+  final BorderRadiusGeometry borderRadius;
   final double borderWidth;
 
   _GradientBorderPainter({
@@ -381,7 +383,7 @@ class _GradientBorderPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
-    final rrect = RRect.fromRectAndRadius(rect, Radius.circular(borderRadius));
+    final rrect = borderRadius.resolve(TextDirection.ltr).toRRect(rect);
 
     final paint = Paint()
       ..shader = gradient.createShader(rect)
@@ -432,7 +434,7 @@ class GlassCard extends StatelessWidget {
     return GlassContainer(
       padding: padding ?? EdgeInsets.all(12.w),
       margin: margin ?? EdgeInsets.all(8.w),
-      borderRadius: AppDimensions.radiusLG,
+      borderRadius: BorderRadius.circular(AppDimensions.radiusLG),
       width: width,
       height: height,
       enableNeonBorder: true,
@@ -497,7 +499,7 @@ class GlassContainerFeatured extends StatelessWidget {
     return GlassContainerGradientBorder(
       padding: padding ?? EdgeInsets.all(20.w),
       margin: margin ?? EdgeInsets.all(12.w),
-      borderRadius: AppDimensions.radiusXL,
+      borderRadius: BorderRadius.circular(AppDimensions.radiusXL),
       borderWidth: isDark ? 2.5 : 1.5,
       animationDelay: animationDelay,
       child: child,
