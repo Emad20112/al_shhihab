@@ -242,12 +242,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   : Icon(_isLogin ? Icons.login_rounded : Icons.person_add_alt),
               label: Text(_isLogin ? 'login'.tr() : 'create_account'.tr()),
             ),
-            SizedBox(height: AppDimensions.spacingMD),
-            OutlinedButton.icon(
-              onPressed: _isSubmitting ? null : _openVerification,
-              icon: const Icon(Icons.sms_rounded),
-              label: Text('verify_account'.tr()),
-            ),
+            if (_isLogin) ...[
+              SizedBox(height: AppDimensions.spacingMD),
+              OutlinedButton.icon(
+                onPressed: _isSubmitting ? null : _openVerification,
+                icon: const Icon(Icons.sms_rounded),
+                label: Text('verify_account'.tr()),
+              ),
+            ],
           ],
         ),
       ),
@@ -389,7 +391,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             .register(_registerPayload(phone));
         if (!mounted) return;
         _showMessage('register_success'.tr());
-        _openVerification(replace: true, contact: phone);
+        _openVerification(replace: true, contact: phone, autoSendCode: true);
       }
     } catch (error) {
       if (!mounted) return;
@@ -418,7 +420,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     };
   }
 
-  void _openVerification({bool replace = false, String? contact}) {
+  void _openVerification({
+    bool replace = false,
+    String? contact,
+    bool autoSendCode = false,
+  }) {
     _updateCurrentPhoneNumber();
     final route = MaterialPageRoute(
       builder: (_) => VerifyAccountScreen(
@@ -427,6 +433,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             (_currentPhoneNumber.isNotEmpty
                 ? _currentPhoneNumber
                 : _emailController.text.trim()),
+        autoSendCode: autoSendCode,
       ),
     );
 
@@ -534,6 +541,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         return 'account_already_exists'.tr();
       }
       if (error.isUnauthorized) {
+        if (raw.contains('موثق') ||
+            raw.contains('verified') ||
+            raw.contains('verification')) {
+          return 'account_not_verified'.tr();
+        }
         if (raw.contains('نشط') || raw.contains('active')) {
           return 'account_not_active'.tr();
         }

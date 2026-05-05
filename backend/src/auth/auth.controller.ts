@@ -36,10 +36,10 @@ export class AuthController {
       },
     },
   })
-  async register(@Body() body: unknown, @Req() request: Request) {
+  async register(@Body() body: unknown) {
     const dto = await validateData(RegisterDto, unwrapData(body));
-    const session = await this.authService.register(dto, this.requestContext(request));
-    return ok(session, "تم إنشاء الحساب بنجاح", 201);
+    const result = await this.authService.register(dto);
+    return ok(result, "تم إنشاء الحساب بنجاح، يرجى تفعيل الحساب", 201);
   }
 
   @Post("login")

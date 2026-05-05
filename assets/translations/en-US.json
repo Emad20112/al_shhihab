@@ -173,6 +173,7 @@
   "account_already_exists": "An account already exists with these details. Sign in or use another phone/email.",
   "invalid_login_credentials": "The phone number or password is incorrect. Check them and try again.",
   "account_not_active": "Your account is not active yet. Send a verification code to activate it.",
+  "account_not_verified": "Your account is not verified yet. Please activate it with the verification code first.",
   "check_entered_data": "Please review the entered details. One field needs correction.",
   "server_unavailable": "Cannot reach the server right now. Check your internet connection and try again.",
   "verification_code_wrong_or_expired": "The verification code is incorrect or expired. Request a new code if needed.",

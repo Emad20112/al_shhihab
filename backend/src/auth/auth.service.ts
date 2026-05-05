@@ -41,7 +41,7 @@ export class AuthService {
     private readonly sessions: Repository<UserSession>,
   ) {}
 
-  async register(dto: RegisterDto, context: JwtContext = {}) {
+  async register(dto: RegisterDto) {
     if (dto.password_confirmation &&
         dto.password_confirmation !== dto.password) {
       throw new BadRequestException("كلمتا المرور غير متطابقتين");
@@ -55,7 +55,11 @@ export class AuthService {
       passwordHash,
     });
 
-    return this.issueSession(user, context);
+    return {
+      registered: true,
+      requires_verification: true,
+      user: serializeUser(user),
+    };
   }
 
   async login(dto: LoginDto, context: JwtContext = {}) {
@@ -67,6 +71,9 @@ export class AuthService {
     }
     if (!user.isActive) {
       throw new UnauthorizedException("الحساب غير نشط");
+    }
+    if (!user.isVerified) {
+      throw new UnauthorizedException("الحساب غير موثق");
     }
 
     const valid = await bcrypt.compare(dto.password, user.passwordHash);

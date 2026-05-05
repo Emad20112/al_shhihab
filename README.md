@@ -11,6 +11,65 @@ A high-fidelity **Electronics Store Application** focused on delivering a premiu
 
 ---
 
+## تشغيل وتجربة النظام محلياً
+
+### 1. تشغيل قاعدة البيانات
+
+المشروع يستخدم MySQL محلياً على المنفذ `3307` داخل مجلد `backend/.mysql-data` حتى لا يلمس قاعدة XAMPP الافتراضية.
+
+```powershell
+C:\xampp\mysql\bin\mysqld.exe --defaults-file=backend\.mysql-data\my.ini --standalone
+```
+
+للتحقق أن قاعدة البيانات تعمل:
+
+```powershell
+C:\xampp\mysql\bin\mysqladmin.exe --protocol=tcp -h 127.0.0.1 -P 3307 -u root ping
+```
+
+### 2. تشغيل Backend
+
+```powershell
+cd backend
+copy .env.example .env
+npm install
+npm run migration:run
+npm run start:dev
+```
+
+بعد التشغيل:
+
+- API: `http://localhost:3000/api/v1`
+- Swagger: `http://localhost:3000/docs`
+- Admin: `http://localhost:3000/admin/`
+- Admin key: `local-admin-key`
+
+### 3. تشغيل Flutter على Android Emulator
+
+```powershell
+flutter run ^
+  --dart-define=API_BASE_URL=http://10.0.2.2:3000/api/v1 ^
+  --dart-define=API_APP_KEY=local-app-key ^
+  --dart-define=API_APP_SECRET=local-app-secret
+```
+
+على Windows/Desktop استخدم `localhost` بدل `10.0.2.2`.
+
+### 4. تجربة المصادقة
+
+1. افتح شاشة تسجيل الدخول.
+2. اختر `إنشاء حساب`.
+3. أدخل الاسم، رقم الهاتف، وكلمة مرور قوية.
+4. اضغط `إنشاء حساب`.
+5. التطبيق ينقلك تلقائياً إلى شاشة التحقق ويرسل كود تجريبي.
+6. في وضع التطوير يظهر `dev_code` لمدة دقيقة في الرسالة.
+7. أدخل الكود واضغط `تأكيد التحقق`.
+8. بعد نجاح التحقق فقط يتم تسجيل الدخول وحفظ الجلسة.
+
+مهم: إنشاء الحساب وحده لا يرجع توكن ولا يسجل دخول. الحساب غير الموثق لا يستطيع تسجيل الدخول.
+
+---
+
 ## 📱 Visual Concept (The Design System)
 
 The UI is built around a custom **Glass Engine** that adapts to the theme:

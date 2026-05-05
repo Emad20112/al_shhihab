@@ -41,9 +41,14 @@ const _phoneCountries = <_PhoneCountry>[
 ];
 
 class VerifyAccountScreen extends ConsumerStatefulWidget {
-  const VerifyAccountScreen({super.key, this.initialContact});
+  const VerifyAccountScreen({
+    super.key,
+    this.initialContact,
+    this.autoSendCode = false,
+  });
 
   final String? initialContact;
+  final bool autoSendCode;
 
   @override
   ConsumerState<VerifyAccountScreen> createState() =>
@@ -70,6 +75,11 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
   void initState() {
     super.initState();
     _applyInitialContact(widget.initialContact);
+    if (widget.autoSendCode) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _sendCode();
+      });
+    }
   }
 
   @override
@@ -338,7 +348,10 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
           .sendVerification(_payload(phone: phone, includeCode: false));
       if (!mounted) return;
       _startResendTimer();
-      _showMessage(_verificationSentMessage(result));
+      _showMessage(
+        _verificationSentMessage(result),
+        duration: _hasDevCode(result) ? const Duration(minutes: 1) : null,
+      );
     } catch (error) {
       if (!mounted) return;
       _showError(_friendlyError(error));
@@ -384,12 +397,7 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
     required String phone,
     required bool includeCode,
   }) {
-    final payload = <String, dynamic>{
-      'channel': _channel,
-      'type': _channel,
-      'via': _channel,
-      'phone': phone,
-    };
+    final payload = <String, dynamic>{'channel': _channel, 'phone': phone};
 
     if (includeCode) {
       payload['code'] = _codeController.text.trim();
@@ -507,6 +515,11 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
     return 'verification_sent'.tr();
   }
 
+  bool _hasDevCode(Map<String, dynamic> result) {
+    final devCode = result['dev_code']?.toString();
+    return devCode != null && devCode.isNotEmpty;
+  }
+
   String _friendlyError(Object error) {
     if (error is ApiException) {
       final raw = _errorText(error).toLowerCase();
@@ -536,10 +549,13 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
     return 'auth_error'.tr();
   }
 
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+  void _showMessage(String message, {Duration? duration}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: duration ?? const Duration(seconds: 4),
+      ),
+    );
   }
 
   void _showError(String message) {

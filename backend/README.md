@@ -14,6 +14,40 @@ npm run start:dev
 
 تأكد من تشغيل MySQL قبل `npm run migration:run` و `npm run start:dev`.
 
+### التشغيل السريع الموصى به للعرض
+
+افتح Terminal من جذر المشروع وشغّل قاعدة المشروع المعزولة:
+
+```powershell
+C:\xampp\mysql\bin\mysqld.exe --defaults-file=backend\.mysql-data\my.ini --standalone
+```
+
+افتح Terminal ثانية وشغّل السيرفر:
+
+```powershell
+cd backend
+copy .env.example .env
+npm install
+npm run migration:run
+npm run start:dev
+```
+
+افتح Terminal ثالثة وشغّل Flutter على Android emulator:
+
+```powershell
+flutter run ^
+  --dart-define=API_BASE_URL=http://10.0.2.2:3000/api/v1 ^
+  --dart-define=API_APP_KEY=local-app-key ^
+  --dart-define=API_APP_SECRET=local-app-secret
+```
+
+روابط التحقق السريع:
+
+- API: `http://localhost:3000/api/v1/shop/products`
+- Swagger: `http://localhost:3000/docs`
+- Admin: `http://localhost:3000/admin/`
+- Admin key: `local-admin-key`
+
 > ملاحظة مهمة: إذا كانت قاعدة XAMPP على `3306` لا تعمل أو تظهر أخطاء InnoDB، يمكن استخدام قاعدة معزولة للمشروع على `3307` داخل `backend/.mysql-data` بدون لمس بيانات XAMPP الأصلية.
 
 روابط مهمة:
@@ -137,6 +171,56 @@ X-Channel-Id: android
 X-API-APP-KEY: local-app-key
 X-API-APP-SECRET: local-app-secret
 Authorization: Bearer <token>
+```
+
+## تجربة سيناريو المصادقة
+
+السيناريو المقصود للتسجيل الآمن:
+
+1. المستخدم يضغط `إنشاء حساب` من تطبيق Flutter.
+2. `POST /api/v1/auth/register` ينشئ المستخدم فقط ولا يرجع `access_token` أو `refresh_token`.
+3. التطبيق ينتقل تلقائياً إلى شاشة التحقق ويرسل كود عبر `POST /api/v1/auth/verify/send`.
+4. في بيئة التطوير فقط يرجع السيرفر `dev_code` لتسهيل العرض، ويظهر في التطبيق لمدة دقيقة.
+5. عند إدخال الكود الصحيح، `POST /api/v1/auth/verify/check` يفعّل الحساب ويرجع جلسة الدخول.
+6. إذا فشل التحقق أو أُرسلت بيانات غير صحيحة، لا يتم تسجيل الدخول ولا تُحفظ أي جلسة.
+7. `POST /api/v1/auth/login` يرفض الحساب غير الموثق برسالة واضحة.
+
+اختبار سريع من PowerShell:
+
+```powershell
+$headers = @{
+  "X-Channel-Id" = "android"
+  "X-API-APP-KEY" = "local-app-key"
+  "X-API-APP-SECRET" = "local-app-secret"
+}
+
+$phone = "+967777123456"
+$password = "Strong123"
+
+Invoke-RestMethod -Method Post `
+  -Uri http://localhost:3000/api/v1/auth/register `
+  -ContentType "application/json" `
+  -Headers $headers `
+  -Body (@{
+    name = "Demo User"
+    phone = $phone
+    password = $password
+    password_confirmation = $password
+  } | ConvertTo-Json)
+
+$send = Invoke-RestMethod -Method Post `
+  -Uri http://localhost:3000/api/v1/auth/verify/send `
+  -ContentType "application/json" `
+  -Headers $headers `
+  -Body (@{ phone = $phone; channel = "sms" } | ConvertTo-Json)
+
+$code = $send.data.dev_code
+
+Invoke-RestMethod -Method Post `
+  -Uri http://localhost:3000/api/v1/auth/verify/check `
+  -ContentType "application/json" `
+  -Headers $headers `
+  -Body (@{ phone = $phone; channel = "sms"; code = $code; otp = $code } | ConvertTo-Json)
 ```
 
 ## المسارات الجاهزة

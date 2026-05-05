@@ -20,4 +20,14 @@ export class CheckVerificationDto {
   @IsOptional()
   @IsString()
   otp?: string;
+
+  @ApiProperty({ enum: ["sms", "whatsapp"], example: "sms" })
+  @IsOptional()
+  @IsString()
+  type?: string;
+
+  @ApiProperty({ enum: ["sms", "whatsapp"], example: "sms" })
+  @IsOptional()
+  @IsString()
+  via?: string;
 }
