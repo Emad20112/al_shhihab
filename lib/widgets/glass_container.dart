@@ -133,7 +133,7 @@ class GlassContainer extends StatelessWidget {
               // Glass surface
               color: AppColors.getGlassSurface(
                 isDark,
-              ).withOpacity(effectiveOpacity),
+              ).withValues(alpha: effectiveOpacity),
               borderRadius: effectiveRadius,
               // Border - Neon gradient for dark mode, subtle white for light mode
               border: _buildBorder(
@@ -186,13 +186,15 @@ class GlassContainer extends StatelessWidget {
       // Since Border doesn't support gradients directly, we use a solid color
       // The gradient effect is achieved via the CustomPaint in GlassContainerWithGradientBorder
       return Border.all(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         width: width,
       );
     } else {
       // Light mode - subtle white border
       return Border.all(
-        color: Colors.white.withOpacity(AppColors.lightGlassBorderOpacity),
+        color: Colors.white.withValues(
+          alpha: AppColors.lightGlassBorderOpacity,
+        ),
         width: width,
       );
     }
@@ -204,7 +206,7 @@ class GlassContainer extends StatelessWidget {
       // Dark mode shadows with optional neon glow
       final shadows = <BoxShadow>[
         BoxShadow(
-          color: Colors.black.withOpacity(0.3),
+          color: Colors.black.withValues(alpha: 0.3),
           blurRadius: 20,
           spreadRadius: -5,
           offset: const Offset(0, 10),
@@ -215,8 +217,8 @@ class GlassContainer extends StatelessWidget {
       if (enableNeonGlow) {
         shadows.add(
           BoxShadow(
-            color: (neonBorderColors?.first ?? AppColors.neonCyan).withOpacity(
-              0.15,
+            color: (neonBorderColors?.first ?? AppColors.neonCyan).withValues(
+              alpha: 0.15,
             ),
             blurRadius: glowBlur,
             spreadRadius: glowSpread,
@@ -229,13 +231,13 @@ class GlassContainer extends StatelessWidget {
       // Light mode - soft diffused shadows
       return [
         BoxShadow(
-          color: Colors.black.withOpacity(0.08),
+          color: Colors.black.withValues(alpha: 0.08),
           blurRadius: 30,
           spreadRadius: -5,
           offset: const Offset(0, 15),
         ),
         BoxShadow(
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withValues(alpha: 0.8),
           blurRadius: 20,
           spreadRadius: -10,
           offset: const Offset(0, -5),
@@ -309,7 +311,10 @@ class GlassContainerGradientBorder extends StatelessWidget {
         gradientColors ??
         (isDark
             ? [AppColors.neonCyan, AppColors.neonMagenta, AppColors.neonBlue]
-            : [Colors.white.withOpacity(0.5), Colors.white.withOpacity(0.2)]);
+            : [
+                Colors.white.withValues(alpha: 0.5),
+                Colors.white.withValues(alpha: 0.2),
+              ]);
 
     Widget container = Container(
       width: width,
@@ -336,7 +341,7 @@ class GlassContainerGradientBorder extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.getGlassSurface(
                   isDark,
-                ).withOpacity(effectiveOpacity),
+                ).withValues(alpha: effectiveOpacity),
                 borderRadius: effectiveRadius,
               ),
               padding:

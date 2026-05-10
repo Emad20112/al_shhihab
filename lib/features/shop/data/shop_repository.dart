@@ -17,9 +17,9 @@ class ShopRepository {
       '/shop/products',
       authenticated: false,
       queryParameters: {
-        if (categoryId != null) 'category_id': categoryId,
+        'category_id': ?categoryId,
         if (search != null && search.trim().isNotEmpty) 'search': search,
-        if (featured != null) 'featured': featured,
+        'featured': ?featured,
       },
       fromData: (value) {
         if (value is! List) return const <ProductModel>[];

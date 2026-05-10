@@ -171,6 +171,7 @@
   "email_already_used": "An account already uses this email address. Sign in or use another email.",
   "phone_and_email_already_used": "This phone number and email are already used by an existing account. Try signing in.",
   "account_already_exists": "An account already exists with these details. Sign in or use another phone/email.",
+  "account_not_found": "No account was found for this phone number. Create an account first.",
   "invalid_login_credentials": "The phone number or password is incorrect. Check them and try again.",
   "account_not_active": "Your account is not active yet. Send a verification code to activate it.",
   "account_not_verified": "Your account is not verified yet. Please activate it with the verification code first.",

@@ -62,13 +62,13 @@ class GlassmorphismTheme {
         selectedItemColor: AppColors.lightAccent,
         unselectedItemColor: AppColors.lightTextMuted,
         type: BottomNavigationBarType.fixed,
-        selectedLabelStyle: GoogleFonts.poppins(
+        selectedLabelStyle: GoogleFonts.cairo(
+          fontSize: 12.sp,
+          fontWeight: FontWeight.w700,
+        ),
+        unselectedLabelStyle: GoogleFonts.cairo(
           fontSize: 12.sp,
           fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: GoogleFonts.poppins(
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w400,
         ),
       ),
 
@@ -82,9 +82,9 @@ class GlassmorphismTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
-          textStyle: GoogleFonts.poppins(
+          textStyle: GoogleFonts.cairo(
             fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -106,9 +106,10 @@ class GlassmorphismTheme {
           borderSide: BorderSide(color: AppColors.lightAccent, width: 2),
         ),
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-        hintStyle: GoogleFonts.poppins(
+        hintStyle: GoogleFonts.cairo(
           color: AppColors.lightTextMuted,
           fontSize: 14.sp,
+          fontWeight: FontWeight.w600,
         ),
       ),
 
@@ -176,13 +177,13 @@ class GlassmorphismTheme {
         selectedItemColor: AppColors.neonCyan,
         unselectedItemColor: AppColors.darkTextMuted,
         type: BottomNavigationBarType.fixed,
-        selectedLabelStyle: GoogleFonts.poppins(
+        selectedLabelStyle: GoogleFonts.cairo(
+          fontSize: 12.sp,
+          fontWeight: FontWeight.w700,
+        ),
+        unselectedLabelStyle: GoogleFonts.cairo(
           fontSize: 12.sp,
           fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: GoogleFonts.poppins(
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w400,
         ),
       ),
 
@@ -196,9 +197,9 @@ class GlassmorphismTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.r),
           ),
-          textStyle: GoogleFonts.poppins(
+          textStyle: GoogleFonts.cairo(
             fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -224,9 +225,10 @@ class GlassmorphismTheme {
           borderSide: BorderSide(color: AppColors.neonCyan, width: 2),
         ),
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-        hintStyle: GoogleFonts.poppins(
+        hintStyle: GoogleFonts.cairo(
           color: AppColors.darkTextMuted,
           fontSize: 14.sp,
+          fontWeight: FontWeight.w600,
         ),
       ),
 
@@ -236,9 +238,7 @@ class GlassmorphismTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14.r),
-          side: BorderSide(
-            color: Colors.white.withValues(alpha: 0.1),
-          ),
+          side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
         ),
       ),
 
@@ -255,9 +255,9 @@ class GlassmorphismTheme {
   // ═══════════════════════════════════════════════════════════════════════════
 
   static TextStyle _getTitleTextStyle(bool isDark) {
-    return GoogleFonts.poppins(
+    return GoogleFonts.cairo(
       fontSize: 20.sp,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w700,
       color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
     );
   }
@@ -272,90 +272,90 @@ class GlassmorphismTheme {
 
     return TextTheme(
       // Display styles
-      displayLarge: GoogleFonts.poppins(
+      displayLarge: GoogleFonts.cairo(
         fontSize: 57.sp,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w800,
         color: primary,
-        letterSpacing: -0.25,
+        letterSpacing: 0,
       ),
-      displayMedium: GoogleFonts.poppins(
+      displayMedium: GoogleFonts.cairo(
         fontSize: 45.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w800,
         color: primary,
       ),
-      displaySmall: GoogleFonts.poppins(
+      displaySmall: GoogleFonts.cairo(
         fontSize: 36.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: primary,
       ),
 
       // Headline styles
-      headlineLarge: GoogleFonts.poppins(
+      headlineLarge: GoogleFonts.cairo(
         fontSize: 32.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w800,
         color: primary,
       ),
-      headlineMedium: GoogleFonts.poppins(
+      headlineMedium: GoogleFonts.cairo(
         fontSize: 28.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w800,
         color: primary,
       ),
-      headlineSmall: GoogleFonts.poppins(
+      headlineSmall: GoogleFonts.cairo(
         fontSize: 24.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w800,
         color: primary,
       ),
 
       // Title styles
-      titleLarge: GoogleFonts.poppins(
+      titleLarge: GoogleFonts.cairo(
         fontSize: 22.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w800,
         color: primary,
       ),
-      titleMedium: GoogleFonts.poppins(
+      titleMedium: GoogleFonts.cairo(
         fontSize: 16.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: primary,
       ),
-      titleSmall: GoogleFonts.poppins(
+      titleSmall: GoogleFonts.cairo(
         fontSize: 14.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: primary,
       ),
 
       // Body styles
-      bodyLarge: GoogleFonts.poppins(
+      bodyLarge: GoogleFonts.cairo(
         fontSize: 16.sp,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w600,
         color: primary,
       ),
-      bodyMedium: GoogleFonts.poppins(
+      bodyMedium: GoogleFonts.cairo(
         fontSize: 14.sp,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w600,
         color: secondary,
       ),
-      bodySmall: GoogleFonts.poppins(
+      bodySmall: GoogleFonts.cairo(
         fontSize: 12.sp,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w600,
         color: secondary,
       ),
 
       // Label styles
-      labelLarge: GoogleFonts.poppins(
+      labelLarge: GoogleFonts.cairo(
         fontSize: 14.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: primary,
       ),
-      labelMedium: GoogleFonts.poppins(
+      labelMedium: GoogleFonts.cairo(
         fontSize: 12.sp,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w700,
         color: secondary,
       ),
-      labelSmall: GoogleFonts.poppins(
+      labelSmall: GoogleFonts.cairo(
         fontSize: 11.sp,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         color: secondary,
-        letterSpacing: 0.5,
+        letterSpacing: 0,
       ),
     );
   }
@@ -376,85 +376,85 @@ class GlassmorphismTheme {
       // Display styles
       displayLarge: GoogleFonts.cairo(
         fontSize: 57.sp,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w800,
         color: primary,
       ),
       displayMedium: GoogleFonts.cairo(
         fontSize: 45.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w800,
         color: primary,
       ),
       displaySmall: GoogleFonts.cairo(
         fontSize: 36.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: primary,
       ),
 
       // Headline styles
       headlineLarge: GoogleFonts.cairo(
         fontSize: 32.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w800,
         color: primary,
       ),
       headlineMedium: GoogleFonts.cairo(
         fontSize: 28.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w800,
         color: primary,
       ),
       headlineSmall: GoogleFonts.cairo(
         fontSize: 24.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w800,
         color: primary,
       ),
 
       // Title styles
       titleLarge: GoogleFonts.cairo(
         fontSize: 22.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w800,
         color: primary,
       ),
       titleMedium: GoogleFonts.cairo(
         fontSize: 16.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: primary,
       ),
       titleSmall: GoogleFonts.cairo(
         fontSize: 14.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: primary,
       ),
 
       // Body styles
       bodyLarge: GoogleFonts.cairo(
         fontSize: 16.sp,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w600,
         color: primary,
       ),
       bodyMedium: GoogleFonts.cairo(
         fontSize: 14.sp,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w600,
         color: secondary,
       ),
       bodySmall: GoogleFonts.cairo(
         fontSize: 12.sp,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w600,
         color: secondary,
       ),
 
       // Label styles
       labelLarge: GoogleFonts.cairo(
         fontSize: 14.sp,
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w700,
         color: primary,
       ),
       labelMedium: GoogleFonts.cairo(
         fontSize: 12.sp,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w700,
         color: secondary,
       ),
       labelSmall: GoogleFonts.cairo(
         fontSize: 11.sp,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         color: secondary,
       ),
     );

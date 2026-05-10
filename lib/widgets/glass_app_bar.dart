@@ -118,8 +118,9 @@ class GlassAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color:
-                          Colors.black.withValues(alpha: isDark ? 0.2 : 0.08),
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.2 : 0.08,
+                      ),
                       blurRadius: 20,
                       offset: const Offset(0, 5),
                     ),
@@ -217,8 +218,7 @@ class GlassAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     child: Image.network(
                       avatarUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                          _buildAvatarFallback(isDark),
+                      errorBuilder: (_, _, _) => _buildAvatarFallback(isDark),
                     ),
                   )
                 : _buildAvatarFallback(isDark),
@@ -374,7 +374,13 @@ class _GlassIconButtonState extends State<_GlassIconButton> {
         duration: const Duration(milliseconds: 150),
         width: 36.w,
         height: 36.w,
-        transform: Matrix4.identity()..scale(_isPressed ? 0.92 : 1.0),
+        transform: Matrix4.identity()
+          ..scaleByDouble(
+            _isPressed ? 0.92 : 1.0,
+            _isPressed ? 0.92 : 1.0,
+            _isPressed ? 0.92 : 1.0,
+            1.0,
+          ),
         transformAlignment: Alignment.center,
         decoration: BoxDecoration(
           shape: BoxShape.circle,

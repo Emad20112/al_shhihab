@@ -76,7 +76,7 @@ class GlassSettingTile extends StatelessWidget {
         boxShadow: isDark
             ? [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 15,
                   spreadRadius: -5,
                   offset: const Offset(0, 5),
@@ -84,7 +84,7 @@ class GlassSettingTile extends StatelessWidget {
               ]
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 20,
                   spreadRadius: -5,
                   offset: const Offset(0, 10),
@@ -101,13 +101,13 @@ class GlassSettingTile extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: isDark
-                  ? AppColors.darkGlassSurface.withOpacity(0.35)
-                  : Colors.white.withOpacity(0.25),
+                  ? AppColors.darkGlassSurface.withValues(alpha: 0.35)
+                  : Colors.white.withValues(alpha: 0.25),
               borderRadius: BorderRadius.circular(effectiveRadius),
               border: Border.all(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.1)
-                    : Colors.white.withOpacity(0.3),
+                    : Colors.white.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -116,8 +116,8 @@ class GlassSettingTile extends StatelessWidget {
               child: InkWell(
                 onTap: onTap,
                 borderRadius: BorderRadius.circular(effectiveRadius),
-                splashColor: effectiveIconColor.withOpacity(0.1),
-                highlightColor: effectiveIconColor.withOpacity(0.05),
+                splashColor: effectiveIconColor.withValues(alpha: 0.1),
+                highlightColor: effectiveIconColor.withValues(alpha: 0.05),
                 child: Padding(
                   padding: EdgeInsets.all(AppDimensions.spacingMD),
                   child: Row(
@@ -155,7 +155,7 @@ class GlassSettingTile extends StatelessWidget {
                       ),
 
                       // Trailing widget
-                      if (trailing != null) trailing!,
+                      ?trailing,
 
                       // Default arrow if no trailing and has onTap
                       if (trailing == null && onTap != null)
@@ -196,16 +196,16 @@ class GlassSettingTile extends StatelessWidget {
       width: 44.w,
       height: 44.w,
       decoration: BoxDecoration(
-        color: iconColor.withOpacity(isDark ? 0.15 : 0.1),
+        color: iconColor.withValues(alpha: isDark ? 0.15 : 0.1),
         borderRadius: BorderRadius.circular(AppDimensions.radiusSM),
         border: Border.all(
-          color: iconColor.withOpacity(isDark ? 0.3 : 0.2),
+          color: iconColor.withValues(alpha: isDark ? 0.3 : 0.2),
           width: 1,
         ),
         boxShadow: isDark
             ? [
                 BoxShadow(
-                  color: iconColor.withOpacity(0.2),
+                  color: iconColor.withValues(alpha: 0.2),
                   blurRadius: 10,
                   spreadRadius: 0,
                 ),
@@ -259,8 +259,8 @@ class GlassSettingSection extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.2,
                     color: isDark
-                        ? AppColors.neonCyan.withOpacity(0.7)
-                        : AppColors.lightAccent.withOpacity(0.8),
+                        ? AppColors.neonCyan.withValues(alpha: 0.7)
+                        : AppColors.lightAccent.withValues(alpha: 0.8),
                   ),
                 ),
               )
@@ -290,14 +290,14 @@ class GlassToggleSwitch extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final activeColor = isDark ? AppColors.neonCyan : AppColors.lightAccent;
     final inactiveColor = isDark
-        ? AppColors.darkTextMuted.withOpacity(0.3)
-        : AppColors.lightTextMuted.withOpacity(0.3);
+        ? AppColors.darkTextMuted.withValues(alpha: 0.3)
+        : AppColors.lightTextMuted.withValues(alpha: 0.3);
 
     return Switch(
       value: value,
       onChanged: onChanged,
-      activeColor: activeColor,
-      activeTrackColor: activeColor.withOpacity(0.3),
+      activeThumbColor: activeColor,
+      activeTrackColor: activeColor.withValues(alpha: 0.3),
       inactiveThumbColor: isDark
           ? AppColors.darkTextMuted
           : AppColors.lightTextMuted,

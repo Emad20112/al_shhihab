@@ -338,7 +338,7 @@ class SimpleGradientBackground extends StatelessWidget {
                   : const Color(0xFFE8D0FF).withValues(alpha: 0.4),
             ),
           ),
-          if (child != null) child!,
+          ?child,
         ],
       ),
     );

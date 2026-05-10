@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 
+import 'package:al_shihab/widgets/forgot_password_bottom_sheet.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -55,11 +56,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
 
   _AuthMode _mode = _AuthMode.login;
   bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
   bool _isSubmitting = false;
   bool _showValidationErrors = false;
 
@@ -75,7 +74,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     _emailController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -109,37 +107,48 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   Widget _buildAppBar(BuildContext context, bool isDark) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacingMD,
-        vertical: AppDimensions.spacingSM,
+      padding: EdgeInsets.fromLTRB(
+        AppDimensions.spacingMD,
+        AppDimensions.spacingSM,
+        AppDimensions.spacingMD,
+        AppDimensions.spacingSM,
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          IconButton.filledTonal(
-            onPressed: () => Navigator.of(context).maybePop(),
-            icon: const Icon(Icons.arrow_back_rounded),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: IconButton(
+              onPressed: () => Navigator.of(context).maybePop(),
+              icon: Icon(
+                Directionality.of(context) == ui.TextDirection.rtl
+                    ? Icons.arrow_back_ios_new_rounded
+                    : Icons.arrow_forward_ios_rounded,
+              ),
+              iconSize: 22.w,
+              color: isDark
+                  ? AppColors.darkTextPrimary
+                  : AppColors.lightTextPrimary,
+              tooltip: 'back'.tr(),
+            ),
           ),
-          SizedBox(width: AppDimensions.spacingSM),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _isLogin ? 'login'.tr() : 'create_account'.tr(),
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  _isLogin ? 'login_subtitle'.tr() : 'register_subtitle'.tr(),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: isDark
-                        ? AppColors.darkTextSecondary
-                        : AppColors.lightTextSecondary,
-                  ),
-                ),
-              ],
+          SizedBox(height: AppDimensions.spacingXS),
+          Text(
+            _isLogin ? 'login'.tr() : 'create_account'.tr(),
+            textAlign: TextAlign.center,
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            _isLogin ? 'login_subtitle'.tr() : 'register_subtitle'.tr(),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.lightTextSecondary,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -185,9 +194,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               label: 'password'.tr(),
               icon: Icons.lock_rounded,
               obscureText: _obscurePassword,
-              textInputAction: _isLogin
-                  ? TextInputAction.done
-                  : TextInputAction.next,
+              textInputAction: TextInputAction.done,
               suffixIcon: IconButton(
                 onPressed: () {
                   setState(() => _obscurePassword = !_obscurePassword);
@@ -200,35 +207,34 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               ),
               validator: _passwordValidator,
               onChanged: !_isLogin ? (_) => setState(() {}) : null,
-              onSubmitted: _isLogin ? (_) => _submit() : null,
+              onSubmitted: (_) => _submit(),
             ),
-            if (!_isLogin) ...[
-              SizedBox(height: 8.h),
-              _PasswordGuidance(password: _passwordController.text),
-            ],
-            if (!_isLogin) ...[
-              SizedBox(height: AppDimensions.spacingMD),
-              _AuthTextField(
-                controller: _confirmPasswordController,
-                label: 'confirm_password'.tr(),
-                icon: Icons.verified_user_rounded,
-                obscureText: _obscureConfirmPassword,
-                textInputAction: TextInputAction.done,
-                suffixIcon: IconButton(
+            if (_isLogin) ...[
+              SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
                   onPressed: () {
-                    setState(
-                      () => _obscureConfirmPassword = !_obscureConfirmPassword,
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => const ForgotPasswordBottomSheet(),
                     );
                   },
-                  icon: Icon(
-                    _obscureConfirmPassword
-                        ? Icons.visibility_rounded
-                        : Icons.visibility_off_rounded,
+                  child: Text(
+                    'هل نسيت كلمة المرور؟',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-                validator: _confirmPasswordValidator,
-                onSubmitted: (_) => _submit(),
               ),
+            ],
+            if (!_isLogin) ...[
+              SizedBox(height: 8.h),
+              const _PasswordGuidance(),
             ],
             SizedBox(height: AppDimensions.spacingLG),
             FilledButton.icon(
@@ -242,14 +248,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   : Icon(_isLogin ? Icons.login_rounded : Icons.person_add_alt),
               label: Text(_isLogin ? 'login'.tr() : 'create_account'.tr()),
             ),
-            if (_isLogin) ...[
-              SizedBox(height: AppDimensions.spacingMD),
-              OutlinedButton.icon(
-                onPressed: _isSubmitting ? null : _openVerification,
-                icon: const Icon(Icons.sms_rounded),
-                label: Text('verify_account'.tr()),
-              ),
-            ],
           ],
         ),
       ),
@@ -348,11 +346,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             ),
           ),
           hintText: _selectedPhoneCountry.dialCode,
-          helperText: _phoneHelperMessage(
-            _selectedPhoneCountry,
-            _maxNationalDigits(_selectedPhoneCountry.countryCode),
-          ),
-          helperMaxLines: 2,
           border: const OutlineInputBorder(),
           hintStyle: TextStyle(
             color: isDark
@@ -416,7 +409,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       'phone': phone,
       if (email.isNotEmpty) 'email': email,
       'password': _passwordController.text,
-      'password_confirmation': _confirmPasswordController.text,
     };
   }
 
@@ -509,16 +501,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       return null;
     }
     if (!_hasStrongPasswordLength(value)) return 'password_min_8'.tr();
-    if (!_hasPasswordLetter(value)) return 'password_need_letter'.tr();
-    if (!_hasPasswordNumber(value)) return 'password_need_number'.tr();
-    if (value.contains(RegExp(r'\s'))) return 'password_no_spaces'.tr();
     return null;
-  }
-
-  String? _confirmPasswordValidator(String? value) {
-    if (value == null || value.isEmpty) return 'field_required'.tr();
-    if (value != _passwordController.text) return 'passwords_do_not_match'.tr();
-    return _passwordValidator(value);
   }
 
   String _friendlyError(Object error) {
@@ -591,15 +574,6 @@ String _phoneLengthMessage(_PhoneCountry country, int requiredDigits) {
   return '${_countryNameEn(country.countryCode)} phone number must be $requiredDigits digits after ${country.dialCode}.';
 }
 
-String _phoneHelperMessage(_PhoneCountry country, int requiredDigits) {
-  final isArabic =
-      WidgetsBinding.instance.platformDispatcher.locale.languageCode == 'ar';
-  if (isArabic) {
-    return 'أدخل $requiredDigits أرقام بعد مفتاح ${country.dialCode}. مثال: 777 000 000';
-  }
-  return 'Enter $requiredDigits digits after ${country.dialCode}. Example: 777 000 000';
-}
-
 String _countryNameAr(String countryCode) {
   return switch (countryCode) {
     'YE' => 'اليمن',
@@ -637,8 +611,6 @@ String _errorText(ApiException error) {
 }
 
 bool _hasStrongPasswordLength(String value) => value.length >= 8;
-bool _hasPasswordLetter(String value) => RegExp(r'[A-Za-z]').hasMatch(value);
-bool _hasPasswordNumber(String value) => RegExp(r'\d').hasMatch(value);
 
 class _NationalPhoneFormatter extends TextInputFormatter {
   const _NationalPhoneFormatter(this.countryCode);
@@ -815,74 +787,17 @@ class _AuthTextField extends StatelessWidget {
 }
 
 class _PasswordGuidance extends StatelessWidget {
-  const _PasswordGuidance({required this.password});
-
-  final String password;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'password_requirements'.tr(),
-          style: Theme.of(
-            context,
-          ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w700),
-        ),
-        SizedBox(height: 6.h),
-        _PasswordRule(
-          met: _hasStrongPasswordLength(password),
-          label: 'password_rule_length'.tr(),
-        ),
-        _PasswordRule(
-          met: _hasPasswordLetter(password),
-          label: 'password_rule_letter'.tr(),
-        ),
-        _PasswordRule(
-          met: _hasPasswordNumber(password),
-          label: 'password_rule_number'.tr(),
-        ),
-        _PasswordRule(
-          met: password.isNotEmpty && !password.contains(RegExp(r'\s')),
-          label: 'password_rule_no_spaces'.tr(),
-        ),
-      ],
-    );
-  }
-}
-
-class _PasswordRule extends StatelessWidget {
-  const _PasswordRule({required this.met, required this.label});
-
-  final bool met;
-  final String label;
+  const _PasswordGuidance();
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final color = met
-        ? AppColors.neonGreen
-        : (isDark ? AppColors.darkTextSecondary : AppColors.lightTextMuted);
-    return Padding(
-      padding: EdgeInsets.only(top: 4.h),
-      child: Row(
-        children: [
-          Icon(
-            met ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
-            size: 15.w,
-            color: color,
-          ),
-          SizedBox(width: 7.w),
-          Expanded(
-            child: Text(
-              label,
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(color: color, height: 1.35),
-            ),
-          ),
-        ],
+    return Text(
+      'password_requirements'.tr(),
+      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+        color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextMuted,
+        fontWeight: FontWeight.w700,
+        height: 1.35,
       ),
     );
   }

@@ -105,12 +105,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isDark
-                    ? AppColors.darkGlassSurface.withOpacity(0.5)
-                    : Colors.white.withOpacity(0.4),
+                    ? AppColors.darkGlassSurface.withValues(alpha: 0.5)
+                    : Colors.white.withValues(alpha: 0.4),
                 border: Border.all(
                   color: isDark
-                      ? AppColors.neonCyan.withOpacity(0.2)
-                      : Colors.white.withOpacity(0.5),
+                      ? AppColors.neonCyan.withValues(alpha: 0.2)
+                      : Colors.white.withValues(alpha: 0.5),
                 ),
               ),
               child: Icon(
@@ -146,13 +146,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               height: 50.h,
               decoration: BoxDecoration(
                 color: isDark
-                    ? AppColors.darkGlassSurface.withOpacity(0.4)
-                    : Colors.white.withOpacity(0.3),
+                    ? AppColors.darkGlassSurface.withValues(alpha: 0.4)
+                    : Colors.white.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusLG),
                 border: Border.all(
                   color: isDark
-                      ? AppColors.neonCyan.withOpacity(0.3)
-                      : Colors.white.withOpacity(0.4),
+                      ? AppColors.neonCyan.withValues(alpha: 0.3)
+                      : Colors.white.withValues(alpha: 0.4),
                   width: isDark ? 1.5 : 1,
                 ),
               ),
@@ -273,8 +273,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     Icons.history_rounded,
                     size: 48.w,
                     color: isDark
-                        ? AppColors.darkTextMuted.withOpacity(0.5)
-                        : AppColors.lightTextMuted.withOpacity(0.5),
+                        ? AppColors.darkTextMuted.withValues(alpha: 0.5)
+                        : AppColors.lightTextMuted.withValues(alpha: 0.5),
                   ),
                   SizedBox(height: AppDimensions.spacingSM),
                   Text(

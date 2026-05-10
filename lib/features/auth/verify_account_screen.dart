@@ -56,7 +56,6 @@ class VerifyAccountScreen extends ConsumerStatefulWidget {
 }
 
 class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
-  final _phoneFormKey = GlobalKey<FormState>();
   final _codeFormKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
   final _codeController = TextEditingController();
@@ -66,7 +65,6 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
   String _currentPhoneNumber = '';
   bool _isSending = false;
   bool _isChecking = false;
-  bool _showPhoneValidationErrors = false;
   bool _showCodeValidationErrors = false;
   int _resendSeconds = 0;
   Timer? _resendTimer;
@@ -121,9 +119,18 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
       ),
       child: Row(
         children: [
-          IconButton.filledTonal(
+          IconButton(
             onPressed: () => Navigator.of(context).maybePop(),
-            icon: const Icon(Icons.arrow_back_rounded),
+            icon: Icon(
+              Directionality.of(context) == ui.TextDirection.rtl
+                  ? Icons.arrow_back_ios_new_rounded
+                  : Icons.arrow_forward_ios_rounded,
+            ),
+            iconSize: 22.w,
+            color: isDark
+                ? AppColors.darkTextPrimary
+                : AppColors.lightTextPrimary,
+            tooltip: 'back'.tr(),
           ),
           SizedBox(width: AppDimensions.spacingSM),
           Expanded(
@@ -165,7 +172,15 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
             Icons.phone,
           ),
           SizedBox(height: AppDimensions.spacingSM),
-          Form(key: _phoneFormKey, child: _buildPhoneField(isDark)),
+          Text(
+            _currentPhoneNumber.isEmpty
+                ? (widget.initialContact ?? '')
+                : _currentPhoneNumber,
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+            textDirection: ui.TextDirection.ltr,
+          ),
           SizedBox(height: AppDimensions.spacingMD),
           SegmentedButton<String>(
             segments: [
@@ -238,6 +253,8 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
     );
   }
 
+  bool get _canSendCode => !_isSending && _resendSeconds == 0;
+
   Widget _buildStepTitle(BuildContext context, String title, IconData icon) {
     return Row(
       children: [
@@ -255,73 +272,6 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
     );
   }
 
-  Widget _buildPhoneField(bool isDark) {
-    return Directionality(
-      textDirection: ui.TextDirection.ltr,
-      child: TextFormField(
-        controller: _phoneController,
-        keyboardType: TextInputType.phone,
-        textInputAction: TextInputAction.next,
-        autofillHints: const [AutofillHints.telephoneNumber],
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        textDirection: ui.TextDirection.ltr,
-        textAlign: TextAlign.left,
-        inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly,
-          LengthLimitingTextInputFormatter(
-            _maxNationalDigits(_selectedPhoneCountry.countryCode),
-          ),
-          _NationalPhoneFormatter(_selectedPhoneCountry.countryCode),
-        ],
-        onChanged: (_) => _updateCurrentPhoneNumber(),
-        validator: _phoneValidator,
-        decoration: InputDecoration(
-          labelText: 'phone'.tr(),
-          prefixIcon: DropdownButtonHideUnderline(
-            child: DropdownButton<_PhoneCountry>(
-              value: _selectedPhoneCountry,
-              padding: EdgeInsets.only(left: 12.w),
-              items: _phoneCountries
-                  .map(
-                    (country) => DropdownMenuItem(
-                      value: country,
-                      child: Text(
-                        country.label,
-                        textDirection: ui.TextDirection.ltr,
-                      ),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (country) {
-                if (country == null) return;
-                setState(() {
-                  _selectedPhoneCountry = country;
-                  _phoneController.clear();
-                  _currentPhoneNumber = '';
-                  _showPhoneValidationErrors = false;
-                });
-              },
-            ),
-          ),
-          hintText: _selectedPhoneCountry.dialCode,
-          helperText: _phoneHelperMessage(
-            _selectedPhoneCountry,
-            _maxNationalDigits(_selectedPhoneCountry.countryCode),
-          ),
-          helperMaxLines: 2,
-          border: const OutlineInputBorder(),
-          hintStyle: TextStyle(
-            color: isDark
-                ? AppColors.darkTextSecondary
-                : AppColors.lightTextSecondary,
-          ),
-        ),
-      ),
-    );
-  }
-
-  bool get _canSendCode => !_isSending && _resendSeconds == 0;
-
   String _sendButtonLabel() {
     if (_resendSeconds > 0) {
       return '${'resend_code_in'.tr()} $_resendSeconds';
@@ -331,8 +281,10 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
 
   Future<void> _sendCode() async {
     FocusScope.of(context).unfocus();
-    setState(() => _showPhoneValidationErrors = true);
-    if (!(_phoneFormKey.currentState?.validate() ?? false)) return;
+    if (_currentPhoneNumber.isEmpty) {
+      _showError('invalid_phone'.tr());
+      return;
+    }
 
     final phone = await _normalizePhoneNumber();
     if (phone == null) {
@@ -362,13 +314,9 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
 
   Future<void> _checkCode() async {
     FocusScope.of(context).unfocus();
-    setState(() {
-      _showPhoneValidationErrors = true;
-      _showCodeValidationErrors = true;
-    });
-    final phoneValid = _phoneFormKey.currentState?.validate() ?? false;
+    setState(() => _showCodeValidationErrors = true);
     final codeValid = _codeFormKey.currentState?.validate() ?? false;
-    if (!phoneValid || !codeValid) return;
+    if (!codeValid) return;
 
     final phone = await _normalizePhoneNumber();
     if (phone == null) {
@@ -379,12 +327,16 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
 
     setState(() => _isChecking = true);
     try {
-      await ref
+      final session = await ref
           .read(authControllerProvider.notifier)
           .checkVerification(_payload(phone: phone, includeCode: true));
       if (!mounted) return;
-      _showMessage('verification_success'.tr());
-      Navigator.of(context).maybePop();
+      if (session == null || session.token.isEmpty) {
+        _showError('account_not_found'.tr());
+        return;
+      }
+      _showMessage('login_success'.tr());
+      Navigator.of(context).popUntil((route) => route.isFirst);
     } catch (error) {
       if (!mounted) return;
       _showError(_friendlyError(error));
@@ -405,24 +357,6 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
     }
 
     return payload;
-  }
-
-  String? _phoneValidator(String? value) {
-    final trimmed = value?.trim() ?? '';
-    if (trimmed.isEmpty) return 'field_required'.tr();
-
-    final digits = trimmed.replaceAll(RegExp(r'\D'), '');
-    final requiredDigits = _maxNationalDigits(
-      _selectedPhoneCountry.countryCode,
-    );
-    if (digits.length != requiredDigits) {
-      if (!_showPhoneValidationErrors && digits.length < requiredDigits) {
-        return null;
-      }
-      return _phoneLengthMessage(_selectedPhoneCountry, requiredDigits);
-    }
-
-    return null;
   }
 
   String? _codeValidator(String? value) {
@@ -651,15 +585,6 @@ String _phoneLengthMessage(_PhoneCountry country, int requiredDigits) {
     return 'رقم ${_countryNameAr(country.countryCode)} يجب أن يكون $requiredDigits أرقام بعد مفتاح ${country.dialCode}.';
   }
   return '${_countryNameEn(country.countryCode)} phone number must be $requiredDigits digits after ${country.dialCode}.';
-}
-
-String _phoneHelperMessage(_PhoneCountry country, int requiredDigits) {
-  final isArabic =
-      WidgetsBinding.instance.platformDispatcher.locale.languageCode == 'ar';
-  if (isArabic) {
-    return 'أدخل $requiredDigits أرقام بعد مفتاح ${country.dialCode}. مثال: 777 000 000';
-  }
-  return 'Enter $requiredDigits digits after ${country.dialCode}. Example: 777 000 000';
 }
 
 String _countryNameAr(String countryCode) {

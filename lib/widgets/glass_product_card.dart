@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -97,7 +96,13 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
         curve: Curves.easeOutCubic,
         width: widget.width ?? 170.w,
         height: widget.height ?? 240.h,
-        transform: Matrix4.identity()..scale(_isPressed ? 0.98 : 1.0),
+        transform: Matrix4.identity()
+          ..scaleByDouble(
+            _isPressed ? 0.98 : 1.0,
+            _isPressed ? 0.98 : 1.0,
+            _isPressed ? 0.98 : 1.0,
+            1.0,
+          ),
         transformAlignment: Alignment.center,
         child: Container(
           decoration: BoxDecoration(
@@ -218,7 +223,7 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
                       ),
                     ),
                   ),
-                  errorWidget: (_, __, ___) => Center(
+                  errorWidget: (_, _, _) => Center(
                     child: Icon(
                       Icons.checkroom_rounded,
                       size: 40.w,
@@ -307,13 +312,15 @@ class _GlassProductCardState extends ConsumerState<GlassProductCard>
               height: AppDimensions.minTouchTarget,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (isDark ? Colors.black : Colors.white).withOpacity(0.6),
+                color: (isDark ? Colors.black : Colors.white).withValues(
+                  alpha: 0.6,
+                ),
                 border: Border.all(
                   color: isFavorite
                       ? (isDark ? AppColors.neonMagenta : AppColors.error)
                       : (isDark
                             ? AppColors.getNeonGlow(AppColors.neonCyan)
-                            : Colors.white.withOpacity(0.5)),
+                            : Colors.white.withValues(alpha: 0.5)),
                   width: 1,
                 ),
                 boxShadow: isFavorite && isDark
@@ -606,7 +613,13 @@ class _HeroProductCardState extends State<HeroProductCard> {
         curve: Curves.easeOutCubic,
         width: 260.w,
         height: 280.h,
-        transform: Matrix4.identity()..scale(_isPressed ? 0.96 : 1.0),
+        transform: Matrix4.identity()
+          ..scaleByDouble(
+            _isPressed ? 0.96 : 1.0,
+            _isPressed ? 0.96 : 1.0,
+            _isPressed ? 0.96 : 1.0,
+            1.0,
+          ),
         transformAlignment: Alignment.center,
         child: Stack(
           clipBehavior: Clip.none,
@@ -816,7 +829,7 @@ class _HeroProductCardState extends State<HeroProductCard> {
                           ),
                         ),
                       ),
-                      errorWidget: (_, __, ___) => Container(
+                      errorWidget: (_, _, _) => Container(
                         decoration: BoxDecoration(
                           color: isDark
                               ? AppColors.darkGlassSurface
