@@ -1,3 +1,6 @@
+<img width="1920" height="1080" alt="Screenshot (547)" src="https://github.com/user-attachments/assets/d99eb15d-137b-488b-aa95-f46a21a24631" />
+<img width="1920" height="1080" alt="Screenshot (546)" src="https://github.com/user-attachments/assets/72c8508c-3271-4d65-8099-204059474ad4" />
+<img width="1920" height="1080" alt="Screenshot (550)" src="https://github.com/user-attachments/assets/a27ee890-3ed9-4737-831c-3835343081b1" />
 # ✨ ElectroGlass | Futuristic Flutter E-Commerce UI
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)
