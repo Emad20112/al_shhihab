@@ -45,10 +45,12 @@ class VerifyAccountScreen extends ConsumerStatefulWidget {
     super.key,
     this.initialContact,
     this.autoSendCode = false,
+    this.isPasswordRecoveryFlow = false,
   });
 
   final String? initialContact;
   final bool autoSendCode;
+  final bool isPasswordRecoveryFlow;
 
   @override
   ConsumerState<VerifyAccountScreen> createState() =>
@@ -66,6 +68,7 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
   bool _isSending = false;
   bool _isChecking = false;
   bool _showCodeValidationErrors = false;
+  String? _lastSentChannel;
   int _resendSeconds = 0;
   Timer? _resendTimer;
 
@@ -113,46 +116,48 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
 
   Widget _buildHeader(BuildContext context, bool isDark) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacingMD,
-        vertical: AppDimensions.spacingSM,
+      padding: EdgeInsets.fromLTRB(
+        AppDimensions.spacingMD,
+        AppDimensions.spacingSM,
+        AppDimensions.spacingMD,
+        AppDimensions.spacingSM,
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          IconButton(
-            onPressed: () => Navigator.of(context).maybePop(),
-            icon: Icon(
-              Directionality.of(context) == ui.TextDirection.rtl
-                  ? Icons.arrow_back_ios_new_rounded
-                  : Icons.arrow_forward_ios_rounded,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: IconButton(
+              onPressed: () => Navigator.of(context).maybePop(),
+              icon: Icon(
+                Directionality.of(context) == ui.TextDirection.rtl
+                    ? Icons.arrow_forward_ios_rounded
+                    : Icons.arrow_back_ios_new_rounded,
+              ),
+              iconSize: 22.w,
+              color: isDark
+                  ? AppColors.darkTextPrimary
+                  : AppColors.lightTextPrimary,
+              tooltip: 'back'.tr(),
             ),
-            iconSize: 22.w,
-            color: isDark
-                ? AppColors.darkTextPrimary
-                : AppColors.lightTextPrimary,
-            tooltip: 'back'.tr(),
           ),
-          SizedBox(width: AppDimensions.spacingSM),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'verify_account'.tr(),
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  'verify_account_subtitle'.tr(),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: isDark
-                        ? AppColors.darkTextSecondary
-                        : AppColors.lightTextSecondary,
-                  ),
-                ),
-              ],
+          SizedBox(height: AppDimensions.spacingXS),
+          Text(
+            'verify_account'.tr(),
+            textAlign: TextAlign.center,
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            'verify_account_subtitle'.tr(),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.lightTextSecondary,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -299,6 +304,7 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
           .read(authControllerProvider.notifier)
           .sendVerification(_payload(phone: phone, includeCode: false));
       if (!mounted) return;
+      _lastSentChannel = _channel;
       _startResendTimer();
       _showMessage(
         _verificationSentMessage(result),
@@ -335,7 +341,14 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
         _showError('account_not_found'.tr());
         return;
       }
-      _showMessage('login_success'.tr());
+      if (widget.isPasswordRecoveryFlow) {
+        final changed = await _showResetPasswordDialog();
+        if (!mounted) return;
+        if (!changed) return;
+        _showMessage('password_changed_success'.tr());
+      } else {
+        _showMessage('login_success'.tr());
+      }
       Navigator.of(context).popUntil((route) => route.isFirst);
     } catch (error) {
       if (!mounted) return;
@@ -345,11 +358,36 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
     }
   }
 
+  Future<bool> _showResetPasswordDialog() async {
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: false,
+      enableDrag: false,
+      backgroundColor: Colors.transparent,
+      builder: (dialogContext) => _ResetPasswordDialog(
+        onSubmit: (password, confirmPassword) async {
+          await ref.read(authControllerProvider.notifier).resetPassword({
+            'password': password,
+            'password_confirmation': confirmPassword,
+          });
+        },
+      ),
+    );
+    return result ?? false;
+  }
+
   Map<String, dynamic> _payload({
     required String phone,
     required bool includeCode,
   }) {
-    final payload = <String, dynamic>{'channel': _channel, 'phone': phone};
+    final channelForRequest = includeCode
+        ? (_lastSentChannel ?? _channel)
+        : _channel;
+    final payload = <String, dynamic>{
+      'channel': channelForRequest,
+      'phone': phone,
+    };
 
     if (includeCode) {
       payload['code'] = _codeController.text.trim();
@@ -488,6 +526,10 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
       SnackBar(
         content: Text(message),
         duration: duration ?? const Duration(seconds: 4),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusSM),
+        ),
       ),
     );
   }
@@ -499,21 +541,208 @@ class _VerifyAccountScreenState extends ConsumerState<VerifyAccountScreen> {
   }
 }
 
-class _NationalPhoneFormatter extends TextInputFormatter {
-  const _NationalPhoneFormatter(this.countryCode);
+class _ResetPasswordDialog extends StatefulWidget {
+  const _ResetPasswordDialog({required this.onSubmit});
 
-  final String countryCode;
+  final Future<void> Function(String password, String confirmPassword) onSubmit;
 
   @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final digits = _sanitizeNationalDigits(countryCode, newValue.text);
-    final formatted = _formatNationalPhone(countryCode, digits);
-    return TextEditingValue(
-      text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
+  State<_ResetPasswordDialog> createState() => _ResetPasswordDialogState();
+}
+
+class _ResetPasswordDialogState extends State<_ResetPasswordDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _passwordController = TextEditingController();
+  final _confirmController = TextEditingController();
+
+  bool _submitting = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
+  String? _error;
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    FocusScope.of(context).unfocus();
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+
+    try {
+      await widget.onSubmit(_passwordController.text, _confirmController.text);
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _error = _friendlyError(error);
+      });
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
+
+  String? _passwordValidator(String? value) {
+    final password = value ?? '';
+    if (password.isEmpty) return 'field_required'.tr();
+    if (password.length < 8) return 'password_min_8'.tr();
+    return null;
+  }
+
+  String? _confirmValidator(String? value) {
+    final confirm = value ?? '';
+    if (confirm.isEmpty) return 'field_required'.tr();
+    if (confirm != _passwordController.text) {
+      return 'passwords_do_not_match'.tr();
+    }
+    return null;
+  }
+
+  String _friendlyError(Object error) {
+    if (error is ApiException) {
+      final raw = _errorText(error).toLowerCase();
+      if (raw.contains('password') || raw.contains('كلمة')) {
+        return 'password_requirements'.tr();
+      }
+      if (error.statusCode == null) return 'server_unavailable'.tr();
+      return 'auth_error'.tr();
+    }
+    return 'auth_error'.tr();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: EdgeInsets.only(
+        left: AppDimensions.spacingMD,
+        right: AppDimensions.spacingMD,
+        top: AppDimensions.spacingXL,
+        bottom:
+            MediaQuery.of(context).viewInsets.bottom + AppDimensions.spacingMD,
+      ),
+      child: GlassContainerFeatured(
+        margin: EdgeInsets.zero,
+        padding: EdgeInsets.fromLTRB(
+          AppDimensions.spacingLG,
+          AppDimensions.spacingSM,
+          AppDimensions.spacingLG,
+          AppDimensions.spacingLG,
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Align(
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.22)
+                        : Colors.black.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusFull,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: AppDimensions.spacingSM),
+              Text(
+                'reset_password_title'.tr(),
+                textAlign: TextAlign.center,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+              ),
+              SizedBox(height: 4.h),
+              Text(
+                'reset_password_subtitle'.tr(),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.lightTextSecondary,
+                  fontWeight: FontWeight.w600,
+                  height: 1.35,
+                ),
+              ),
+              SizedBox(height: AppDimensions.spacingLG),
+              TextFormField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                validator: _passwordValidator,
+                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(
+                  labelText: 'new_password'.tr(),
+                  prefixIcon: const Icon(Icons.lock_outline_rounded),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() => _obscurePassword = !_obscurePassword);
+                    },
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_rounded
+                          : Icons.visibility_off_rounded,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: AppDimensions.spacingMD),
+              TextFormField(
+                controller: _confirmController,
+                obscureText: _obscureConfirm,
+                validator: _confirmValidator,
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (_) => _submit(),
+                decoration: InputDecoration(
+                  labelText: 'confirm_new_password'.tr(),
+                  prefixIcon: const Icon(Icons.lock_reset_rounded),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() => _obscureConfirm = !_obscureConfirm);
+                    },
+                    icon: Icon(
+                      _obscureConfirm
+                          ? Icons.visibility_rounded
+                          : Icons.visibility_off_rounded,
+                    ),
+                  ),
+                ),
+              ),
+              if (_error != null) ...[
+                SizedBox(height: AppDimensions.spacingSM),
+                Text(
+                  _error!,
+                  style: TextStyle(color: AppColors.error, fontSize: 12.sp),
+                ),
+              ],
+              SizedBox(height: AppDimensions.spacingLG),
+              FilledButton.icon(
+                onPressed: _submitting ? null : _submit,
+                icon: _submitting
+                    ? SizedBox(
+                        width: 18.w,
+                        height: 18.w,
+                        child: const CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.check_rounded),
+                label: Text('change_password'.tr()),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

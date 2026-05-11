@@ -114,6 +114,14 @@ class AuthRepository {
     return _saveSessionIfPresent(response);
   }
 
+  Future<void> resetPassword(Map<String, dynamic> data) async {
+    await _apiClient.post<Map<String, dynamic>>(
+      '/auth/password/reset',
+      body: data,
+      fromData: _mapFromData,
+    );
+  }
+
   Future<AuthUser?> fetchMe() async {
     final response = await _apiClient.get<Map<String, dynamic>>(
       '/me',

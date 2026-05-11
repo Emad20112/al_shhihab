@@ -11,8 +11,12 @@ import '../../core/providers/app_providers.dart';
 import '../../core/providers/location_provider.dart';
 import '../../features/auth/auth_screen.dart';
 import '../../features/auth/providers/auth_providers.dart';
+import '../../features/profile/avatar_picker.dart';
+import '../../features/profile/edit_profile_screen.dart';
+import '../../features/profile/preferences_screen.dart';
 import '../../widgets/city_selector.dart';
 import '../../widgets/glass_setting_tile.dart';
+import '../../widgets/user_avatar.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// SETTINGS SCREEN - Control Center Style Settings
@@ -104,6 +108,34 @@ class SettingsScreen extends ConsumerWidget {
             title: 'general'.tr(),
             animationDelay: const Duration(milliseconds: 250),
             children: [
+              // Edit Profile (only when authenticated)
+              if (isAuthenticated)
+                GlassSettingTile(
+                  icon: Icons.person_outline_rounded,
+                  iconColor: isDark ? AppColors.neonCyan : AppColors.lightAccent,
+                  title: 'edit_profile'.tr(),
+                  animationDelay: const Duration(milliseconds: 260),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const EditProfileScreen(),
+                    ),
+                  ),
+                ),
+
+              // Preferences (only when authenticated)
+              if (isAuthenticated)
+                GlassSettingTile(
+                  icon: Icons.tune_rounded,
+                  iconColor: isDark ? AppColors.neonMagenta : AppColors.lightAccentSecondary,
+                  title: 'preferences'.tr(),
+                  animationDelay: const Duration(milliseconds: 265),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const PreferencesScreen(),
+                    ),
+                  ),
+                ),
+
               // Change Region
               GlassSettingTile(
                 icon: Icons.location_on_rounded,
@@ -293,7 +325,14 @@ class SettingsScreen extends ConsumerWidget {
                 child: Row(
                   children: [
                     // Avatar
-                    _buildAvatar(isDark),
+                    UserAvatar(
+                      avatarUrl: user?.avatarUrl,
+                      size: AppDimensions.avatarSizeLG,
+                      showEditBadge: isAuthenticated,
+                      onTap: isAuthenticated
+                          ? () => showAvatarPicker(context, ref)
+                          : null,
+                    ),
 
                     SizedBox(width: AppDimensions.spacingMD),
 
@@ -383,9 +422,12 @@ class SettingsScreen extends ConsumerWidget {
                     // Account action
                     InkWell(
                       onTap: isAuthenticated
-                          ? () => ref
-                                .read(authControllerProvider.notifier)
-                                .refreshMe()
+                          ? () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      const EditProfileScreen(),
+                                ),
+                              )
                           : () => _openAuth(context),
                       borderRadius: BorderRadius.circular(
                         AppDimensions.radiusFull,
@@ -410,7 +452,7 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                         child: Icon(
                           isAuthenticated
-                              ? Icons.refresh_rounded
+                              ? Icons.edit_rounded
                               : Icons.login_rounded,
                           size: 18.w,
                           color: isDark
@@ -437,54 +479,7 @@ class SettingsScreen extends ConsumerWidget {
         );
   }
 
-  Widget _buildAvatar(bool isDark) {
-    return Container(
-      width: AppDimensions.avatarSizeLG,
-      height: AppDimensions.avatarSizeLG,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [AppColors.neonCyan, AppColors.neonMagenta]
-              : [AppColors.lightAccent, AppColors.lightAccentSecondary],
-        ),
-        boxShadow: isDark
-            ? [
-                BoxShadow(
-                  color: AppColors.neonCyan.withValues(alpha: 0.4),
-                  blurRadius: 15,
-                  spreadRadius: 0,
-                ),
-              ]
-            : [
-                BoxShadow(
-                  color: AppColors.lightAccent.withValues(alpha: 0.3),
-                  blurRadius: 10,
-                  spreadRadius: 0,
-                ),
-              ],
-      ),
-      child: Center(
-        child: Container(
-          width: AppDimensions.avatarSizeInner,
-          height: AppDimensions.avatarSizeInner,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isDark ? AppColors.darkGlassSurface : Colors.white,
-          ),
-          child: Center(
-            child: Icon(
-              Icons.person_rounded,
-              size: AppDimensions.avatarIconSize,
-              color: isDark ? AppColors.neonCyan : AppColors.lightAccent,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // _buildAvatar removed — now using UserAvatar widget directly in _buildProfileSection
 
   String _getCitySubtitle(WidgetRef ref, BuildContext context) {
     final city = ref.watch(selectedCityProvider);

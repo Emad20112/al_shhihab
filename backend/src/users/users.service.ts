@@ -100,6 +100,12 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
+  async updatePasswordHash(userId: number, passwordHash: string) {
+    const user = await this.requireById(userId);
+    user.passwordHash = passwordHash;
+    return this.usersRepository.save(user);
+  }
+
   async markVerifiedByContact(contact: string) {
     const user = await this.findByIdentifier(contact);
     if (!user) return null;

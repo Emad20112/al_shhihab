@@ -92,6 +92,8 @@ The UI is built around a custom **Glass Engine** that adapts to the theme:
 | :--------------------------------------------------------------: | :--------------------------------------------------------------: |
 | ![Screenshot 552](assets/screenshot/Screenshot%20%28552%29.png) | ![Screenshot 554](assets/screenshot/Screenshot%20%28554%29.png) |
 | ![Screenshot 556](assets/screenshot/Screenshot%20%28556%29.png) | ![Screenshot 557](assets/screenshot/Screenshot%20%28557%29.png) |
+| ![Screenshot 563](assets/screenshot/Screenshot%20%28563%29.png) | ![Screenshot 564](assets/screenshot/Screenshot%20%28564%29.png) |
+| ![Screenshot 565](assets/screenshot/Screenshot%20%28565%29.png) |                                                                |
 
 ---
 

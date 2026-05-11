@@ -120,6 +120,10 @@ class AuthController extends AsyncNotifier<AuthState> {
     return response.data ?? response.raw;
   }
 
+  Future<void> resetPassword(Map<String, dynamic> data) {
+    return _repository.resetPassword(data);
+  }
+
   Future<AuthUser?> refreshMe() async {
     final current = state.value ?? AuthState.guest();
     final user = await _repository.fetchMe();

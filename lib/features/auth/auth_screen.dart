@@ -122,8 +122,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               onPressed: () => Navigator.of(context).maybePop(),
               icon: Icon(
                 Directionality.of(context) == ui.TextDirection.rtl
-                    ? Icons.arrow_back_ios_new_rounded
-                    : Icons.arrow_forward_ios_rounded,
+                    ? Icons.arrow_forward_ios_rounded
+                    : Icons.arrow_back_ios_new_rounded,
               ),
               iconSize: 22.w,
               color: isDark
@@ -223,7 +223,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     );
                   },
                   child: Text(
-                    'هل نسيت كلمة المرور؟',
+                    'forgot_password'.tr(),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.secondary,
                       fontWeight: FontWeight.w600,

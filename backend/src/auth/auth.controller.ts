@@ -8,6 +8,7 @@ import { AppCredentialsGuard } from "../common/app-credentials.guard";
 import { validateData } from "../common/validate-data";
 import { CurrentUser, AuthenticatedUser } from "./current-user.decorator";
 import { LoginDto } from "./dto/login.dto";
+import { ResetPasswordDto } from "./dto/reset-password.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { RefreshTokenDto } from "./dto/refresh-token.dto";
 import { AuthService } from "./auth.service";
@@ -78,6 +79,29 @@ export class AuthController {
   async logout(@CurrentUser() user: AuthenticatedUser) {
     await this.authService.logout(user.jti, user.exp, user.sessionId);
     return ok({}, "تم تسجيل الخروج بنجاح");
+  }
+
+  @Post("password/reset")
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  @ApiBearerAuth()
+  @UseGuards(AppCredentialsGuard, JwtAuthGuard)
+  @ApiBody({
+    schema: {
+      example: {
+        data: {
+          password: "StrongPass123",
+          password_confirmation: "StrongPass123",
+        },
+      },
+    },
+  })
+  async resetPassword(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() body: unknown,
+  ) {
+    const dto = await validateData(ResetPasswordDto, unwrapData(body));
+    await this.authService.resetPassword(user.id, dto);
+    return ok({}, "تم تغيير كلمة المرور بنجاح");
   }
 
   private requestContext(request: Request) {

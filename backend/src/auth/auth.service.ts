@@ -13,6 +13,7 @@ import { Repository } from "typeorm";
 import { UsersService } from "../users/users.service";
 import { serializeUser } from "../users/users.serializer";
 import { LoginDto } from "./dto/login.dto";
+import { ResetPasswordDto } from "./dto/reset-password.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { RevokedToken } from "./entities/revoked-token.entity";
 import { UserSession } from "./entities/user-session.entity";
@@ -82,6 +83,15 @@ export class AuthService {
     }
 
     return this.issueSession(user, context);
+  }
+
+  async resetPassword(userId: number, dto: ResetPasswordDto) {
+    if (dto.password_confirmation !== dto.password) {
+      throw new BadRequestException("كلمتا المرور غير متطابقتين");
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, 12);
+    await this.usersService.updatePasswordHash(userId, passwordHash);
   }
 
   async logout(jti: string, exp?: number, sessionId?: string) {
