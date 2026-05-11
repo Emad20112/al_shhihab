@@ -6,7 +6,10 @@
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.0-0175C2?style=for-the-badge&logo=dart&logoColor=white)
 ![State Management](https://img.shields.io/badge/State-Riverpod-purple?style=for-the-badge)
-![Architecture](https://img.shields.io/badge/Architecture-Clean-green?style=for-the-badge)
+
+
+
+
 
 A high-fidelity **Electronics Store Application** focused on delivering a premium user experience through **Glassmorphism** design principles. The app features advanced micro-interactions, 3D animations, and a fully adaptive UI that switches seamlessly between "Frosted Ice" (Light Mode) and "Smoked Glass" (Dark Mode).
 
