@@ -90,11 +90,10 @@ The UI is built around a custom **Glass Engine** that adapts to the theme:
 
 ## 📸 Screenshots
 
-_(Place your screenshots here. I recommend creating a grid showing Home, Dark Mode, and Light Mode)_
-
-|                 Home (Dark)                  |                  Home (Light)                  |                 3D Carousel                  |
-| :------------------------------------------: | :--------------------------------------------: | :------------------------------------------: |
-| ![Dark Home](docs/screenshots/dark_home.png) | ![Light Home](docs/screenshots/light_home.png) | ![3D Effect](docs/screenshots/3d_effect.png) |
+| ![Screenshot 546](assets/screenshot/Screenshot%20%28546%29.png) | ![Screenshot 547](assets/screenshot/Screenshot%20%28547%29.png) |
+| :--------------------------------------------------------------: | :--------------------------------------------------------------: |
+| ![Screenshot 552](assets/screenshot/Screenshot%20%28552%29.png) | ![Screenshot 554](assets/screenshot/Screenshot%20%28554%29.png) |
+| ![Screenshot 556](assets/screenshot/Screenshot%20%28556%29.png) | ![Screenshot 557](assets/screenshot/Screenshot%20%28557%29.png) |
 
 ---
 
